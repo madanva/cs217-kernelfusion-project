@@ -1,5 +1,5 @@
 /*
- * All rights reserved - Harvard University. 
+ * All rights reserved - Stanford University. 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -39,8 +39,8 @@ class PECore : public match::Module {
  public:
   Connections::In<bool> start;
   Connections::In<spec::StreamType> input_port;
-  Connections::In<spec::Axi::SlaveToRVA::Write> rva_in;
-  Connections::Out<spec::Axi::SlaveToRVA::Read> rva_out;
+  Connections::In<spec::Axi::SubordinateToRVA::Write> rva_in;
+  Connections::Out<spec::Axi::SubordinateToRVA::Read> rva_out;
   Connections::Out<spec::ActVectorType> act_port;
   sc_in <NVUINT32>  SC_SRAM_CONFIG;
   
@@ -82,7 +82,7 @@ class PECore : public match::Module {
   
   // while loop control signal (including SRAM I/O)
   bool w_axi_rsp;
-  spec::Axi::SlaveToRVA::Read rva_out_reg;  
+  spec::Axi::SubordinateToRVA::Read rva_out_reg;  
 
   // SRAM buffer signals
   // Weight Buffer signals                           
@@ -171,7 +171,7 @@ class PECore : public match::Module {
   }
 /////////////////////////////
 
-  void DecodeAxiWrite(const spec::Axi::SlaveToRVA::Write& rva_in_reg){
+  void DecodeAxiWrite(const spec::Axi::SubordinateToRVA::Write& rva_in_reg){
     NVUINT4     tmp = nvhls::get_slc<4>(rva_in_reg.addr, 20);
     NVUINT16    local_index = nvhls::get_slc<16>(rva_in_reg.addr, 4);
     
@@ -229,7 +229,7 @@ class PECore : public match::Module {
   }   
   
   
-  void DecodeAxiRead(const spec::Axi::SlaveToRVA::Write& rva_in_reg) {
+  void DecodeAxiRead(const spec::Axi::SubordinateToRVA::Write& rva_in_reg) {
     NVUINT4 tmp = nvhls::get_slc<4>(rva_in_reg.addr, 20);
     NVUINT16    local_index = nvhls::get_slc<16>(rva_in_reg.addr, 4);
         
@@ -313,7 +313,7 @@ class PECore : public match::Module {
   
   
   void DecodeAxi() {  
-    spec::Axi::SlaveToRVA::Write rva_in_reg;
+    spec::Axi::SubordinateToRVA::Write rva_in_reg;
     if (rva_in.PopNB(rva_in_reg)) {
       //w_axi_req = 1;
       CDCOUT(sc_time_stamp()  << " PECore: " << name() << "RVA Pop " << endl, kDebugLevel);

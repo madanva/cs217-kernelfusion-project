@@ -1,5 +1,5 @@
 /*
- * All rights reserved - Harvard University. 
+ * All rights reserved - Stanford University. 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -91,7 +91,7 @@ SC_MODULE(Interrupt) {
 };
 
 SC_MODULE(Top){
-  static const int numSlaves = spec::kNumPE+1; // Num of partition = PE*N + GB
+  static const int numSubordinates = spec::kNumPE+1; // Num of partition = PE*N + GB
  public:
 // Accelerator I/O follows SMIV definition, clk, rst, IRQ (done), axi::slave::write, axi::slave::read
   sc_in<bool>  clk;
@@ -103,18 +103,18 @@ SC_MODULE(Top){
   
 // Internal Connections
   // AxiSplitter Master connects to I/O
-  // AxiSplitter Slave  channels (FIXME: we cannot use array of wraped up AXI channels)
+  // AxiSplitter Subordinate  channels (FIXME: we cannot use array of wraped up AXI channels)
   typedef typename spec::Axi::axi4_::read::template chan<>::ARChan   axi_rd_chan_ar;
   typedef typename spec::Axi::axi4_::read::template chan<>::RChan    axi_rd_chan_r;
   typedef typename spec::Axi::axi4_::write::template chan<>::AWChan  axi_wr_chan_aw;
   typedef typename spec::Axi::axi4_::write::template chan<>::WChan   axi_wr_chan_w;
   typedef typename spec::Axi::axi4_::write::template chan<>::BChan   axi_wr_chan_b;
 
-  nvhls::nv_array<axi_rd_chan_ar, numSlaves>  axi_rd_c_ar;
-  nvhls::nv_array<axi_rd_chan_r, numSlaves>   axi_rd_c_r;
-  nvhls::nv_array<axi_wr_chan_aw, numSlaves>  axi_wr_c_aw;
-  nvhls::nv_array<axi_wr_chan_w, numSlaves>   axi_wr_c_w;
-  nvhls::nv_array<axi_wr_chan_b, numSlaves>   axi_wr_c_b;
+  nvhls::nv_array<axi_rd_chan_ar, numSubordinates>  axi_rd_c_ar;
+  nvhls::nv_array<axi_rd_chan_r, numSubordinates>   axi_rd_c_r;
+  nvhls::nv_array<axi_wr_chan_aw, numSubordinates>  axi_wr_c_aw;
+  nvhls::nv_array<axi_wr_chan_w, numSubordinates>   axi_wr_c_w;
+  nvhls::nv_array<axi_wr_chan_b, numSubordinates>   axi_wr_c_b;
   
 // Streaming and Control 
 // XXX Important: The done, start signals btw GB and PEs have much less delay than streaming data communication.
@@ -144,9 +144,9 @@ SC_MODULE(Top){
   PEPartition* pe_ptrs[spec::kNumPE];
 
   // Axi Spliter, and configuration regs (hard coded)
-  // NOTE: spec::kNumPE+1 = numSlaves
+  // NOTE: spec::kNumPE+1 = numSubordinates
   spec::Axi::AxiSplitter axispliter_inst;
-  sc_signal<NVUINTW(spec::Axi::axiCfg::addrWidth)> addrBound[numSlaves][2];
+  sc_signal<NVUINTW(spec::Axi::axiCfg::addrWidth)> addrBound[numSubordinates][2];
 
   // Databus modules
   PEStart pe_start_inst;
@@ -160,7 +160,7 @@ SC_MODULE(Top){
   //      but we might need to use SC_THREAD instead
   void WriteAxiSplitterConfig() {
     #pragma hls_unroll yes    
-    for (int i = 0; i < numSlaves; i++) {
+    for (int i = 0; i < numSubordinates; i++) {
       NVUINTW(spec::Axi::axiCfg::addrWidth) write_base  = 0x33000000 + 0x01000000*i;
       NVUINTW(spec::Axi::axiCfg::addrWidth) write_bound = 0x33FFFFFF + 0x01000000*i; 
       addrBound[i][0].write(write_base);
@@ -221,8 +221,8 @@ SC_MODULE(Top){
     // Connect Splitter master to chip I/O    
     axispliter_inst.axi_rd_m(if_axi_rd);
     axispliter_inst.axi_wr_m(if_axi_wr);       
-    // AXI Spliter Slave, Config
-    for (int i = 0; i < numSlaves; i++) {    
+    // AXI Spliter Subordinate, Config
+    for (int i = 0; i < numSubordinates; i++) {    
       axispliter_inst.axi_rd_s_ar[i](axi_rd_c_ar[i]);
       axispliter_inst.axi_rd_s_r[i] (axi_rd_c_r[i]);
       axispliter_inst.axi_wr_s_aw[i](axi_wr_c_aw[i]);

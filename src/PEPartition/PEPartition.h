@@ -1,5 +1,5 @@
 /*
- * All rights reserved - Harvard University. 
+ * All rights reserved - Stanford University. 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -52,12 +52,12 @@ SC_MODULE(PEPartition) {
   Connections::In<bool>                 start;
   Connections::Out<bool>                done;  
 
-  Connections::Combinational<spec::Axi::SlaveToRVA::Write>     rva_in;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Read>      rva_out;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write>     rva_in;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read>      rva_out;
   
   
   PEModule                pemodule_inst;
-  spec::Axi::SlaveToRVA   rva_inst;
+  spec::Axi::SubordinateToRVA   rva_inst;
       
   SC_HAS_PROCESS(PEPartition);
   PEPartition(sc_module_name name)

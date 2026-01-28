@@ -1,5 +1,5 @@
 /*
- * All rights reserved - Harvard University. 
+ * All rights reserved - Stanford University. 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -50,9 +50,9 @@
 SC_MODULE(Source) {
   sc_in<bool> clk;
   sc_in<bool> rst;  
-  Connections::Out<spec::Axi::SlaveToRVA::Write> rva_in;
+  Connections::Out<spec::Axi::SubordinateToRVA::Write> rva_in;
   
-  std::vector<spec::Axi::SlaveToRVA::Write> src_vec;
+  std::vector<spec::Axi::SubordinateToRVA::Write> src_vec;
 
   SC_CTOR(Source) {
     SC_THREAD(run);
@@ -61,7 +61,7 @@ SC_MODULE(Source) {
   }
 
   void run(){
-    spec::Axi::SlaveToRVA::Write  rva_in_src;
+    spec::Axi::SubordinateToRVA::Write  rva_in_src;
     wait();
     //cout << "size of src_vec: " << src_vec.size() << endl;
     for (unsigned i = 0; i < src_vec.size(); i++) {
@@ -79,11 +79,11 @@ SC_MODULE(Source) {
 SC_MODULE(Dest) {
   sc_in<bool> clk;
   sc_in<bool> rst;
-  Connections::In<spec::Axi::SlaveToRVA::Read> rva_out;
+  Connections::In<spec::Axi::SubordinateToRVA::Read> rva_out;
 
-  std::vector<spec::Axi::SlaveToRVA::Read> dest_vec;
+  std::vector<spec::Axi::SubordinateToRVA::Read> dest_vec;
 
-  spec::Axi::SlaveToRVA::Read rva_out_dest;
+  spec::Axi::SubordinateToRVA::Read rva_out_dest;
 
   SC_CTOR(Dest) {
     SC_THREAD(run);
@@ -111,8 +111,8 @@ SC_MODULE(testbench) {
   sc_clock clk;
   sc_signal<bool> rst;
 
-  Connections::Combinational<spec::Axi::SlaveToRVA::Write> rva_in;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Read> rva_out;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write> rva_in;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read> rva_out;
 
   NVHLS_DESIGN(SRAMTop) dut;
   Source  source;
@@ -145,8 +145,8 @@ SC_MODULE(testbench) {
    }
 
   void testset() {
-    spec::Axi::SlaveToRVA::Write rva_write_tmp;
-    spec::Axi::SlaveToRVA::Read  rva_read_tmp;
+    spec::Axi::SubordinateToRVA::Write rva_write_tmp;
+    spec::Axi::SubordinateToRVA::Read  rva_read_tmp;
 
     rva_write_tmp.rw = 1;
     rva_write_tmp.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_20_02_01_01_01_01");

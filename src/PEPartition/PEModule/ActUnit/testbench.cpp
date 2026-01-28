@@ -1,5 +1,5 @@
 /*
- * All rights reserved - Harvard University. 
+ * All rights reserved - Stanford University. 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -58,7 +58,7 @@ SC_MODULE(Source) {
   sc_in<bool> clk;
   sc_in<bool> rst;  
   Connections::Out<spec::ActVectorType> act_port;
-  Connections::Out<spec::Axi::SlaveToRVA::Write> rva_in;
+  Connections::Out<spec::Axi::SubordinateToRVA::Write> rva_in;
 
   Connections::Out<bool> start;    
 
@@ -73,7 +73,7 @@ SC_MODULE(Source) {
   }
   
   void run(){
-    spec::Axi::SlaveToRVA::Write  rva_in_src;
+    spec::Axi::SubordinateToRVA::Write  rva_in_src;
 
     float ref_in[16][spec::kNumVectorLanes];
     for (int i = 0; i < 16; i++) {
@@ -197,12 +197,12 @@ SC_MODULE(Source) {
 SC_MODULE(Dest) {
   sc_in<bool> clk;
   sc_in<bool> rst;
-  Connections::In<spec::Axi::SlaveToRVA::Read> rva_out;
+  Connections::In<spec::Axi::SubordinateToRVA::Read> rva_out;
   Connections::In<spec::StreamType> output_port; 
   Connections::In<bool> done;
 
   spec::StreamType output_port_dest;
-  spec::Axi::SlaveToRVA::Read rva_out_dest;
+  spec::Axi::SubordinateToRVA::Read rva_out_dest;
 
   SC_CTOR(Dest) {
     SC_THREAD(Pop_rva_out);
@@ -250,8 +250,8 @@ SC_MODULE(testbench) {
   sc_signal<bool> rst;
 
   Connections::Combinational<spec::ActVectorType> act_port;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Write> rva_in;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Read> rva_out;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write> rva_in;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read> rva_out;
   Connections::Combinational<spec::StreamType> output_port; 
   
   Connections::Combinational<bool> start;

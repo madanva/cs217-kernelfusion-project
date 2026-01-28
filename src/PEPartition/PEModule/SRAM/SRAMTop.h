@@ -1,5 +1,5 @@
 /*
- * All rights reserved - Harvard University. 
+ * All rights reserved - Stanford University. 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -37,8 +37,8 @@ class SRAMTop : public match::Module {
   static const int kDebugLevel = 4;
   SC_HAS_PROCESS(SRAMTop);
  public:
-  Connections::In<spec::Axi::SlaveToRVA::Write> rva_in;
-  Connections::Out<spec::Axi::SlaveToRVA::Read> rva_out;
+  Connections::In<spec::Axi::SubordinateToRVA::Write> rva_in;
+  Connections::Out<spec::Axi::SubordinateToRVA::Read> rva_out;
   
   // single port input SRAM
   ArbitratedScratchpadDP<spec::PE::Input::kNumBanks,
@@ -51,7 +51,7 @@ class SRAMTop : public match::Module {
   
   // while loop control signal (including SRAM I/O)
   bool w_axi_rsp;
-  spec::Axi::SlaveToRVA::Read rva_out_reg;  
+  spec::Axi::SubordinateToRVA::Read rva_out_reg;  
 
   // Input Buffer signal      
   spec::PE::Input::Address    input_read_addrs            [spec::PE::Input::kNumReadPorts]; 
@@ -97,7 +97,7 @@ class SRAMTop : public match::Module {
   }
 /////////////////////////////
 
-  void DecodeAxiWrite(const spec::Axi::SlaveToRVA::Write& rva_in_reg){
+  void DecodeAxiWrite(const spec::Axi::SubordinateToRVA::Write& rva_in_reg){
     NVUINT4     tmp = nvhls::get_slc<4>(rva_in_reg.addr, 20);
     NVUINT16    local_index = nvhls::get_slc<16>(rva_in_reg.addr, 4);
     
@@ -141,7 +141,7 @@ class SRAMTop : public match::Module {
   }   
   
   
-  void DecodeAxiRead(const spec::Axi::SlaveToRVA::Write& rva_in_reg) {
+  void DecodeAxiRead(const spec::Axi::SubordinateToRVA::Write& rva_in_reg) {
     NVUINT4 tmp = nvhls::get_slc<4>(rva_in_reg.addr, 20);
     NVUINT16    local_index = nvhls::get_slc<16>(rva_in_reg.addr, 4);
         
@@ -198,7 +198,7 @@ class SRAMTop : public match::Module {
   }
   
   void DecodeAxi() {  
-    spec::Axi::SlaveToRVA::Write rva_in_reg;
+    spec::Axi::SubordinateToRVA::Write rva_in_reg;
     if (rva_in.PopNB(rva_in_reg)) {
       CDCOUT(sc_time_stamp()  << " SRAMTop: " << name() << "RVA Pop " << endl, kDebugLevel);
       if(rva_in_reg.rw) {

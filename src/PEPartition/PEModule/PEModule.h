@@ -1,5 +1,5 @@
 /*
- * All rights reserved - Harvard University. 
+ * All rights reserved - Stanford University. 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -36,8 +36,8 @@ class PERVA : public match::Module {
   static const int kDebugLevel = 3;
   SC_HAS_PROCESS(PERVA);
  public: 
-  Connections::In<spec::Axi::SlaveToRVA::Write> rva_in;
-  Connections::Out<spec::Axi::SlaveToRVA::Read> rva_out;  
+  Connections::In<spec::Axi::SubordinateToRVA::Write> rva_in;
+  Connections::Out<spec::Axi::SubordinateToRVA::Read> rva_out;  
   Connections::In<bool> start; 
   
   // start trigger (streaming) is from GB -> Databus
@@ -48,11 +48,11 @@ class PERVA : public match::Module {
   Connections::Out<bool> act_start;
   
   // 4, 5, 6
-  Connections::Out<spec::Axi::SlaveToRVA::Write>    pe_rva_in;
-  Connections::In<spec::Axi::SlaveToRVA::Read>      pe_rva_out;  
+  Connections::Out<spec::Axi::SubordinateToRVA::Write>    pe_rva_in;
+  Connections::In<spec::Axi::SubordinateToRVA::Read>      pe_rva_out;  
   // 8, 9
-  Connections::Out<spec::Axi::SlaveToRVA::Write>    act_rva_in;
-  Connections::In<spec::Axi::SlaveToRVA::Read>      act_rva_out;
+  Connections::Out<spec::Axi::SubordinateToRVA::Write>    act_rva_in;
+  Connections::In<spec::Axi::SubordinateToRVA::Read>      act_rva_out;
   
   sc_out<NVUINT32> SC_SRAM_CONFIG;    
   
@@ -93,7 +93,7 @@ class PERVA : public match::Module {
       // Axi input
       bool start_reg;
       bool is_start = 0;
-      spec::Axi::SlaveToRVA::Write rva_in_reg;    
+      spec::Axi::SubordinateToRVA::Write rva_in_reg;    
  
       if(rva_in.PopNB(rva_in_reg)) {
         NVUINT4 tmp = nvhls::get_slc<4>(rva_in_reg.addr, 20);
@@ -149,7 +149,7 @@ class PERVA : public match::Module {
 
     #pragma hls_pipeline_init_interval 1
     while(1){
-      spec::Axi::SlaveToRVA::Read rva_out_reg;
+      spec::Axi::SubordinateToRVA::Read rva_out_reg;
       bool is_valid = 0;
       if (pe_rva_out.PopNB(rva_out_reg)) {
         is_valid = 1;
@@ -171,17 +171,17 @@ class PEModule : public match::Module {
  public:
   Connections::In<bool> start;  
   Connections::Out<bool> done;
-  Connections::In<spec::Axi::SlaveToRVA::Write> rva_in;  
-  Connections::Out<spec::Axi::SlaveToRVA::Read> rva_out;
+  Connections::In<spec::Axi::SubordinateToRVA::Write> rva_in;  
+  Connections::Out<spec::Axi::SubordinateToRVA::Read> rva_out;
   Connections::In<spec::StreamType> input_port;     
   Connections::Out<spec::StreamType> output_port; 
   
   Connections::Combinational<bool> pe_start;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Write> pe_rva_in;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Read> pe_rva_out;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write> pe_rva_in;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read> pe_rva_out;
   Connections::Combinational<bool> act_start;    
-  Connections::Combinational<spec::Axi::SlaveToRVA::Write> act_rva_in;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Read> act_rva_out;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write> act_rva_in;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read> act_rva_out;
   Connections::Combinational<spec::ActVectorType> act_port;
 
   sc_signal<NVUINT32> SC_SRAM_CONFIG;
