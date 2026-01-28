@@ -21,7 +21,7 @@ include $(HLS_SCRIPTS)/Makefile_src
 
 .PHONY: all run
 
-all: sim_test run
+all: clean sim_test run
 
 run:
 	./sim_test

@@ -25,7 +25,7 @@
 #include <nvhls_types.h>
 
 #include "axi/AxiSplitter.h"
-#include "axi/AxiSlaveToReadyValid.h"
+#include "axi/AxiSubordinateToReadyValid.h"
 #include "SM6Spec.h"
 
 // 20190125 NOTE: AXI dataWidth is modified from standard 64 bits to 128 bits 
@@ -56,7 +56,7 @@ namespace spec {
     };
     
     typedef typename axi::axi4<axiCfg> axi4_;
-    typedef AxiSlaveToReadyValid<axiCfg, rvaCfg> SlaveToRVA;
+    typedef AxiSubordinateToReadyValid<axiCfg, rvaCfg> SubordinateToRVA;
     // PE*n + GB
     typedef AxiSplitter<axiCfg, kNumPE+1> AxiSplitter;
   } 
