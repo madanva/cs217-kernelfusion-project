@@ -55,9 +55,9 @@
 SC_MODULE(Source) {
   sc_in<bool> clk;
   sc_in<bool> rst;  
-  Connections::Out<spec::Axi::SlaveToRVA::Write> rva_in;
+  Connections::Out<spec::Axi::SubordinateToRVA::Write> rva_in;
   
-  std::vector<spec::Axi::SlaveToRVA::Write> src_vec;
+  std::vector<spec::Axi::SubordinateToRVA::Write> src_vec;
   
     
   SC_CTOR(Source) {
@@ -83,10 +83,10 @@ SC_MODULE(Source) {
 SC_MODULE(Dest) {
   sc_in<bool> clk;
   sc_in<bool> rst;
-  Connections::In<spec::Axi::SlaveToRVA::Read> rva_out;
+  Connections::In<spec::Axi::SubordinateToRVA::Read> rva_out;
 
 
-  std::vector<spec::Axi::SlaveToRVA::Read> dest_vec;
+  std::vector<spec::Axi::SubordinateToRVA::Read> dest_vec;
 
 
   SC_CTOR(Dest) {
@@ -100,7 +100,7 @@ SC_MODULE(Dest) {
     
     unsigned i = 0;
     while (1) {
-      spec::Axi::SlaveToRVA::Read rva_out_dest;
+      spec::Axi::SubordinateToRVA::Read rva_out_dest;
       spec::StreamType output_port_dest;
       if (rva_out.PopNB(rva_out_dest)) {
         cout << hex << sc_time_stamp() << " Dest rva data = " << rva_out_dest.data << endl;
@@ -120,8 +120,8 @@ SC_MODULE(testbench) {
 	sc_clock clk;
   sc_signal<bool> rst;
   
-  Connections::Combinational<spec::Axi::SlaveToRVA::Write> rva_;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Read> rva_out;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write> rva_;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read> rva_out;
 
 
   NVHLS_DESIGN(GBCore) dut;
@@ -155,8 +155,8 @@ SC_MODULE(testbench) {
   }
   
   void testset() {
-    spec::Axi::SlaveToRVA::Write rva_write_tmp;
-    spec::Axi::SlaveToRVA::Read  rva_read_tmp;    
+    spec::Axi::SubordinateToRVA::Write rva_write_tmp;
+    spec::Axi::SubordinateToRVA::Read  rva_read_tmp;    
     
     // AXI write 
     

@@ -49,8 +49,8 @@ class LayerNorm : public match::Module {
   spec::ActVectorType negmean_vector, inv_std_vector;
   spec::ActVectorType out_data;  
  public:
-  Connections::In<spec::Axi::SlaveToRVA::Write> rva_in;
-  Connections::Out<spec::Axi::SlaveToRVA::Read> rva_out;
+  Connections::In<spec::Axi::SubordinateToRVA::Write> rva_in;
+  Connections::Out<spec::Axi::SubordinateToRVA::Read> rva_out;
 
   Connections::In<bool> start;
   Connections::Out<bool> done;
@@ -86,7 +86,7 @@ class LayerNorm : public match::Module {
   GBControlConfig gbcontrol_config;
   
   bool w_axi_rsp;  
-  spec::Axi::SlaveToRVA::Read rva_out_reg;  
+  spec::Axi::SubordinateToRVA::Read rva_out_reg;  
   // A. FSM
   enum FSM {
     IDLE, MEAN, MEAN2, VAR, NORM, NORM2, GAMMA, GAMMA2, BETA, BETA2, BETA3, NEXT
@@ -134,7 +134,7 @@ class LayerNorm : public match::Module {
     }
   }
   
-  void DecodeAxiWrite(const spec::Axi::SlaveToRVA::Write& rva_in_reg){
+  void DecodeAxiWrite(const spec::Axi::SubordinateToRVA::Write& rva_in_reg){
     NVUINT4     tmp = nvhls::get_slc<4>(rva_in_reg.addr, 20);
     NVUINT16    local_index = nvhls::get_slc<16>(rva_in_reg.addr, 4);
     
@@ -144,7 +144,7 @@ class LayerNorm : public match::Module {
   }   
   
   
-  void DecodeAxiRead(const spec::Axi::SlaveToRVA::Write& rva_in_reg) {
+  void DecodeAxiRead(const spec::Axi::SubordinateToRVA::Write& rva_in_reg) {
     NVUINT4 tmp = nvhls::get_slc<4>(rva_in_reg.addr, 20);
     NVUINT16    local_index = nvhls::get_slc<16>(rva_in_reg.addr, 4);
     
@@ -156,7 +156,7 @@ class LayerNorm : public match::Module {
   }
   
   void DecodeAxi() {  
-    spec::Axi::SlaveToRVA::Write rva_in_reg;
+    spec::Axi::SubordinateToRVA::Write rva_in_reg;
     if (rva_in.PopNB(rva_in_reg)) {
       CDCOUT(sc_time_stamp() << name() << "RVA Pop " << endl, kDebugLevel);
       if(rva_in_reg.rw) {

@@ -55,12 +55,12 @@
 SC_MODULE(Source) {
   sc_in<bool> clk;
   sc_in<bool> rst;  
-  Connections::Out<spec::Axi::SlaveToRVA::Write> rva_in;
+  Connections::Out<spec::Axi::SubordinateToRVA::Write> rva_in;
   
   Connections::Out<bool> start;
   Connections::Out<spec::GB::Large::DataRsp<16>>    large_rsp;
   Connections::Out<spec::GB::Small::DataRsp>       small_rsp;
-  std::vector<spec::Axi::SlaveToRVA::Write> src_vec;
+  std::vector<spec::Axi::SubordinateToRVA::Write> src_vec;
   bool start_src; 
   
   spec::GB::Large::DataRsp<16> large_rsp_src;
@@ -74,7 +74,7 @@ SC_MODULE(Source) {
   }
 
   void run(){
-    spec::Axi::SlaveToRVA::Write  rva_in_src; 
+    spec::Axi::SubordinateToRVA::Write  rva_in_src; 
     rva_in_src.rw = 1;
   //rva_in_src.data = set_bytes<16>("00_02_04_02_00_00_00_60_00_10_00_00_00_00_00_01");
     rva_in_src.data = set_bytes<16>("00_02_04_02_00_00_00_11_00_02_00_00_00_00_00_01"); //is_valid=1, mode=0, is_rnn=0, memory_index1=0, memory_index2=0, num_vector= 2, num_output_vector=0, num_timestep=16, num_timestep_padding=00, adpbias_1=2, adpbias_2=4, adpbias_3 = 2, adpbias_4=0 
@@ -446,12 +446,12 @@ SC_MODULE(Source) {
 SC_MODULE(Dest) {
   sc_in<bool> clk;
   sc_in<bool> rst;
-  Connections::In<spec::Axi::SlaveToRVA::Read> rva_out;
+  Connections::In<spec::Axi::SubordinateToRVA::Read> rva_out;
   Connections::In<bool> done;
   Connections::In<spec::GB::Large::DataReq>      large_req;
   Connections::In<spec::GB::Small::DataReq>      small_req;
   
-  std::vector<spec::Axi::SlaveToRVA::Read> dest_vec;
+  std::vector<spec::Axi::SubordinateToRVA::Read> dest_vec;
 
 
   SC_CTOR(Dest) {
@@ -464,7 +464,7 @@ SC_MODULE(Dest) {
     wait();
     
     while (1) {
-      spec::Axi::SlaveToRVA::Read rva_out_dest;
+      spec::Axi::SubordinateToRVA::Read rva_out_dest;
       spec::StreamType output_port_dest;
       spec::GB::Large::DataReq large_req_dest;
       spec::GB::Small::DataReq small_req_dest;
@@ -496,8 +496,8 @@ SC_MODULE(testbench) {
   sc_clock clk;
   sc_signal<bool> rst;
   
-  Connections::Combinational<spec::Axi::SlaveToRVA::Write> rva_in;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Read> rva_out;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write> rva_in;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read> rva_out;
   Connections::Combinational<bool> start;
   Connections::Combinational<bool> done;
  

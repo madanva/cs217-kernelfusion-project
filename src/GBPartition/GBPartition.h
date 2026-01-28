@@ -52,11 +52,11 @@ SC_MODULE(GBPartition) {
   Connections::Out<bool>              pe_start;
   Connections::In<bool>               pe_done;  
  
-  Connections::Combinational<spec::Axi::SlaveToRVA::Write>     rva_in;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Read>      rva_out;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write>     rva_in;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read>      rva_out;
   
   GBModule                gbmodule_inst;
-  spec::Axi::SlaveToRVA   rva_inst;
+  spec::Axi::SubordinateToRVA   rva_inst;
       
   SC_HAS_PROCESS(GBPartition);
   GBPartition(sc_module_name name)

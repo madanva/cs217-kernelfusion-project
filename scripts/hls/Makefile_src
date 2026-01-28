@@ -33,7 +33,7 @@ MATCHLIB_HOME ?= $(CATAPULT_HOME)/Mgc_home/shared/pkgs/matchlib/cmod
 CC = g++
 
 INCDIR ?=
-INCDIR += -I. -I$(SYSTEMC_HOME)/include -I$(BOOST_INCL) -I$(CATAPULT_HOME)/Mgc_home/shared/include -I$(INCLUDE)
+INCDIR += -I. -I$(SYSTEMC_HOME)/include -I$(BOOST_INCL) -I$(CATAPULT_HOME)/Mgc_home/shared/include -I$(INCLUDE) -I$(REPO_TOP)/src
 INCDIR += -I$(CONNECTIONS_HOME)/include
 INCDIR += -I$(RAPIDJSON_HOME)/include
 INCDIR += -I$(MATCHLIB_HOME)/include

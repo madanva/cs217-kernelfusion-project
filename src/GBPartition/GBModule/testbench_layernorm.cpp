@@ -59,7 +59,7 @@ SC_MODULE(Source) {
   sc_in<bool> rst;  
   Connections::Out<spec::StreamType> data_in;  
   Connections::Out<bool> pe_done; 
-  Connections::Out<spec::Axi::SlaveToRVA::Write> rva_in;
+  Connections::Out<spec::Axi::SubordinateToRVA::Write> rva_in;
 
   SC_CTOR(Source) {
     SC_THREAD(layernorm_run);
@@ -68,7 +68,7 @@ SC_MODULE(Source) {
   }
 
   void layernorm_run() {
-    spec::Axi::SlaveToRVA::Write  rva_in_src;
+    spec::Axi::SubordinateToRVA::Write  rva_in_src;
 
     std::string filename;
     std::vector<std::vector<double>>  input_layernorm0;
@@ -217,12 +217,12 @@ SC_MODULE(Source) {
 SC_MODULE(Dest) {
   sc_in<bool> clk;
   sc_in<bool> rst;
-  Connections::In<spec::Axi::SlaveToRVA::Read> rva_out;
+  Connections::In<spec::Axi::SubordinateToRVA::Read> rva_out;
   Connections::In<spec::StreamType> data_out; 
   Connections::In<bool> done; 
   Connections::In<bool> pe_start; 
 
-  spec::Axi::SlaveToRVA::Read rva_out_dest;
+  spec::Axi::SubordinateToRVA::Read rva_out_dest;
   spec::StreamType data_out_dest;
   bool done_dest;
   bool pe_start_dest;
@@ -300,8 +300,8 @@ SC_MODULE(testbench) {
   sc_clock clk;
   sc_signal<bool> rst;
 
-  Connections::Combinational<spec::Axi::SlaveToRVA::Write> rva_in;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Read> rva_out;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write> rva_in;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read> rva_out;
   Connections::Combinational<spec::StreamType> data_in;     
   Connections::Combinational<spec::StreamType> data_out;     
   Connections::Combinational<bool> pe_start;  

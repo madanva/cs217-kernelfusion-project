@@ -73,8 +73,8 @@ class GBCore : public match::Module {
 
  public:
   
-  Connections::In<spec::Axi::SlaveToRVA::Write>   rva_in_large;   
-  Connections::Out<spec::Axi::SlaveToRVA::Read>   rva_out_large;
+  Connections::In<spec::Axi::SubordinateToRVA::Write>   rva_in_large;   
+  Connections::Out<spec::Axi::SubordinateToRVA::Read>   rva_out_large;
       
   Connections::In<spec::GB::Large::DataReq>       gbcontrol_large_req;
   Connections::Out<spec::GB::Large::DataRsp<1>>   gbcontrol_large_rsp;   
@@ -87,8 +87,8 @@ class GBCore : public match::Module {
   Connections::In<spec::GB::Large::DataReq>       attention_large_req;
   Connections::Out<spec::GB::Large::DataRsp<16>>  attention_large_rsp;   
   
-  Connections::In<spec::Axi::SlaveToRVA::Write>   rva_in_small; 
-  Connections::Out<spec::Axi::SlaveToRVA::Read>   rva_out_small;  
+  Connections::In<spec::Axi::SubordinateToRVA::Write>   rva_in_small; 
+  Connections::Out<spec::Axi::SubordinateToRVA::Read>   rva_out_small;  
   Connections::In<spec::GB::Small::DataReq>       gbcontrol_small_req;
   Connections::Out<spec::GB::Small::DataRsp>      gbcontrol_small_rsp;    
   Connections::In<spec::GB::Small::DataReq>       layernorm_small_req;
@@ -232,8 +232,8 @@ class GBCore : public match::Module {
       bool is_axi = 0;
       //bool is_axi_rsp = 0;
       NVUINT4 rsp_mode = 0; 
-      spec::Axi::SlaveToRVA::Write rva_in_reg;
-      spec::Axi::SlaveToRVA::Read rva_out_reg;          
+      spec::Axi::SubordinateToRVA::Write rva_in_reg;
+      spec::Axi::SubordinateToRVA::Read rva_out_reg;          
 
       #pragma hls_unroll yes 
       for (unsigned i = 0; i < spec::GB::Large::kNumReadPorts; i++) { 
@@ -435,8 +435,8 @@ class GBCore : public match::Module {
 
 
   void SmallRun() {
-    spec::Axi::SlaveToRVA::Write rva_in_reg;
-    spec::Axi::SlaveToRVA::Read rva_out_reg;          
+    spec::Axi::SubordinateToRVA::Write rva_in_reg;
+    spec::Axi::SubordinateToRVA::Read rva_out_reg;          
     spec::GB::Small::DataReq small_req_reg;
       
     rva_in_small.Reset();

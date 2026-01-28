@@ -40,8 +40,8 @@ class GBRVA : public match::Module {
   static const int kDebugLevel = 3;
   SC_HAS_PROCESS(GBRVA);
  public: 
-  Connections::In<spec::Axi::SlaveToRVA::Write> rva_in;
-  Connections::Out<spec::Axi::SlaveToRVA::Read> rva_out;  
+  Connections::In<spec::Axi::SubordinateToRVA::Write> rva_in;
+  Connections::Out<spec::Axi::SubordinateToRVA::Read> rva_out;  
   
   // 0: GBBLock Start 
   Connections::Out<bool> gbcontrol_start;
@@ -50,27 +50,27 @@ class GBRVA : public match::Module {
   Connections::Out<bool> zeropadding_start;
   Connections::Out<bool> attention_start; 
   // 4, 5, 6
-  Connections::Out<spec::Axi::SlaveToRVA::Write>    gbcore_large_rva_in;
-  Connections::In<spec::Axi::SlaveToRVA::Read>      gbcore_large_rva_out; 
+  Connections::Out<spec::Axi::SubordinateToRVA::Write>    gbcore_large_rva_in;
+  Connections::In<spec::Axi::SubordinateToRVA::Read>      gbcore_large_rva_out; 
    
-  Connections::Out<spec::Axi::SlaveToRVA::Write>    gbcore_small_rva_in;
-  Connections::In<spec::Axi::SlaveToRVA::Read>      gbcore_small_rva_out;    
+  Connections::Out<spec::Axi::SubordinateToRVA::Write>    gbcore_small_rva_in;
+  Connections::In<spec::Axi::SubordinateToRVA::Read>      gbcore_small_rva_out;    
   
   // 7
-  Connections::Out<spec::Axi::SlaveToRVA::Write>    gbcontrol_rva_in;
-  Connections::In<spec::Axi::SlaveToRVA::Read>      gbcontrol_rva_out;  
+  Connections::Out<spec::Axi::SubordinateToRVA::Write>    gbcontrol_rva_in;
+  Connections::In<spec::Axi::SubordinateToRVA::Read>      gbcontrol_rva_out;  
   // 8
-  Connections::Out<spec::Axi::SlaveToRVA::Write>    layerreduce_rva_in;
-  Connections::In<spec::Axi::SlaveToRVA::Read>      layerreduce_rva_out;  
+  Connections::Out<spec::Axi::SubordinateToRVA::Write>    layerreduce_rva_in;
+  Connections::In<spec::Axi::SubordinateToRVA::Read>      layerreduce_rva_out;  
   // 9
-  Connections::Out<spec::Axi::SlaveToRVA::Write>    layernorm_rva_in;
-  Connections::In<spec::Axi::SlaveToRVA::Read>      layernorm_rva_out; 
+  Connections::Out<spec::Axi::SubordinateToRVA::Write>    layernorm_rva_in;
+  Connections::In<spec::Axi::SubordinateToRVA::Read>      layernorm_rva_out; 
   // A
-  Connections::Out<spec::Axi::SlaveToRVA::Write>    zeropadding_rva_in;
-  Connections::In<spec::Axi::SlaveToRVA::Read>      zeropadding_rva_out;    
+  Connections::Out<spec::Axi::SubordinateToRVA::Write>    zeropadding_rva_in;
+  Connections::In<spec::Axi::SubordinateToRVA::Read>      zeropadding_rva_out;    
   // B TODO: For Attention module
-  Connections::Out<spec::Axi::SlaveToRVA::Write>    attention_rva_in;
-  Connections::In<spec::Axi::SlaveToRVA::Read>      attention_rva_out;   
+  Connections::Out<spec::Axi::SubordinateToRVA::Write>    attention_rva_in;
+  Connections::In<spec::Axi::SubordinateToRVA::Read>      attention_rva_out;   
     
   sc_out<NVUINT32> SC_SRAM_CONFIG;  
   
@@ -142,7 +142,7 @@ class GBRVA : public match::Module {
       //zeropadding_start.TransferNB();
       
       // Axi input
-      spec::Axi::SlaveToRVA::Write rva_in_reg;
+      spec::Axi::SubordinateToRVA::Write rva_in_reg;
       if (rva_in.PopNB(rva_in_reg)) {
         NVUINT4 tmp = nvhls::get_slc<4>(rva_in_reg.addr, 20);
         NVUINT16 local_index = nvhls::get_slc<16>(rva_in_reg.addr, 4);
@@ -230,7 +230,7 @@ class GBRVA : public match::Module {
 
     #pragma hls_pipeline_init_interval 1
     while(1){
-      spec::Axi::SlaveToRVA::Read rva_out_reg;
+      spec::Axi::SubordinateToRVA::Read rva_out_reg;
       bool is_valid = 0;
       
       if (gbcore_large_rva_out.PopNB(rva_out_reg)) {
@@ -328,8 +328,8 @@ class GBModule : public match::Module {
   static const int kDebugLevel = 3;
   SC_HAS_PROCESS(GBModule);
  public:
-  Connections::In<spec::Axi::SlaveToRVA::Write>     rva_in;
-  Connections::Out<spec::Axi::SlaveToRVA::Read>     rva_out;
+  Connections::In<spec::Axi::SubordinateToRVA::Write>     rva_in;
+  Connections::Out<spec::Axi::SubordinateToRVA::Read>     rva_out;
   Connections::Out<bool> done;
   
   //GBControl <-> PE
@@ -340,25 +340,25 @@ class GBModule : public match::Module {
   
   
   // GBCore 3, 4, 5, 6
-  Connections::Combinational<spec::Axi::SlaveToRVA::Write>    gbcore_large_rva_in;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Read>     gbcore_large_rva_out; 
-  Connections::Combinational<spec::Axi::SlaveToRVA::Write>    gbcore_small_rva_in;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Read>     gbcore_small_rva_out;    
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write>    gbcore_large_rva_in;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read>     gbcore_large_rva_out; 
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write>    gbcore_small_rva_in;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read>     gbcore_small_rva_out;    
   // GBControl 7
-  Connections::Combinational<spec::Axi::SlaveToRVA::Write>    gbcontrol_rva_in;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Read>     gbcontrol_rva_out;  
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write>    gbcontrol_rva_in;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read>     gbcontrol_rva_out;  
   // LayerReduce 8
-  Connections::Combinational<spec::Axi::SlaveToRVA::Write>    layerreduce_rva_in;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Read>     layerreduce_rva_out;  
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write>    layerreduce_rva_in;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read>     layerreduce_rva_out;  
   // LayerNorm 9
-  Connections::Combinational<spec::Axi::SlaveToRVA::Write>    layernorm_rva_in;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Read>     layernorm_rva_out; 
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write>    layernorm_rva_in;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read>     layernorm_rva_out; 
   // ZeroPadding A
-  Connections::Combinational<spec::Axi::SlaveToRVA::Write>    zeropadding_rva_in;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Read>     zeropadding_rva_out;    
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write>    zeropadding_rva_in;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read>     zeropadding_rva_out;    
   // TODO: For Attention module B  
-  Connections::Combinational<spec::Axi::SlaveToRVA::Write>    attention_rva_in;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Read>     attention_rva_out;     
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write>    attention_rva_in;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read>     attention_rva_out;     
  
  
   Connections::Combinational<bool> gbcontrol_start;

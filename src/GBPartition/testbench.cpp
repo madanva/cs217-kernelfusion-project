@@ -34,7 +34,7 @@
 #include <math.h> // testbench only
 #include <queue>
 
-#include "axi/testbench/MasterFromFile.h"
+#include "axi/testbench/InitiatorFromFile.h"
 #include "SM6Spec.h"
 #include "AxiSpec.h"
 #include "AdpfloatSpec.h"

@@ -59,9 +59,9 @@ SC_MODULE(Source) {
   sc_in<bool> rst;  
   Connections::Out<spec::StreamType> data_in;  
   Connections::Out<bool> pe_done;
-  Connections::Out<spec::Axi::SlaveToRVA::Write> rva_in;
+  Connections::Out<spec::Axi::SubordinateToRVA::Write> rva_in;
 
-  std::vector<spec::Axi::SlaveToRVA::Write> src_vec;
+  std::vector<spec::Axi::SubordinateToRVA::Write> src_vec;
  
   SC_CTOR(Source) {
     SC_THREAD(run);
@@ -70,7 +70,7 @@ SC_MODULE(Source) {
   }
 
   void run() {
-    spec::Axi::SlaveToRVA::Write  rva_in_src;
+    spec::Axi::SubordinateToRVA::Write  rva_in_src;
 
     wait();
     for (unsigned i = 0; i < src_vec.size(); i++) {
@@ -87,13 +87,13 @@ SC_MODULE(Source) {
 SC_MODULE(Dest) {
   sc_in<bool> clk;
   sc_in<bool> rst;
-  Connections::In<spec::Axi::SlaveToRVA::Read> rva_out;
+  Connections::In<spec::Axi::SubordinateToRVA::Read> rva_out;
   Connections::In<spec::StreamType> data_out; 
   Connections::In<bool> done;  
   Connections::In<bool> pe_start;
 
-  std::vector<spec::Axi::SlaveToRVA::Read> dest_vec;
-  spec::Axi::SlaveToRVA::Read rva_out_dest;
+  std::vector<spec::Axi::SubordinateToRVA::Read> dest_vec;
+  spec::Axi::SubordinateToRVA::Read rva_out_dest;
 
   SC_CTOR(Dest) {
     SC_THREAD(run);
@@ -128,8 +128,8 @@ SC_MODULE(testbench) {
   Connections::Combinational<spec::StreamType> data_in;     
   Connections::Combinational<bool> pe_start;  
   Connections::Combinational<bool> pe_done;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Write> rva_in;
-  Connections::Combinational<spec::Axi::SlaveToRVA::Read> rva_out;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write> rva_in;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read> rva_out;
   Connections::Combinational<spec::StreamType> data_out; 
   Connections::Combinational<bool> done;  
 
@@ -174,8 +174,8 @@ SC_MODULE(testbench) {
    }
 
   void testset() {
-    spec::Axi::SlaveToRVA::Write rva_write_tmp;
-    spec::Axi::SlaveToRVA::Read  rva_read_tmp;
+    spec::Axi::SubordinateToRVA::Write rva_write_tmp;
+    spec::Axi::SubordinateToRVA::Read  rva_read_tmp;
  
     // AXI write 
     // GB SRAM config
