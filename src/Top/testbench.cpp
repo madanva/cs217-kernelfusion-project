@@ -33,7 +33,7 @@
 #include <math.h> // testbench only
 #include <queue>
 
-#include "axi/testbench/MasterFromFile.h"
+#include "axi/testbench/ManagerFromFile.h"
 #include "SM6Spec.h"
 #include "AxiSpec.h"
 #include "AdpfloatSpec.h"
@@ -103,7 +103,7 @@ SC_MODULE(Dest) {
 
 SC_MODULE(testbench) {
   SC_HAS_PROCESS(testbench);
-  MasterFromFile<spec::Axi::axiCfg, true> master;
+  ManagerFromFile<spec::Axi::axiCfg, true> master;
 
   sc_clock clk;
   sc_signal<bool> rst;
@@ -165,7 +165,7 @@ SC_MODULE(testbench) {
     /*while (1) {
       wait(1, SC_NS);
       if (master_done==1) {
-        cout << "Master has finished issuing AXI Writes" << endl;
+        cout << "Manager has finished issuing AXI Writes" << endl;
       }
     }*/
 

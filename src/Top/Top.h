@@ -102,7 +102,7 @@ SC_MODULE(Top){
 /////////////////////////////////////////////////////////////////////////////////////////////////////
   
 // Internal Connections
-  // AxiSplitter Master connects to I/O
+  // AxiSplitter Manager connects to I/O
   // AxiSplitter Subordinate  channels (FIXME: we cannot use array of wraped up AXI channels)
   typedef typename spec::Axi::axi4_::read::template chan<>::ARChan   axi_rd_chan_ar;
   typedef typename spec::Axi::axi4_::read::template chan<>::RChan    axi_rd_chan_r;
