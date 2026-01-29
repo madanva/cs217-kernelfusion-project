@@ -5,4 +5,11 @@ Lab 4 - Accelerator top
 3. CMOD file added for reference -> will be changed to src
 
 TODO
+1. PEModule tb fix
+
+Notes
 1. DataBus testbench empty
+2. PECore testbench seg fault
+
+TODO later
+1. remove .csv is not needed
