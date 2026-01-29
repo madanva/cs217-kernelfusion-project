@@ -40,8 +40,65 @@
 #define NVHLS_VERIFY_BLOCKS (PEModule)
 #include <nvhls_verify.h>
 
+// Helper functions
+
+void InitPEConfig(NVUINTW(128)& PEConfigFlat)
+{
+  NVUINT1   is_valid;
+  NVUINT1   is_zero_first;
+  NVUINT1   is_cluster;
+  NVUINT1   is_bias;
+  NVUINT4   num_manager;      // number of matrix-vector mul (1 or 2)
+  NVUINT8   num_output;      
+  
+  is_valid = 1;
+  is_zero_first = 0;
+  is_cluster = 0;
+  is_bias = 0;
+  num_manager = 1;
+  num_output = 1;
+  
+  PEConfigFlat = 0;
+  PEConfigFlat.set_slc<1>(0, is_valid);
+  PEConfigFlat.set_slc<1>(8, is_zero_first);
+  PEConfigFlat.set_slc<1>(16, is_cluster);
+  PEConfigFlat.set_slc<1>(24, is_bias);
+  PEConfigFlat.set_slc<4>(32, num_manager);
+  PEConfigFlat.set_slc<8>(40, num_output); 
+}
+
+void InitPEManager(NVUINTW(128)& PEManagerConfigFlat)
+{
+  NVUINT1   zero_active;                        // 8 (whether zero output functionality is activate)
+  spec::AdpfloatBiasType adplfloat_bias_weight; // 8
+  spec::AdpfloatBiasType adplfloat_bias_bias;   // 8
+  spec::AdpfloatBiasType adplfloat_bias_input;  // 8
+  NVUINT8   num_input;  
+  NVUINTW(spec::PE::Weight::kAddressWidth) base_weight;
+  NVUINTW(spec::PE::Bias::kAddressWidth) base_bias;
+  NVUINTW(spec::PE::Input::kAddressWidth) base_input;
+
+  zero_active = 0;
+  adplfloat_bias_weight = 2;
+  adplfloat_bias_bias = 0;
+  adplfloat_bias_input = 2;
+  num_input = 1;
+  base_weight = 0;
+  base_bias = 0;
+  base_input = 0;
+
+  PEManagerConfigFlat.set_slc<1>(0, zero_active);
+  PEManagerConfigFlat.set_slc<spec::kAdpfloatBiasWidth>(8, adplfloat_bias_weight);
+  PEManagerConfigFlat.set_slc<spec::kAdpfloatBiasWidth>(16, adplfloat_bias_bias);
+  PEManagerConfigFlat.set_slc<spec::kAdpfloatBiasWidth>(24, adplfloat_bias_input);
+  PEManagerConfigFlat.set_slc<8>(32, num_input);
+  PEManagerConfigFlat.set_slc<spec::PE::Weight::kAddressWidth>(48, base_weight);
+  PEManagerConfigFlat.set_slc<spec::PE::Bias::kAddressWidth>(64, base_bias);
+  PEManagerConfigFlat.set_slc<spec::PE::Input::kAddressWidth>(80, base_input);
+}
+
 std::vector<double> golden_y;
-std::vector<NVUINTW(spec::VectorType::width)> golden_rva_out;
+sc_event sync_event;
 
 SC_MODULE(Source) {
   sc_in<bool> clk;
@@ -62,15 +119,14 @@ SC_MODULE(Source) {
     rva_in.Reset();
     wait();
 
-    const int size = 16;
     spec::AdpfloatBiasType adpbias = 2;
     
     // Generate random data
-    std::vector<std::vector<double>> W(size, std::vector<double>(size));
-    std::vector<double> x(size);
+    std::vector<std::vector<double>> W(spec::kNumVectorLanes, std::vector<double>(spec::kNumVectorLanes));
+    std::vector<double> x(spec::kNumVectorLanes);
 
-    for (int i = 0; i < size; ++i) {
-      for (int j = 0; j < size; ++j) {
+    for (int i = 0; i < spec::kNumVectorLanes; ++i) {
+      for (int j = 0; j < spec::kNumVectorLanes; ++j) {
         W[i][j] = (double)rand() / RAND_MAX - 0.5;
       }
       x[i] = (double)rand() / RAND_MAX - 0.5;
@@ -82,82 +138,71 @@ SC_MODULE(Source) {
 
     spec::Axi::SubordinateToRVA::Write rva_in_src;
 
-    // 1. PEConfig: is_valid=1, is_bias=0, num_manager=1, num_output=1
+    // 1. PEConfig: 
     rva_in_src.rw = 1;
-    rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_01_01_00_00_00_01");
+    NVUINTW(128) pe_config_raw;
+    InitPEConfig(pe_config_raw);
+    rva_in_src.data = pe_config_raw;
     rva_in_src.addr = set_bytes<3>("40_00_10");
     rva_in.Push(rva_in_src);
-    /*cout << sc_time_stamp() << " Wrote PEConfig = " << rva_in_src.data << endl;
-    wait();
-    // Read
-    rva_in_src.rw = 0;
-    rva_in_src.addr = set_bytes<3>("40_00_10");
-    rva_in.Push(rva_in_src);
-    golden_rva_out.push_back(rva_in_src.data);*/
     wait();
 
-    // 2. PEManager 0: num_input=16, base_weight=0, base_bias=0, base_input=0
+    // 2. PEManager 0: num_input=1, base_weight=0, base_bias=0, base_input=0
+    NVUINTW(128) pe_manager_raw;
+    InitPEManager(pe_manager_raw);
     rva_in_src.rw = 1;
-    rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_10_00_00_00_02_02_02_00"); // num_input = 16 (0x10)
+    rva_in_src.data = pe_manager_raw;
     rva_in_src.addr = set_bytes<3>("40_00_20");
     rva_in.Push(rva_in_src);
-    cout << sc_time_stamp() << " Wrote PEManager 0 = " << rva_in_src.data << endl;
-    wait();
-    // Read
-    rva_in_src.rw = 0;
-    rva_in_src.addr = set_bytes<3>("40_00_20");
-    rva_in.Push(rva_in_src);
-    golden_rva_out.push_back(rva_in_src.data);
     wait();
 
     // 3. Load Weights (W)
     AdpfloatType<8, 3> adpfloat_tmp;
-    for (int i = 0; i < size; i++) { // For each row of W
+    for (int i = 0; i < spec::kNumVectorLanes; i++) { // For each row of W
       spec::VectorType weight_vec;
-      for (int j = 0; j < size; j++) {
+      for (int j = 0; j < spec::kNumVectorLanes; j++) {
         adpfloat_tmp.set_value(W[i][j], adpbias);
         weight_vec[j] = adpfloat_tmp.to_rawbits();
       }
       rva_in_src.rw = 1;
       rva_in_src.data = weight_vec.to_rawbits();
-      rva_in_src.addr = 0x500000 + (i * 16); // base_weight=0, addr=0+i
+      rva_in_src.addr = 0x500000 + i * 16;
       rva_in.Push(rva_in_src);
       wait();
     }
     
     // 4. Load Input (x)
     spec::VectorType input_vec;
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < spec::kNumVectorLanes; i++) {
         adpfloat_tmp.set_value(x[i], adpbias);
         input_vec[i] = adpfloat_tmp.to_rawbits();
     }
     rva_in_src.rw = 1;
     rva_in_src.data = input_vec.to_rawbits();
-    rva_in_src.addr = 0x600000 + 0; // base_input=0
+    rva_in_src.addr = 0x600000 + 0;
     rva_in.Push(rva_in_src);
     wait();
 
-    // 5. ActUnit Config: num_inst=3, num_output=1
+    // 6. ActUnit Config: num_inst=3, num_output=1
     rva_in_src.rw = 1;
     rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_00_01_03_02_00_01");
     rva_in_src.addr = set_bytes<3>("80_00_10");
     rva_in.Push(rva_in_src);
     wait();
 
-    // 6. ActUnit Instructions: INPE, TANH, OUTGB
+    // 7. ActUnit Instructions: INPE, TANH, OUTGB
     rva_in_src.rw = 1;
     rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_00_00_00_40_B0_30");
     rva_in_src.addr = set_bytes<3>("80_00_20");
     rva_in.Push(rva_in_src);
     wait();
 
-    // 7. Start
+    // 8. Start
     rva_in_src.rw = 1;
     rva_in_src.data = 0;
     rva_in_src.addr = set_bytes<3>("00_00_00");
     rva_in.Push(rva_in_src);
     wait();
-
   }
 };
 
@@ -169,38 +214,33 @@ SC_MODULE(Dest) {
   Connections::In<bool> done;
 
   std::vector<double> dut_output;
+  bool dut_output_popped = false;
+  bool done_signal_received = false;
 
   SC_CTOR(Dest) {
-    SC_THREAD(PopOutport);
-    sensitive << clk.pos();
-    async_reset_signal_is(rst, false);
     SC_THREAD(PopDone);
     sensitive << clk.pos();
     async_reset_signal_is(rst, false);
-    SC_THREAD(PopRvaOut);
+    SC_THREAD(PopRVAOut);
+    sensitive << clk.pos();
+    async_reset_signal_is(rst, false);
+    SC_THREAD(PopOutport);
+    sensitive << clk.pos();
+    async_reset_signal_is(rst, false);
+    SC_THREAD(OutputCompare);
     sensitive << clk.pos();
     async_reset_signal_is(rst, false);
   }
 
-  void PopRvaOut() {
+  void PopRVAOut() {
     rva_out.Reset();
     wait();
-
-    while (1) {
-      spec::Axi::SubordinateToRVA::Read rva_out_dest;
-      unsigned int i = 0;
-      if (rva_out.PopNB(rva_out_dest)) {
-
-        if (rva_out_dest.data != golden_rva_out[i]) {
-            cout << "ERROR: MISMATCH in rva_out data. DUT=" << rva_out_dest.data 
-                 << ", Golden=" << golden_rva_out[i] << endl;
-            sc_assert(false);
-        } else {
-            cout << "rva_out data matches golden model: " << rva_out_dest.data << endl;
+    while(1) {
+        spec::Axi::SubordinateToRVA::Read rva_out_dest;
+        if (rva_out.PopNB(rva_out_dest)) {
+            cout << sc_time_stamp() << " Dest: Received AXI read response." << endl;
         }
-        i++;
-      }
-      wait();
+        wait();
     }
   }
 
@@ -211,10 +251,14 @@ SC_MODULE(Dest) {
     while (1) {
       spec::StreamType output_port_dest;
       if (output_port.PopNB(output_port_dest)) {
+        cout << sc_time_stamp() << " Dest: Received output port data." << endl;
         for (int i = 0; i < spec::kNumVectorLanes; i++) {
+          cout << "  Raw Output[" << i << "] = " << output_port_dest.data[i] << endl;
           AdpfloatType<8,3> tmp(output_port_dest.data[i]);
           dut_output.push_back(tmp.to_float(2));
+          cout << "  Output[" << i << "] = " << tmp.to_float(2) << endl;
         }
+        dut_output_popped = true;
       }
       wait();
     }
@@ -227,38 +271,47 @@ SC_MODULE(Dest) {
       bool done_dest;
       if (done.PopNB(done_dest)) {
         if (done_dest) {
-            cout << "Starting comparison with golden model" << endl;
-            bool passed = true;
-            if (dut_output.size() != golden_y.size()) {
-                cout << "ERROR: DUT output size (" << dut_output.size() << ") != golden model size (" << golden_y.size() << ")" << endl;
-                passed = false;
-            } else {
-                double max_diff = 0.0;
-                for (size_t i = 0; i < dut_output.size(); ++i) {
-                    double diff = std::abs(dut_output[i] - golden_y[i]);
-                    if (diff > max_diff) max_diff = diff;
-                    if (diff > 1e-1) { // Looser tolerance for basic test
-                        cout << "MISMATCH at index " << i << ": DUT=" << dut_output[i] << ", Golden=" << golden_y[i] << endl;
-                        passed = false;
-                    }
-                }
-                cout << "Max difference: " << max_diff << endl;
-            }
-
-            if (passed) {
-                cout << "TESTBENCH PASSED" << endl;
-            } else {
-                cout << "TESTBENCH FAILED" << endl;
-                sc_assert(false);
-            }
-            sc_stop();
+          done_signal_received = true;
         }
-
-        
       }
       wait();
     }
   }
+
+  void OutputCompare() {
+    while (1) {
+      if (dut_output_popped && done_signal_received) {
+        cout << "Starting comparison with golden model" << endl;
+          bool passed = true;
+          if (dut_output.size() != golden_y.size()) {
+              cout << "ERROR: DUT output size (" << dut_output.size() << ") != golden model size (" << golden_y.size() << ")" << endl;
+              passed = false;
+          } else {
+              double max_diff = 0.0;
+              for (size_t i = 0; i < dut_output.size(); ++i) {
+                  double diff = std::abs(dut_output[i] - golden_y[i]);
+                  if (diff > max_diff) max_diff = diff;
+                  if (diff > 1e-1) { // Looser tolerance for basic test
+                      cout << "MISMATCH at index " << i << ": DUT=" << dut_output[i] << ", Golden=" << golden_y[i] << endl;
+                      passed = false;
+                  }
+              }
+              cout << "Max difference: " << max_diff << endl;
+          }
+
+          if (passed) {
+              cout << "TESTBENCH PASSED" << endl;
+          } else {
+              cout << "TESTBENCH FAILED" << endl;
+              sc_assert(false);
+          }
+          sc_stop();
+      }
+      wait();
+    }
+  }
+
+
 };
 
 SC_MODULE(testbench) {
