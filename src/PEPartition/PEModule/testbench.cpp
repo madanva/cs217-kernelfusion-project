@@ -253,10 +253,10 @@ SC_MODULE(Dest) {
       if (output_port.PopNB(output_port_dest)) {
         cout << sc_time_stamp() << " Dest: Received output port data." << endl;
         for (int i = 0; i < spec::kNumVectorLanes; i++) {
-          cout << "  Raw Output[" << i << "] = " << output_port_dest.data[i] << endl;
+          //cout << "  Raw Output[" << i << "] = " << output_port_dest.data[i] << endl;
           AdpfloatType<8,3> tmp(output_port_dest.data[i]);
           dut_output.push_back(tmp.to_float(2));
-          cout << "  Output[" << i << "] = " << tmp.to_float(2) << endl;
+          //cout << "  Output[" << i << "] = " << tmp.to_float(2) << endl;
         }
         dut_output_popped = true;
       }
@@ -279,6 +279,10 @@ SC_MODULE(Dest) {
   }
 
   void OutputCompare() {
+    double max_diff = 0.0;
+    double diff = 0.0;
+    double percent_diff = 0.0;
+    double accumulated_percent_diff = 0.0;
     while (1) {
       if (dut_output_popped && done_signal_received) {
         cout << "Starting comparison with golden model" << endl;
@@ -287,9 +291,11 @@ SC_MODULE(Dest) {
               cout << "ERROR: DUT output size (" << dut_output.size() << ") != golden model size (" << golden_y.size() << ")" << endl;
               passed = false;
           } else {
-              double max_diff = 0.0;
               for (size_t i = 0; i < dut_output.size(); ++i) {
-                  double diff = std::abs(dut_output[i] - golden_y[i]);
+                  diff = std::abs(dut_output[i] - golden_y[i]);
+                  percent_diff = diff * 100 / (std::abs(golden_y[i]));
+                  accumulated_percent_diff = accumulated_percent_diff + percent_diff;
+                  cout << " Dut output, golden output and percentage difference: " << dut_output[i] << " " << golden_y[i] << " " << percent_diff << "%" << endl;
                   if (diff > max_diff) max_diff = diff;
                   if (diff > 1e-1) { // Looser tolerance for basic test
                       cout << "MISMATCH at index " << i << ": DUT=" << dut_output[i] << ", Golden=" << golden_y[i] << endl;
@@ -297,13 +303,16 @@ SC_MODULE(Dest) {
                   }
               }
               cout << "Max difference: " << max_diff << endl;
+              //cout << "Percent difference: " << accumulated_percent_diff/dut_output.size() << endl;
           }
 
           if (passed) {
-              cout << "TESTBENCH PASSED" << endl;
+            cout << endl;
+            cout << "Max difference: " << max_diff << " is less than threshold: " << 1e-1 << endl;
+            cout << "TESTBENCH PASSED" << endl;
           } else {
-              cout << "TESTBENCH FAILED" << endl;
-              sc_assert(false);
+            cout << "TESTBENCH FAILED" << endl;
+            sc_assert(false);
           }
           sc_stop();
       }
