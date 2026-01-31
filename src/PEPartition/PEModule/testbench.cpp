@@ -144,6 +144,7 @@ SC_MODULE(Source) {
     InitPEConfig(pe_config_raw);
     rva_in_src.data = pe_config_raw;
     rva_in_src.addr = set_bytes<3>("40_00_10");
+    cout << "    WRITE PEConfig: " << std::hex << pe_config_raw << " @ " << rva_in_src.addr << endl;
     rva_in.Push(rva_in_src);
     wait();
 
@@ -153,6 +154,7 @@ SC_MODULE(Source) {
     rva_in_src.rw = 1;
     rva_in_src.data = pe_manager_raw;
     rva_in_src.addr = set_bytes<3>("40_00_20");
+    cout << " WRITE PEManager: " << std::hex << pe_manager_raw << " @ " << rva_in_src.addr << endl;
     rva_in.Push(rva_in_src);
     wait();
 
@@ -167,6 +169,7 @@ SC_MODULE(Source) {
       rva_in_src.rw = 1;
       rva_in_src.data = weight_vec.to_rawbits();
       rva_in_src.addr = 0x500000 + i * 16;
+      cout << "    WRITE Weight: " << std::hex << rva_in_src.data << " @ " << rva_in_src.addr << endl;
       rva_in.Push(rva_in_src);
       wait();
     }
@@ -180,6 +183,7 @@ SC_MODULE(Source) {
     rva_in_src.rw = 1;
     rva_in_src.data = input_vec.to_rawbits();
     rva_in_src.addr = 0x600000 + 0;
+    cout << "    WRITE Input: " << std::hex << rva_in_src.data << " @ " << rva_in_src.addr << endl;
     rva_in.Push(rva_in_src);
     wait();
 
@@ -187,6 +191,7 @@ SC_MODULE(Source) {
     rva_in_src.rw = 1;
     rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_00_01_03_02_00_01");
     rva_in_src.addr = set_bytes<3>("80_00_10");
+    cout << "    WRITE ActUnit Config: " << std::hex << rva_in_src.data << " @ " << rva_in_src.addr << endl;
     rva_in.Push(rva_in_src);
     wait();
 
@@ -194,6 +199,7 @@ SC_MODULE(Source) {
     rva_in_src.rw = 1;
     rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_00_00_00_40_B0_30");
     rva_in_src.addr = set_bytes<3>("80_00_20");
+    cout << "    WRITE ActUnit Instructions: " << std::hex << rva_in_src.data << " @ " << rva_in_src.addr << endl;
     rva_in.Push(rva_in_src);
     wait();
 
@@ -201,6 +207,7 @@ SC_MODULE(Source) {
     rva_in_src.rw = 1;
     rva_in_src.data = 0;
     rva_in_src.addr = set_bytes<3>("00_00_00");
+    cout << "    WRITE Start write:" << std::hex << rva_in_src.data << " @ " << rva_in_src.addr << endl;
     rva_in.Push(rva_in_src);
     wait();
   }
@@ -251,7 +258,7 @@ SC_MODULE(Dest) {
     while (1) {
       spec::StreamType output_port_dest;
       if (output_port.PopNB(output_port_dest)) {
-        cout << sc_time_stamp() << " Dest: Received output port data." << endl;
+        cout << sc_time_stamp() << " Dest: Received output port data:" << output_port_dest.data << endl;
         for (int i = 0; i < spec::kNumVectorLanes; i++) {
           //cout << "  Raw Output[" << i << "] = " << output_port_dest.data[i] << endl;
           AdpfloatType<8,3> tmp(output_port_dest.data[i]);
