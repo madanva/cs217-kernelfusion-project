@@ -38,7 +38,6 @@
 #include <nvhls_vector.h>
 
 #include <iostream>
-#include <fstream>
 
 #include "SM6Spec.h"
 #include "AxiSpec.h"
@@ -74,89 +73,67 @@ SC_MODULE(Source) {
     rva_in.Reset();
     spec::Axi::SubordinateToRVA::Write  rva_in_src;
 
-    std::string filename;
-    std::vector<std::vector<double>>  input_encoder;
-    std::vector<double>  gamma_ref, beta_ref;
-    std::vector<unsigned long> npy_shape;
-    std::vector<double>  npy_data;
-
     spec::VectorType act_vec;
-    spec::VectorType gamma_vec;
-    spec::VectorType beta_vec;
 
     AdpfloatType<8, 3> adpfloat_tmp;
     spec::AdpfloatBiasType adpbias_input = 2;
-    spec::AdpfloatBiasType adpbias_beta = 0;
-    spec::AdpfloatBiasType adpbias_gamma = 1;
     wait();
 
-    //GBControl AXI GBControlConfig 
+    //GBControl AXI GBControlConfig
+    // is_valid=1, mode=0 (unidirectional), is_rnn=1, memory_index=0, output_memory_index=0,
+    // num_vector= 1, num_timestep=16,
+    // adpbias_act=2, adpbias_atten=0, adpbias_beta = 0, adpbias_gamma=0
     rva_in_src.rw = 1;
-    rva_in_src.data = set_bytes<16>("00_00_00_02_00_00_00_A0_00_10_00_00_00_01_00_01"); //is_valid=1, mode=0 (unidirectional), is_rnn=1, memory_index=0, output_memory_index=0, num_vector= 16, num_output_vector=0, num_timestep=160, num_timestep_padding=0, adpbias_act=2, adpbias_atten=0, adpbias_beta = 0, adpbias_gamma=0
+    rva_in_src.data = set_bytes<16>("00_00_00_02_00_00_00_10_00_01_00_00_00_01_00_01");
     rva_in_src.addr = set_bytes<3>("70_00_10");  // last 4 bits never used
-    ofstream myfile;
-    myfile.open ("axi_commands_for_gbcontrol_configs_and_input_activations_in_GBCore.csv");
-    myfile << "0," << "W," << hex << rva_in_src.addr << "," << hex << rva_in_src.data << "\n"; 
+    cout << "    WRITE GBControlConfig: " << rva_in_src.data << " @ " << rva_in_src.addr << endl;  
     rva_in.Push(rva_in_src);
-    wait(); 
+    wait();
 
     //GBCore LargeBuffer Config
+    // num_vector_large for kMaxNumManagers=0 is 16, base_large for kMaxNumManagers=0 is 0
     rva_in_src.rw = 1;
-    rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_10"); //num_vector_large for kMaxNumManagers=0 is 16, base_large for kMaxNumManagers=0 is 0 
+    rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_10");
     rva_in_src.addr = set_bytes<3>("40_00_10");  // last 4 bits never used
-    myfile << "2," << "W," << hex << rva_in_src.addr << "," << hex << rva_in_src.data << "\n"; 
+    cout << "    WRITE GBCore LargeBufferConfig: " << rva_in_src.data << " @ " << rva_in_src.addr << endl;  
     rva_in.Push(rva_in_src);
-    wait(); 
-
-    //Storing Activations in LargeBuffer
-    npy_shape.clear(); npy_data.clear();
-    npy::LoadArrayFromNumpy("/group/ttambe/sm6/hls_tapeout/cmod/testbench/dataset_enc256_dec256_unilstm_kmeans/x_l3.npy", npy_shape, npy_data);
-    cout << "x_l3 shape is: " << npy_shape[0] << " by " << npy_shape[2] << endl;
-    input_encoder = to_2d(npy_shape[0], npy_shape[2], npy_data);
-    for (unsigned int i=0; i < 10; i++) {  // i --> upper_timestepindex 
-      for (int j=0; j < 16; j++) { //j --> vector_index
-        for (int m=0; m < spec::kNumVectorLanes; m++) { //m --> bank_index
-
-               for (int k=0; k < spec::kNumVectorLanes; k++) { //k --> scalar_index
-                 adpfloat_tmp.Reset();
-                 adpfloat_tmp.set_value(input_encoder[16*i+m][16*j + k], adpbias_input);
-                 act_vec[k] =adpfloat_tmp.to_rawbits();
-                 adpfloat_tmp.Reset();
-               } // for k
-           rva_in_src.rw = 1;
-           rva_in_src.data = act_vec.to_rawbits();
-           rva_in_src.addr = 0x500000 + (16*(16*i + j) + m)*16;
-           myfile << "2," << "W," << hex << rva_in_src.addr << "," << hex << rva_in_src.data << "\n";
-           //cout << "addresss_wii: " << 16*(16*i + j) + m << endl;
-           rva_in.Push(rva_in_src);
-           if (rva_in_src.addr ==  0x500000 + (16*(16*9 + 15) + 15)*16) {
-              cout << "Pushed last input_encoder weight vector: " << endl;
-           }
-           wait();
-        } // for j
-      } // for m
-    } // for i 
-    wait(); 
-
     wait();
 
-    //GBControl AXI GBControlConfig 
+    //Storing Activations in LargeBuffer
+    for (int i = 0; i < 16; i++) { // 16 vectors for our 16x16 matrix
+        for (int k=0; k < spec::kNumVectorLanes; k++) { //k --> scalar_index
+            adpfloat_tmp.Reset();
+            double random_val = ((double)rand() / RAND_MAX * 2.0 - 1.0);
+            adpfloat_tmp.set_value(random_val, adpbias_input);
+            act_vec[k] = adpfloat_tmp.to_rawbits();
+        }
+        rva_in_src.rw = 1;
+        rva_in_src.data = act_vec.to_rawbits();
+        rva_in_src.addr = 0x500000 + i * 16; // Simple contiguous address for each 16-byte vector
+        rva_in.Push(rva_in_src);
+        if (i == 15) {
+            cout << "Pushed last input vector." << endl;
+        }
+        wait();
+    }
+    wait();
+
+    //GBControl AXI GBControlConfig
+    // is_valid=1, mode=0, sendback=0, memory_index=0, output_memory_index=0,
+    // num_vector= 1, num_timestep=16,
+    // adpbias_act=2, adpbias_atten=0, adpbias_beta = 0, adpbias_gamma=1
     rva_in_src.rw = 1;
-    rva_in_src.data = set_bytes<16>("01_00_00_02_00_00_01_40_00_10_00_00_00_00_00_01"); //is_valid=1, mode=0, sendback=0, memory_index=0, output_memory_index=0, num_vector= 16, num_output_vector=0, num_timestep=320, num_timestep_padding=0, adpbias_act=2, adpbias_atten=0, adpbias_beta = 0, adpbias_gamma=1
-    rva_in_src.addr = set_bytes<3>("70_00_10");  // last 4 bits never used 
-    myfile << "2," << "W," << hex << rva_in_src.addr << "," << hex << rva_in_src.data << "\n";
+    rva_in_src.data = set_bytes<16>("01_00_00_02_00_00_00_10_00_01_00_00_00_00_00_01");
+    rva_in_src.addr = set_bytes<3>("70_00_10");  // last 4 bits never used
     rva_in.Push(rva_in_src);
-    wait(); 
+    wait();
 
     //send GBControl start signal
     rva_in_src.rw = 1;
-    rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00"); 
-    rva_in_src.addr = set_bytes<3>("00_00_10");  
-    myfile << "2," << "W," << hex << rva_in_src.addr << "," << hex << rva_in_src.data << "\n";
+    rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00");
+    rva_in_src.addr = set_bytes<3>("00_00_10");
     rva_in.Push(rva_in_src);
-    wait(); 
-
-    myfile.close(); 
+    wait();
  
   } // layernorm_run()
 
@@ -314,7 +291,7 @@ SC_MODULE(testbench) {
 }; //SC Module testbench
 
 int sc_main(int argc, char *argv[]) {
-  
+  nvhls::set_random_seed();  
   testbench tb("tb");
   sc_report_handler::set_actions(SC_ERROR, SC_DISPLAY);
   sc_start();
@@ -326,5 +303,3 @@ int sc_main(int argc, char *argv[]) {
     DCOUT("TESTBENCH PASS" << endl);
   return rc;
 }
-
-
