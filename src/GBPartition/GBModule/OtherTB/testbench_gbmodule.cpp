@@ -54,7 +54,10 @@
    #pragma CTC SKIP
 #endif
 
+std::vector<double> golden_y;
+
 SC_MODULE(Source) {
+ public:
   sc_in<bool> clk;
   sc_in<bool> rst;  
   Connections::Out<spec::StreamType> data_in;  
@@ -72,6 +75,8 @@ SC_MODULE(Source) {
     pe_done.Reset();
     rva_in.Reset();
     spec::Axi::SubordinateToRVA::Write  rva_in_src;
+
+    std::vector<std::vector<double>> W(spec::kNumVectorLanes, std::vector<double>(spec::kNumVectorLanes));
 
     spec::VectorType act_vec;
 
@@ -104,6 +109,8 @@ SC_MODULE(Source) {
         for (int k=0; k < spec::kNumVectorLanes; k++) { //k --> scalar_index
             adpfloat_tmp.Reset();
             double random_val = ((double)rand() / RAND_MAX * 2.0 - 1.0);
+            W[i][k] = random_val;
+            cout << "Value sent: " << random_val << endl;
             adpfloat_tmp.set_value(random_val, adpbias_input);
             act_vec[k] = adpfloat_tmp.to_rawbits();
         }
@@ -117,6 +124,10 @@ SC_MODULE(Source) {
         wait();
     }
     wait();
+
+    // Golden model calculation for layer normalization
+
+    
 
     //GBControl AXI GBControlConfig
     // is_valid=1, mode=0, sendback=0, memory_index=0, output_memory_index=0,
@@ -140,6 +151,10 @@ SC_MODULE(Source) {
 }; //SC MODULE Source
 
 SC_MODULE(Dest) {
+ public:
+  std::queue<spec::VectorType>* golden_queue;
+  int error_count;
+
   sc_in<bool> clk;
   sc_in<bool> rst;
   Connections::In<spec::Axi::SubordinateToRVA::Read> rva_out;
@@ -152,7 +167,7 @@ SC_MODULE(Dest) {
   bool done_dest;
   bool pe_start_dest;
 
-  SC_CTOR(Dest) {
+  SC_CTOR(Dest) : error_count(0) {
     SC_THREAD(PopDataOut);
     sensitive << clk.pos();
     async_reset_signal_is(rst, false);
@@ -165,7 +180,15 @@ SC_MODULE(Dest) {
     SC_THREAD(RVA_Out);
     sensitive << clk.pos();
     async_reset_signal_is(rst, false);
+  }
 
+  ~Dest() {
+    if (error_count > 0) {
+      SC_REPORT_ERROR("testbench", "Mismatches found.");
+    }
+    if (!golden_queue->empty()) {
+      SC_REPORT_ERROR("testbench", "Not all golden data was consumed.");
+    }
   }   
   void RVA_Out() {
     rva_out.Reset();
@@ -192,7 +215,6 @@ SC_MODULE(Dest) {
    wait();
    while (1) {
      if (data_out.PopNB(data_out_dest)) {
-        //cout << hex << sc_time_stamp() << " data_out data = " << data_out_dest.data << endl;
         cout << sc_time_stamp() << " Design data_out result" << " \t " << endl;
         for (int i = 0; i < spec::kNumVectorLanes; i++) {
           AdpfloatType<8,3> tmp(data_out_dest.data[i]);
@@ -241,6 +263,8 @@ SC_MODULE(testbench) {
   NVHLS_DESIGN(GBModule) dut;
   Source  source;
   Dest    dest;
+
+  
 
   testbench(sc_module_name name)
   : sc_module(name),
