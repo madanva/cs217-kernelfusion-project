@@ -44,8 +44,8 @@ SC_MODULE(PEPartition) {
   // Update 02152020 for matching new AXI format
   //typename spec::Axi::axi4_::read::slave   if_axi_rd;
   //typename spec::Axi::axi4_::write::slave  if_axi_wr;
-  typename spec::Axi::axi4_::read::template subordinate<>   if_axi_rd;
-  typename spec::Axi::axi4_::write::template subordinate<>  if_axi_wr;
+  typename spec::Axi::axi4_::read::template slave<>   if_axi_rd;
+  typename spec::Axi::axi4_::write::template slave<>  if_axi_wr;
   
   Connections::In<spec::StreamType>     input_port;     
   Connections::Out<spec::StreamType>    output_port; 

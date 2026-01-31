@@ -6,6 +6,9 @@ Lab 4 - Accelerator top
 
 TODO
 1. PEModule tb fix
+2. PEParition tb fix
+2. PECore fix?
+3. 
 
 Notes
 1. DataBus testbench empty

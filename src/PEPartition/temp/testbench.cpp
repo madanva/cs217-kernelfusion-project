@@ -70,9 +70,6 @@ SC_MODULE(Source) {
   }
   
   void run(){
-    input_port.Reset();
-    start.Reset();
-
     wait(1000);
     std::cout << "@" << sc_time_stamp() <<" TB checkpoint " << std::endl;
 
@@ -98,7 +95,6 @@ SC_MODULE(Dest) {
   }  
 
   void PopOutport() {
-   output_port.Reset();
    wait();
  
    while (1) {
@@ -116,7 +112,6 @@ SC_MODULE(Dest) {
   } //PopOutputport
 
   void PopDone() {
-   done.Reset();
    wait();
  
    while (1) {
@@ -135,11 +130,11 @@ SC_MODULE(Dest) {
 
 SC_MODULE(testbench) {
   SC_HAS_PROCESS(testbench);
-  ManagerFromFile<spec::Axi::axiCfg> manager;
+  ManagerFromFile<spec::Axi::axiCfg> master;
 
   sc_clock clk;
   sc_signal<bool> rst;
-  sc_signal<bool> manager_done;
+  sc_signal<bool> master_done;
 
   //typename axi::axi4<spec::Axi::axiCfg>::read::chan axi_read;
   //typename axi::axi4<spec::Axi::axiCfg>::write::chan axi_write;
@@ -160,14 +155,17 @@ SC_MODULE(testbench) {
   
   testbench(sc_module_name name)
   : sc_module(name),
-     manager("manager", "axi_commands_read_write.csv "),
+  //SC_CTOR(testbench)
+  // : master("master", "axi_commands_for_kmeans_clustering_for_LSTM.csv"),
+     master("master", "axi_commands_for_kmeans_clustering_for_LSTM.csv"),
+     //master("master", "axi_commands_read_write.csv"),
      clk("clk", 1.0, SC_NS, 0.5, 0, SC_NS, true),
      rst("rst"),
      dut("dut"),
      source("source"),
      dest("dest"),
      axi_read("axi_read"),
-     axi_write("axi_write"){
+     axi_write("axi_write") {
      
     dut.clk(clk);
     dut.rst(rst);
@@ -178,12 +176,12 @@ SC_MODULE(testbench) {
     dut.done(done);
     dut.start(start);
 
-    manager.clk(clk);
-    manager.reset_bar(rst);
-    manager.done(manager_done);
-    manager.if_rd(axi_read);
-    manager.if_wr(axi_write);
-
+    master.clk(clk);
+    master.reset_bar(rst);
+    master.done(master_done);
+    master.if_rd(axi_read);
+    master.if_wr(axi_write);
+    
     source.clk(clk);
     source.rst(rst);
     source.input_port(input_port);
@@ -206,15 +204,14 @@ SC_MODULE(testbench) {
     rst.write(true);
     std::cout << "@" << sc_time_stamp() <<" De-Asserting reset" << std::endl;
 
-    while (1) {
+    /*while (1) {
       wait(1, SC_NS);
-      if (manager_done==1) {
-        std::cout << "@" << sc_time_stamp() <<" AXI Manager has finished issuing AXI commands" << std::endl;
-        break;
+      if (master_done==1) {
+        cout << "Manager has finished issuing AXI Writes" << endl;
       }
-    }
+    }*/
 
-    wait(1600, SC_NS ); //TODO increase
+    wait(160000, SC_NS );
     std::cout << "@" << sc_time_stamp() <<" sc_stop" << std::endl;
     sc_stop();
   }
