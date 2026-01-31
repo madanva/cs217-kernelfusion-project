@@ -44,8 +44,6 @@
 
 #include "helper.h"
 
-#include "../../testbench/libnpy/npy.hpp"
-
 #define NVHLS_VERIFY_BLOCKS (GBModule)
 #include <nvhls_verify.h>
 

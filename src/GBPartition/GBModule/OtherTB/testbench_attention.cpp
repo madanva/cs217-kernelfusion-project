@@ -44,8 +44,6 @@
 
 #include "helper.h"
 
-#include "../../testbench/libnpy/npy.hpp"
-
 #define NVHLS_VERIFY_BLOCKS (GBModule)
 #include <nvhls_verify.h>
 
@@ -71,7 +69,8 @@ SC_MODULE(Source) {
     spec::Axi::SubordinateToRVA::Write  rva_in_src;
 
     std::string filename;
-    std::vector<std::vector<double>>  encoder_source, encoder_source_pad;
+    std::vector<std::vector<double>>  encoder_source, encoder_source_pad, decoder_2d;
+    std::vector<double>  decoder;
     std::vector<unsigned long> npy_shape;
     std::vector<double>  npy_data;
 
@@ -81,14 +80,15 @@ SC_MODULE(Source) {
 
     AdpfloatType<8, 3> adpfloat_tmp;
     spec::AdpfloatBiasType adpbias_enc = 2;
+    spec::AdpfloatBiasType adpbias_dec = 4;
     //spec::AdpfloatBiasType adpbias_softmax_out = 2;
     //spec::AdpfloatBiasType adpbias_output = 0;
     wait();
 
-    //Zeropadding AXI GBControlConfig 
+    //Attention AXI GBControlConfig 
     rva_in_src.rw = 1;
-    rva_in_src.data = set_bytes<16>("00_02_04_02_00_64_00_60_00_10_00_00_00_00_00_01"); //is_valid=1, mode=0, is_rnn=0, memory_index1=0, memory_index2=0, num_vector= 16, num_output_vector=0, num_timestep=96, num_timestep_padding=100, adpbias_1=2, adpbias_2=4, adpbias_3 = 2, adpbias_4=0
-    rva_in_src.addr = set_bytes<3>("A0_00_10");  // last 4 bits never used 
+    rva_in_src.data = set_bytes<16>("00_02_04_02_00_00_00_60_00_10_00_00_00_00_00_01"); //is_valid=1, mode=0, is_rnn=0, memory_index1=0, memory_index2=0, num_vector= 16, num_output_vector=0, num_timestep=96, num_timestep_padding=00, adpbias_1=2, adpbias_2=4, adpbias_3 = 2, adpbias_4=0
+    rva_in_src.addr = set_bytes<3>("B0_00_10");  // last 4 bits never used 
     rva_in.Push(rva_in_src);
     wait(); 
 
@@ -134,14 +134,107 @@ SC_MODULE(Source) {
     } // for i 
     wait(); 
 
-    //send Zeropadding start signal
+    //GBCore SmallBuffer Config
     rva_in_src.rw = 1;
-    rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00");
-    rva_in_src.addr = set_bytes<3>("00_00_40");
+    rva_in_src.data = set_bytes<16>("00_10_00_00_00_00_00_00_00_00_00_00_00_00_00_00"); //base_memory_index2 for decoder = 0, base_softmax_index at index7 = 16 
+    rva_in_src.addr = set_bytes<3>("40_00_20");  // last 4 bits never used 
     rva_in.Push(rva_in_src);
+    wait(); 
+
+    //Storing gamma in SmallBuffer
+    npy_shape.clear(); npy_data.clear();
+    npy::LoadArrayFromNumpy("/group/ttambe/sm6/hls_tapeout/cmod/testbench/attention_enc256_dec256/h_t_forbin.npy", npy_shape, npy_data);
+    decoder_2d =  to_2d(npy_shape[1], npy_shape[2], npy_data);
+    cout << "decoder_2d shape is: " << npy_shape[1] << " by " << npy_shape[2] << endl;
+    decoder = decoder_2d[0];
+    cout << "size of decoder: " << decoder.size() << endl;
+    cout << "printing decoder values from npy file: " << endl;
+    PrintVector(decoder);
+
+    for (unsigned int i=0; i < 16; i++) { 
+        for (int j=0; j < spec::kNumVectorLanes; j++) {
+           adpfloat_tmp.Reset();
+           adpfloat_tmp.set_value(decoder[16*i + j], adpbias_dec);
+           decoder_vec[j] =adpfloat_tmp.to_rawbits();
+           adpfloat_tmp.Reset();
+         } // for j
+      rva_in_src.rw = 1;
+      rva_in_src.data = decoder_vec.to_rawbits();
+      rva_in_src.addr = 0x600000 + i*16;
+      cout << "addresss_decoder: " << i << endl;
+      rva_in.Push(rva_in_src);
+      if (rva_in_src.addr ==  0x600000 + 15*16) {
+         cout << "Pushed last decoder vector: " << endl;
+      }
+      wait();
+    }  // for i
     wait();
 
+    //send Attention start signal
+    rva_in_src.rw = 1;
+    rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00"); 
+    rva_in_src.addr = set_bytes<3>("00_00_50");  
+    rva_in.Push(rva_in_src);
+    wait();
+    wait(2340); 
 
+    //rva_in_src.rw = 0;
+    //rva_in_src.addr = 0x500000 + 16*16;
+    //rva_in.Push(rva_in_src);
+    
+
+    //GBControl AXI GBControlConfig 
+    rva_in_src.rw = 1;
+    rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_10_00_00_00_00_03_01"); //is_valid=1, mode=3, is_rnn=0, memory_index=0, output_memory_index=0, num_vector= 16, num_output_vector=0, num_timestep=320, num_timestep_padding=0, adpbias_act=2, adpbias_atten=0, adpbias_beta = 0, adpbias_dec=1
+    rva_in_src.addr = set_bytes<3>("70_00_10");  // last 4 bits never used 
+    rva_in.Push(rva_in_src);
+    wait(); 
+
+    //send GBControl start signal
+    rva_in_src.rw = 1;
+    rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00"); 
+    rva_in_src.addr = set_bytes<3>("00_00_10");  
+    rva_in.Push(rva_in_src);
+    wait();
+    
+    const int NumVCol = 16;   
+    const int NumVRow = 6;
+    //std::vector<std::vector<float>> weight_ref_float(NumVRow*16, std::vector<float>(NumVCol*16, 0));
+    std::vector<std::vector<double>> weight_ref_float_T;
+    //std::vector<float>              input_ref_float(NumVCol*16, 0);    
+    std::vector<double>              out1_ref_float;
+    std::vector<double>              soft_ref_float;
+    std::vector<double>              out2_ref_float;  
+
+    weight_ref_float_T = TransposeMatrix(encoder_source);
+
+    // First BMM1 output 
+    // Generate Reference Output 
+    out1_ref_float = MatrixVectorMul(encoder_source, decoder);
+    cout << "Output1 Reference Value " << endl;    
+    for (int i = 0; i < NumVRow*16; i++) { 
+      cout << out1_ref_float[i] << endl;
+    }
+    
+    // SoftMax
+    soft_ref_float = SoftMax(out1_ref_float);
+    cout << "SoftMax Reference Value " << endl;    
+    for (int i = 0; i < NumVRow*16; i++) { 
+      cout << soft_ref_float[i] << endl;
+    }
+
+    out2_ref_float = MatrixVectorMul(weight_ref_float_T, soft_ref_float);
+    // Second BMM2 output 
+    // TODO try to reformat the data for Dest l
+    cout << "Output2 Reference Value " << endl;
+    for (int i = 0; i < NumVCol; i++) { 
+      for (int j = 0; j < 16; j++) {
+        cout << out2_ref_float[16*i+j] << endl;
+        //dest.output_ref_vec.push_back(out2_ref_float[16*i+j]);
+      }
+    }    
+   
+ 
   } // attention_run()
 
 }; //SC MODULE Source

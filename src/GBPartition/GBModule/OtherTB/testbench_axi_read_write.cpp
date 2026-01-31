@@ -68,10 +68,6 @@ SC_MODULE(Source) {
   }
 
   void run() {
-    data_in.Reset();
-    pe_done.Reset();
-    rva_in.Reset();
-
     spec::Axi::SubordinateToRVA::Write  rva_in_src;
 
     wait();
@@ -105,11 +101,6 @@ SC_MODULE(Dest) {
   }
 
   void run(){
-    rva_out.Reset();
-    data_out.Reset();
-    done.Reset();
-    pe_start.Reset();
-
     wait();
     
     unsigned i = 0;

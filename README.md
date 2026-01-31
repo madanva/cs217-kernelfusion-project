@@ -5,10 +5,8 @@ Lab 4 - Accelerator top
 3. CMOD file added for reference -> will be changed to src
 
 TODO
-1. PEModule tb fix
-2. PEParition tb fix
-2. PECore fix?
-3. 
+2. GBModule testbench modify
+3. GBPartition testbench modify
 
 Notes
 1. DataBus testbench empty
