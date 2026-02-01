@@ -12,22 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-LOGFILE = build.log
-CFLAGS = -DHLS_ALGORITHMICC
-DEBUG_FLAG = -DDEBUG_LEVEL=5
-HLS_SCRIPTS ?= $(REPO_TOP)/scripts/hls/
+ROOT := ../..
+SRC_PATH := $(ROOT)/src/
+SYSTEMC_DESIGN := 1
+COMPILER_FLAGS := HLS_ALGORITHMICC
+CLK_PERIOD := 4.0
+RUN_SCVERIFY := 0
+HLS_SCRIPTS := $(REPO_TOP)/scripts/hls
 
-include $(HLS_SCRIPTS)/Makefile_src
-
-.PHONY: all run
-
-all: clean sim_test run
-
-run:
-	./sim_test
-
-sim_test: $(wildcard *.h) $(wildcard *.cpp)
-	$(CC) -o sim_test $(CFLAGS) $(USER_FLAGS) $(wildcard *.cpp) $(BOOSTLIBS) $(LIBS) > $(LOGFILE) 2>&1
-
-sim_test_debug: $(wildcard *.h) $(wildcard *.cpp)
-	$(CC) -o sim_test $(CFLAGS) $(DEBUG_FLAG) $(USER_FLAGS) $(wildcard *.cpp) $(BOOSTLIBS) $(LIBS) > $(LOGFILE) 2>&1
+include $(HLS_SCRIPTS)/Makefile_hls
