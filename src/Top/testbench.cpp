@@ -162,12 +162,13 @@ SC_MODULE(testbench) {
     rst.write(true);
     std::cout << "@" << sc_time_stamp() <<" De-Asserting reset" << std::endl;
 
-    /*while (1) {
+    while (1) {
       wait(1, SC_NS);
       if (master_done==1) {
         cout << "Manager has finished issuing AXI Writes" << endl;
+        break;
       }
-    }*/
+    }
 
     wait(200000, SC_NS );
     std::cout << "@" << sc_time_stamp() <<" sc_stop" << std::endl;
