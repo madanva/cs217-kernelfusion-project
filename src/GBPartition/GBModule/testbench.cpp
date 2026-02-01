@@ -175,6 +175,7 @@ SC_MODULE(Source) {
     rva_in_src.data = set_bytes<16>("01_00_00_02_00_00_00_10_00_01_00_00_00_00_00_01"); //is_valid=1, mode=0, is_rnn=0, memory_index=0, output_memory_index=0, num_vector= 16, num_output_vector=0, num_timestep=256, num_timestep_padding=0, adpbias_act=2, adpbias_atten=0, adpbias_beta = 0, adpbias_gamma=1
     rva_in_src.addr = set_bytes<3>("90_00_10");  // last 4 bits never used 
     rva_in.Push(rva_in_src);
+    cout << "    WRITE AXI GBControlConfig: " << std::hex << rva_in_src.data << " @ " << rva_in_src.addr << endl;
     wait(); 
 
     //GBCore LargeBuffer Config
@@ -182,6 +183,7 @@ SC_MODULE(Source) {
     rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_10"); //num_vector_large for kMaxNumManagers=0 is 16, base_large for kMaxNumManagers=0 is 0 
     rva_in_src.addr = set_bytes<3>("40_00_10");  // last 4 bits never used 
     rva_in.Push(rva_in_src);
+    cout << "    WRITE AXI GBCoreConfig: " << std::hex << rva_in_src.data <<  " @ " << rva_in_src.addr <<endl;
     wait(); 
 
     // Load Input data to LargeBuffer (starting at address 0x500000 + 0)
@@ -196,6 +198,7 @@ SC_MODULE(Source) {
         rva_in_src.data = act_vec.to_rawbits();
         rva_in_src.addr = 0x500000 + i * 16; // Each vector takes 16 bytes (kNumVectorLanes * sizeof(ScalarType))
         rva_in.Push(rva_in_src);
+        cout << "    WRITE AXI LargeBuffer: " << std::hex << rva_in_src.data << " @ " << rva_in_src.addr << endl;
         wait();
     }
     wait(); 
@@ -205,6 +208,7 @@ SC_MODULE(Source) {
     rva_in_src.data = set_bytes<16>("00_00_00_10_00_00_00_00_00_00_00_00_00_00_00_00"); //base_small[5] for gamma = 0, base_small[6] for beta = 16 
     rva_in_src.addr = set_bytes<3>("40_00_20");  // GBCoreConfig, write_index=4 
     rva_in.Push(rva_in_src);
+    cout << "    WRITE AXI GBCoreConfig: " << std::hex << rva_in_src.data <<  " @ " << rva_in_src.addr << endl;
     wait(); 
 
     // Load Gamma vector to SmallBuffer (manager 5, starting at offset 0)
@@ -217,6 +221,7 @@ SC_MODULE(Source) {
     rva_in_src.data = act_vec.to_rawbits();
     rva_in_src.addr = 0x600000 + 0; // SmallBuffer base + base_small[5] offset (0) * 16 bytes/vector
     rva_in.Push(rva_in_src);
+    cout << "    WRITE AXI SmallBuffer: " << std::hex << rva_in_src.data << " @ " << rva_in_src.addr << endl;
     wait();
 
     // Load Beta vector to SmallBuffer (manager 6, starting at offset 16)
@@ -229,6 +234,7 @@ SC_MODULE(Source) {
     rva_in_src.data = act_vec.to_rawbits();
     rva_in_src.addr = 0x600000 + 16 * 16; // SmallBuffer base + base_small[6] offset (16) * 16 bytes/vector
     rva_in.Push(rva_in_src);
+    cout << "    WRITE AXI SmallBuffer: " << std::hex << rva_in_src.data << " @ " << rva_in_src.addr << endl;
     wait();
 
     //send LayerNorm start signal
@@ -236,7 +242,7 @@ SC_MODULE(Source) {
     rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00"); 
     rva_in_src.addr = set_bytes<3>("00_00_30");  
     rva_in.Push(rva_in_src);
-
+    cout << "    WRITE AXI LayerNorm Start: " << std::hex << rva_in_src.data << " @ " << rva_in_src.addr << endl;
     wait();
 
     //GBControl AXI GBControlConfig 
@@ -244,6 +250,7 @@ SC_MODULE(Source) {
     rva_in_src.data = set_bytes<16>("01_00_00_02_00_00_00_10_00_01_00_00_00_00_00_01"); //is_valid=1, mode=0, sendback=0, memory_index=0, output_memory_index=0, num_vector= 16, num_output_vector=0, num_timestep=320, num_timestep_padding=0, adpbias_act=2, adpbias_atten=0, adpbias_beta = 0, adpbias_gamma=1
     rva_in_src.addr = set_bytes<3>("70_00_10");  // last 4 bits never used 
     rva_in.Push(rva_in_src);
+    cout << "    WRITE AXI GBControlConfig: " << std::hex << rva_in_src.data << " @ " << rva_in_src.addr << endl;
     wait(); 
 
     //send GBControl start signal
@@ -251,6 +258,8 @@ SC_MODULE(Source) {
     rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_00_00_00_00_00_00"); 
     rva_in_src.addr = set_bytes<3>("00_00_10");  
     rva_in.Push(rva_in_src);
+    cout << "    WRITE AXI GBControl Start: " << std::hex << rva_in_src.data << " @ " << rva_in_src.addr << endl;
+    
     wait(); 
  
   } //layernorm_run

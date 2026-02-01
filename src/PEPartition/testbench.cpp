@@ -173,10 +173,6 @@ SC_MODULE(testbench) {
   
   typename axi::axi4<spec::Axi::axiCfg>::read::template chan<> axi_read;
   typename axi::axi4<spec::Axi::axiCfg>::write::template chan<> axi_write;
-
-  spec::Axi::SubordinateToRVA::Write     rva_in_obs;
-  spec::Axi::SubordinateToRVA::Read      rva_out_obs;
-
   
   testbench(sc_module_name name)
   : sc_module(name),

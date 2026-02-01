@@ -42,9 +42,9 @@ SC_MODULE(GBPartition) {
 
   Connections::Out<bool> done;
   
-  // AXI slave read write
-  typename spec::Axi::axi4_::read::template slave<>   if_axi_rd;
-  typename spec::Axi::axi4_::write::template slave<>  if_axi_wr;
+  // AXI subordinate read write
+  typename spec::Axi::axi4_::read::template subordinate<>   if_axi_rd;
+  typename spec::Axi::axi4_::write::template subordinate<>  if_axi_wr;
   
   //GBControl <-> PE
   Connections::In<spec::StreamType>   data_in;          
