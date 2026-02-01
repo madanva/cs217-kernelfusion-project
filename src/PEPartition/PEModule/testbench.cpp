@@ -387,6 +387,7 @@ SC_MODULE(testbench) {
     std::cout << "@" << sc_time_stamp() <<" De-Asserting reset" << std::endl;
     wait(5000, SC_NS );
     cout << "Error: Simulation timed out!" << endl;
+    SC_REPORT_ERROR("testbench", "Simulation timeout");
     sc_stop();
   }
 };

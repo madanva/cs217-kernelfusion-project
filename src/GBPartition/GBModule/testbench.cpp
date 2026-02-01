@@ -459,7 +459,7 @@ SC_MODULE(testbench) {
     std::cout << "@" << sc_time_stamp() <<" De-Asserting reset" << std::endl;
     wait(100000, SC_NS );
     std::cout << "@" << sc_time_stamp() <<" Timeout Error!" << std::endl;
-    sc_assert(false);
+    SC_REPORT_ERROR("testbench", "Simulation timeout");
     sc_stop();
   }
 }; //SC Module testbench

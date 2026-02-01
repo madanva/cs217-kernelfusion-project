@@ -260,7 +260,8 @@ SC_MODULE(testbench) {
 
     wait(100000, SC_NS );
     cout << "Error: Simulation timed out! No output popped from DUT" << endl;
-    sc_assert(false);
+    SC_REPORT_ERROR("testbench", "Simulation timeout");
+    sc_stop();
   }
 };
 
