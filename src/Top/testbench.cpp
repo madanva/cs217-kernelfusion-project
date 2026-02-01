@@ -91,9 +91,12 @@ SC_MODULE(Dest) {
    while (1) {
      if (interrupt == 1) {
         cout << sc_time_stamp() << " - Interrupt signal issued!" << endl;
+        break;
      }
      wait(); 
    } // while
+
+   sc_stop();
    
   } //PopInterrupt
 
@@ -171,12 +174,16 @@ SC_MODULE(testbench) {
     }
 
     wait(200000, SC_NS );
-    std::cout << "@" << sc_time_stamp() <<" sc_stop" << std::endl;
-    sc_stop();
+    // If timeout happens, test is a fail
+    cout << "Error: Simulation timed out! No interrupt from DUT" << endl;
+    sc_assert(false);
   }
 };
 
 int sc_main(int argc, char *argv[]) {
+  sc_core::sc_report_handler::set_actions( "/IEEE_Std_1666/deprecated",
+                                           sc_core::SC_DO_NOTHING );
+
   nvhls::set_random_seed();
   NVINT8 test = 14;
   cout << fixed2float<8, 3>(test) << endl;  
