@@ -121,7 +121,7 @@ SC_MODULE(testbench) {
   
   testbench(sc_module_name name)
   : sc_module(name),
-     master("master", "axi_commands_for_kmeans_clustering_for_LSTM_4_timesteps_zero_first_enabled_4PEs.csv"),
+     master("master", "./axi_commands_test.csv"),
      clk("clk", 1.0, SC_NS, 0.5, 0, SC_NS, true),
      rst("rst"),
      dut("dut"),
