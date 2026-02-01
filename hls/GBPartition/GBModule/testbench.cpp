@@ -66,13 +66,10 @@ SC_MODULE(Source) {
   }
 
   void layernorm_run() {
+    data_in.Reset();
+    pe_done.Reset();
+    rva_in.Reset();
     spec::Axi::SubordinateToRVA::Write  rva_in_src;
-
-    std::string filename;
-    std::vector<std::vector<double>>  input_layernorm0;
-    std::vector<double>  gamma_ref, beta_ref;
-    std::vector<unsigned long> npy_shape;
-    std::vector<double>  npy_data;
 
     spec::VectorType act_vec;
     spec::VectorType gamma_vec;
@@ -82,11 +79,30 @@ SC_MODULE(Source) {
     spec::AdpfloatBiasType adpbias_input = 2;
     spec::AdpfloatBiasType adpbias_beta = 0;
     spec::AdpfloatBiasType adpbias_gamma = 1;
+
+        // --- Data Generation ---
+    const int num_vectors = 16; // Number of vectors in the 16x16 matrix (rows)
+    const int vector_size = 16; // Size of each vector (columns)
+    std::vector<std::vector<double>> input_matrix(num_vectors, std::vector<double>(vector_size));
+    std::vector<double> gamma_vector(vector_size);
+    std::vector<double> beta_vector(vector_size);
+
+    for (int i = 0; i < num_vectors; ++i) {
+        for (int j = 0; j < vector_size; ++j) {
+            input_matrix[i][j] = ((double)rand() / RAND_MAX * 2.0 - 1.0);
+        }
+    }
+    for (int i = 0; i < vector_size; ++i) {
+        gamma_vector[i] = ((double)rand() / RAND_MAX * 2.0 - 1.0);
+        beta_vector[i] = ((double)rand() / RAND_MAX * 2.0 - 1.0);
+    }
+
+
     wait();
 
-    //LayerNorm AXI GBControlConfig 
+    //LayerNorm AXI GBControlConfig
     rva_in_src.rw = 1;
-    rva_in_src.data = set_bytes<16>("01_00_00_02_00_00_01_40_00_10_00_00_00_00_00_01"); //is_valid=1, mode=0, sendback=0, memory_index=0, output_memory_index=0, num_vector= 16, num_output_vector=0, num_timestep=320, num_timestep_padding=0, adpbias_act=2, adpbias_atten=0, adpbias_beta = 0, adpbias_gamma=1
+    rva_in_src.data = set_bytes<16>("01_00_00_02_00_00_01_00_00_10_00_00_00_00_00_01"); //is_valid=1, mode=0, is_rnn=0, memory_index=0, output_memory_index=0, num_vector= 16, num_output_vector=0, num_timestep=1, num_timestep_padding=0, adpbias_act=2, adpbias_atten=0, adpbias_beta = 0, adpbias_gamma=1
     rva_in_src.addr = set_bytes<3>("90_00_10");  // last 4 bits never used 
     rva_in.Push(rva_in_src);
     wait(); 
@@ -98,88 +114,50 @@ SC_MODULE(Source) {
     rva_in.Push(rva_in_src);
     wait(); 
 
-    //Storing Activations in LargeBuffer
-    npy_shape.clear(); npy_data.clear();
-    npy::LoadArrayFromNumpy("/group/ttambe/sm6/hls_tapeout/cmod/testbench/dataset_enc256_dec256_unilstm_layernorm/input_layernorm0.npy", npy_shape, npy_data);
-    cout << "input_layernorm0 shape is: " << npy_shape[0] << " by " << npy_shape[2] << endl;
-    input_layernorm0 = to_2d(npy_shape[0], npy_shape[2], npy_data);
-    for (unsigned int i=0; i < 20; i++) {  // i --> upper_timestepindex 
-      for (int j=0; j < 16; j++) { //j --> vector_index
-        for (int m=0; m < spec::kNumVectorLanes; m++) { //m --> bank_index
-
-               for (int k=0; k < spec::kNumVectorLanes; k++) { //k --> scalar_index
-                 adpfloat_tmp.Reset();
-                 adpfloat_tmp.set_value(input_layernorm0[16*i+m][16*j + k], adpbias_input);
-                 act_vec[k] =adpfloat_tmp.to_rawbits();
-                 adpfloat_tmp.Reset();
-               } // for k
-           rva_in_src.rw = 1;
-           rva_in_src.data = act_vec.to_rawbits();
-           rva_in_src.addr = 0x500000 + (16*(16*i + j) + m)*16;
-           //cout << "addresss_wii: " << 16*(16*i + j) + m << endl;
-           rva_in.Push(rva_in_src);
-           if (rva_in_src.addr ==  0x500000 + (16*(16*19 + 15) + 15)*16) {
-              cout << "Pushed last input_layernorm0 weight vector: " << endl;
-           }
-           wait();
-        } // for j
-      } // for m
-    } // for i 
+    // Load Input data to LargeBuffer (starting at address 0x500000 + 0)
+    for (int i = 0; i < num_vectors; i++) {
+        for (int k = 0; k < vector_size; k++) {
+            adpfloat_tmp.Reset();
+            adpfloat_tmp.set_value(input_matrix[i][k], adpbias_input);
+            act_vec[k] = adpfloat_tmp.to_rawbits();
+        }
+        rva_in_src.rw = 1;
+        rva_in_src.data = act_vec.to_rawbits();
+        rva_in_src.addr = 0x500000 + i * 16; // Each vector takes 16 bytes (kNumVectorLanes * sizeof(ScalarType))
+        rva_in.Push(rva_in_src);
+        wait();
+    }
     wait(); 
 
     //GBCore SmallBuffer Config
     rva_in_src.rw = 1;
     rva_in_src.data = set_bytes<16>("00_00_00_10_00_00_00_00_00_00_00_00_00_00_00_00"); //base_small[5] for gamma = 0, base_small[6] for beta = 16 
-    rva_in_src.addr = set_bytes<3>("40_00_20");  // last 4 bits never used 
+    rva_in_src.addr = set_bytes<3>("40_00_40");  // GBCoreConfig, write_index=4 
     rva_in.Push(rva_in_src);
     wait(); 
 
-    //Storing gamma in SmallBuffer
-    npy_shape.clear(); npy_data.clear();
-    npy::LoadArrayFromNumpy("/group/ttambe/sm6/hls_tapeout/cmod/testbench/dataset_enc256_dec256_unilstm_layernorm/layernorm0_weight_fp64.npy", npy_shape, npy_data);
-    cout << "gamma size is: " << npy_shape[0] << endl;
-    gamma_ref = npy_data;
-    for (unsigned int i=0; i < 16; i++) { 
-        for (int j=0; j < spec::kNumVectorLanes; j++) {
-           adpfloat_tmp.Reset();
-           adpfloat_tmp.set_value(gamma_ref[16*i + j], adpbias_gamma);
-           gamma_vec[j] =adpfloat_tmp.to_rawbits();
-           adpfloat_tmp.Reset();
-         } // for j
-      rva_in_src.rw = 1;
-      rva_in_src.data = gamma_vec.to_rawbits();
-      rva_in_src.addr = 0x600000 + i*16;
-      cout << "addresss_gamma: " << i << endl;
-      rva_in.Push(rva_in_src);
-      if (rva_in_src.addr ==  0x600000 + 15*16) {
-         cout << "Pushed last gamma_ref vector: " << endl;
-      }
-      wait();
-    }  // for i
+    // Load Gamma vector to SmallBuffer (manager 5, starting at offset 0)
+    for (int k = 0; k < vector_size; k++) {
+        adpfloat_tmp.Reset();
+        adpfloat_tmp.set_value(gamma_vector[k], adpbias_gamma);
+        act_vec[k] = adpfloat_tmp.to_rawbits();
+    }
+    rva_in_src.rw = 1;
+    rva_in_src.data = act_vec.to_rawbits();
+    rva_in_src.addr = 0x600000 + 0; // SmallBuffer base + base_small[5] offset (0) * 16 bytes/vector
+    rva_in.Push(rva_in_src);
     wait();
 
-    //Storing beta in SmallBuffer
-    npy_shape.clear(); npy_data.clear();
-    npy::LoadArrayFromNumpy("/group/ttambe/sm6/hls_tapeout/cmod/testbench/dataset_enc256_dec256_unilstm_layernorm/layernorm0_bias_fp64.npy", npy_shape, npy_data);
-    cout << "beta size is: " << npy_shape[0] << endl;
-    beta_ref = npy_data;
-    for (unsigned int i=0; i < 16; i++) { 
-        for (int j=0; j < spec::kNumVectorLanes; j++) {
-           adpfloat_tmp.Reset();
-           adpfloat_tmp.set_value(beta_ref[16*i + j], adpbias_beta);
-           beta_vec[j] =adpfloat_tmp.to_rawbits();
-           adpfloat_tmp.Reset();
-         } // for j
-      rva_in_src.rw = 1;
-      rva_in_src.data = beta_vec.to_rawbits();
-      rva_in_src.addr = 0x600000 + (16 + i)*16;
-      cout << "addresss_beta: " << 16 + i << endl;
-      rva_in.Push(rva_in_src);
-      if (rva_in_src.addr ==  0x600000 + (16 + 15)*16) {
-         cout << "Pushed last beta_ref vector: " << endl;
-      }
-      wait();
-    }  // for i
+    // Load Beta vector to SmallBuffer (manager 6, starting at offset 16)
+    for (int k = 0; k < vector_size; k++) {
+        adpfloat_tmp.Reset();
+        adpfloat_tmp.set_value(beta_vector[k], adpbias_beta);
+        act_vec[k] = adpfloat_tmp.to_rawbits();
+    }
+    rva_in_src.rw = 1;
+    rva_in_src.data = act_vec.to_rawbits();
+    rva_in_src.addr = 0x600000 + 16 * 16; // SmallBuffer base + base_small[6] offset (16) * 16 bytes/vector
+    rva_in.Push(rva_in_src);
     wait();
 
     //send LayerNorm start signal
@@ -241,6 +219,10 @@ SC_MODULE(Dest) {
 
   }   
   void RVA_Out() {
+    rva_out.Reset();
+    data_out.Reset();
+    done.Reset();
+    pe_start.Reset();
     wait();
 
     //unsigned i = 0;
