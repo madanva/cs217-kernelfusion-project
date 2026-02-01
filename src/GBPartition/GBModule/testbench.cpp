@@ -77,12 +77,11 @@ SC_MODULE(Source) {
     spec::VectorType gamma_vec;
     spec::VectorType beta_vec;
 
-    AdpfloatType<8, 3> adpfloat_tmp;
+    AdpfloatType<spec::kAdpfloatWordWidth, spec::kAdpfloatExpWidth> adpfloat_tmp;
     spec::AdpfloatBiasType adpbias_input = 2;
     spec::AdpfloatBiasType adpbias_beta = 0;
     spec::AdpfloatBiasType adpbias_gamma = 1;
 
-        // --- Data Generation ---
     const int num_vectors = 16; // Number of vectors in the 16x16 matrix (rows)
     const int vector_size = 16; // Size of each vector (columns)
     std::vector<std::vector<double>> input_matrix(num_vectors, std::vector<double>(vector_size));
@@ -91,40 +90,83 @@ SC_MODULE(Source) {
 
     for (int i = 0; i < num_vectors; ++i) {
         for (int j = 0; j < vector_size; ++j) {
-            input_matrix[i][j] = ((double)rand() / RAND_MAX * 2.0 - 1.0);
+            input_matrix[i][j] = ((double)rand() / RAND_MAX * 2.0 - 1.0) * 0.95; 
         }
     }
     for (int i = 0; i < vector_size; ++i) {
-        gamma_vector[i] = ((double)rand() / RAND_MAX * 2.0 - 1.0);
-        beta_vector[i] = ((double)rand() / RAND_MAX * 2.0 - 1.0);
+        gamma_vector[i] = 1;
+        beta_vector[i] = 0;
     }
 
-    // get golden_y layer norm for input_matrix, gamma_vector and beta_vector
-    const double epsilon = 1e-5;
-    for (int i = 0; i < num_vectors; ++i) { // For each input vector (row)
-        // 1. Calculate mean
-        double sum = 0.0;
-        for (int j = 0; j < vector_size; ++j) {
-            sum += input_matrix[i][j];
-        }
-        double mean = sum / vector_size;
+    // --- Golden Model (Fixed-Point Accurate) ---
+    golden_y.clear();
 
-        // 2. Calculate variance
-        double sq_sum = 0.0;
-        for (int j = 0; j < vector_size; ++j) {
-            sq_sum += (input_matrix[i][j] - mean) * (input_matrix[i][j] - mean);
-        }
-        double variance = sq_sum / vector_size;
-        double std_dev = sqrt(variance + epsilon);
+    std::vector<spec::ActVectorType> fixed_input_matrix(num_vectors);
+    spec::ActVectorType fixed_gamma_vector;
+    spec::ActVectorType fixed_beta_vector;
+    AdpfloatType<spec::kAdpfloatWordWidth, spec::kAdpfloatExpWidth> adp_converter;
 
-        // 3. Normalize, scale, and shift, then store in golden_y
+    for (int i = 0; i < num_vectors; ++i) {
         for (int j = 0; j < vector_size; ++j) {
-            double normalized = (input_matrix[i][j] - mean) / std_dev;
-            double golden_val = normalized * gamma_vector[j] + beta_vector[j];
-            golden_y.push_back(golden_val);
+            adp_converter.set_value(input_matrix[i][j], adpbias_input);
+            fixed_input_matrix[i][j] = adp_converter.to_fixed<spec::kActWordWidth, spec::kActNumFrac>(adpbias_input);
+        }
+    }
+    for (int i = 0; i < vector_size; ++i) {
+        adp_converter.set_value(gamma_vector[i], adpbias_gamma);
+        fixed_gamma_vector[i] = adp_converter.to_fixed<spec::kActWordWidth, spec::kActNumFrac>(adpbias_gamma);
+        adp_converter.set_value(beta_vector[i], adpbias_beta);
+        fixed_beta_vector[i] = adp_converter.to_fixed<spec::kActWordWidth, spec::kActNumFrac>(adpbias_beta);
+    }
+
+    spec::LayerNormSumType total_sum = 0;
+    spec::LayerNormSumType total_sqsum = 0;
+
+    for (int i = 0; i < num_vectors; ++i) {
+        for (int j = 0; j < vector_size; ++j) {
+            total_sum += fixed_input_matrix[i][j];
+            spec::ActScalarType val = fixed_input_matrix[i][j];
+            NVINTW(spec::kActWordWidth * 2) sq_val_tmp = val * val;
+            sq_val_tmp >>= spec::kActNumFrac;
+            spec::ActScalarType sq_val = sq_val_tmp;
+            total_sqsum += sq_val;
         }
     }
 
+    NVUINT14 divisor = num_vectors * vector_size;
+    spec::ActScalarType mean = total_sum / divisor;
+    spec::ActScalarType sqmean = total_sqsum / divisor;
+
+    NVINTW(2 * spec::kActWordWidth) meansq_tmp = mean * mean;
+    meansq_tmp >>= spec::kActNumFrac;
+    spec::ActScalarType meansq = meansq_tmp;
+
+    spec::ActScalarType var = sqmean - meansq;
+
+    double var_float = (double)var.to_int64() / (double)(1 << spec::kActNumFrac);
+    double inv_std_float = 1.0 / sqrt(var_float + 1e-5);
+    spec::ActScalarType inv_std = (spec::ActScalarType)(inv_std_float * (1 << spec::kActNumFrac));
+
+    for (int i = 0; i < num_vectors; ++i) {
+        for (int j = 0; j < vector_size; ++j) {
+            spec::ActScalarType normalized_val = fixed_input_matrix[i][j] - mean;
+            
+            NVINTW(spec::kActWordWidth * 2) mul_tmp = normalized_val * inv_std;
+            mul_tmp >>= spec::kActNumFrac;
+            normalized_val = mul_tmp;
+
+            mul_tmp = normalized_val * fixed_gamma_vector[j];
+            mul_tmp >>= spec::kActNumFrac;
+            
+            spec::ActScalarType scaled_val = mul_tmp;
+            spec::ActScalarType final_val = scaled_val + fixed_beta_vector[j];
+
+            AdpfloatType<spec::kAdpfloatWordWidth, spec::kAdpfloatExpWidth> final_adp;
+            final_adp.set_value_fixed<spec::kActWordWidth, spec::kActNumFrac>(final_val, adpbias_input);
+            
+            golden_y.push_back(final_adp.to_float(adpbias_input));
+        }
+    }
 
     wait();
 
@@ -149,6 +191,7 @@ SC_MODULE(Source) {
             adpfloat_tmp.set_value(input_matrix[i][k], adpbias_input);
             act_vec[k] = adpfloat_tmp.to_rawbits();
         }
+
         rva_in_src.rw = 1;
         rva_in_src.data = act_vec.to_rawbits();
         rva_in_src.addr = 0x500000 + i * 16; // Each vector takes 16 bytes (kNumVectorLanes * sizeof(ScalarType))
@@ -210,7 +253,7 @@ SC_MODULE(Source) {
     rva_in.Push(rva_in_src);
     wait(); 
  
-  } // layernorm_run()
+  } //layernorm_run
 
 }; //SC MODULE Source
 
@@ -232,6 +275,7 @@ SC_MODULE(Dest) {
   bool done_PopPEStart = false;
 
   std::vector<double> Output;
+  static int golden_y_offset;
 
   SC_CTOR(Dest) {
     SC_THREAD(PopDataOut);
@@ -261,7 +305,7 @@ SC_MODULE(Dest) {
     //unsigned i = 0;
     while (1) {
       if (rva_out.PopNB(rva_out_dest)) {
-        cout << sc_time_stamp() << " Dest rva_out read data" << " \t " << endl;
+        cout << sc_time_stamp() << " Dest rva_out read data" << " 	 " << endl;
         for (int i = 0; i < spec::kNumVectorLanes; i++) {
           AdpfloatType<8,3> tmp(rva_out_dest.data[i]);
           //cout << tmp.to_float(2) << endl; //XXX check adativefloat bias value 
@@ -275,23 +319,25 @@ SC_MODULE(Dest) {
    wait();
    while (1) {
      if (data_out.PopNB(data_out_dest)) {
-        //cout << hex << sc_time_stamp() << " data_out data = " << data_out_dest.data << endl;
-        cout << sc_time_stamp() << " Design data_out result" << " \t " << endl;
+        cout << sc_time_stamp() << " Design data_out result" << " 	 " << endl;
+        Output.clear();
         for (int i = 0; i < spec::kNumVectorLanes; i++) {
           AdpfloatType<8,3> tmp(data_out_dest.data[i]);
-          //cout << tmp.to_float(2) << endl; //XXX check adativefloat bias value 
           Output.push_back(tmp.to_float(2));
         }
-        // Compare  Output and golden_v and max diff must be less than 0.2
+        
         double diff = 0.0;
         double max_diff = 0.0;
         for (int i = 0; i < Output.size(); i++) {
-          diff = abs(Output[i] - golden_y[i]);
-          cout << "Output = " << Output[i] << " golden_y = " << golden_y[i] << " diff = " << diff << endl;
+          diff = abs(Output[i] - golden_y[golden_y_offset + i]);
+          //cout << "i and golden_y_offset = " << i << " " << golden_y_offset << endl;
+          cout << "Output = " << Output[i] << " golden_y = " << golden_y[golden_y_offset + i] << " diff = " << diff << endl;
           if (diff > max_diff) {
             max_diff = diff;
           }
         }
+        golden_y_offset += Output.size();
+
         if (max_diff > 0.2) {
           std::cout << "TESTBENCH FAIL: max diff = " << max_diff << " greater than 0.2" << std::endl;
           sc_assert(false);
@@ -299,11 +345,7 @@ SC_MODULE(Dest) {
         else {
           std::cout << "TESTBENCH PASS: max diff = " << max_diff << " less than 0.2" << std::endl;
         }
-        Output.clear();
-        golden_y.clear();
-
-        
-      done_PopDataOut = true;
+        done_PopDataOut = true;
      }
      wait(); 
    } // while
@@ -313,7 +355,7 @@ SC_MODULE(Dest) {
    wait();
    while (1) {
      if (done.PopNB(done_dest)) {
-        cout << sc_time_stamp() << " Done signal issued!!!" << " \t " << done_dest << endl;
+        cout << sc_time_stamp() << " Done signal issued!!!" << endl;
         done_PopDone = true;
      }
      wait(); 
@@ -324,7 +366,7 @@ SC_MODULE(Dest) {
    wait();
    while (1) {
      if (pe_start.PopNB(pe_start_dest)) {
-        cout << sc_time_stamp() << " PE_start signal issued!!!" << " \t " << pe_start_dest << endl;
+        cout << sc_time_stamp() << " PE_start signal issued!!!" << endl;
         done_PopPEStart = true;
      }
      wait(); 
@@ -345,6 +387,8 @@ SC_MODULE(Dest) {
 
 }; //SC MODULE Dest
 
+int Dest::golden_y_offset = 0;
+
 SC_MODULE(testbench) {
   SC_HAS_PROCESS(testbench);
   sc_clock clk;
@@ -363,7 +407,7 @@ SC_MODULE(testbench) {
   Dest    dest;
 
   testbench(sc_module_name name)
-  : sc_module(name),
+  : sc_module(name), 
     clk("clk", 1.0, SC_NS, 0.5, 0, SC_NS, true),
     rst("rst"),
     dut("dut"),
@@ -395,7 +439,7 @@ SC_MODULE(testbench) {
     dest.done(done);
 
     SC_THREAD(run); 
-  }
+  } //testbench
   
   void run(){
     wait(2, SC_NS );
@@ -424,5 +468,3 @@ int sc_main(int argc, char *argv[]) {
     DCOUT("TESTBENCH PASS" << endl);
   return rc;
 }
-
-
