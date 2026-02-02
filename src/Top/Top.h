@@ -93,12 +93,12 @@ SC_MODULE(Interrupt) {
 SC_MODULE(Top){
   static const int numSubordinates = spec::kNumPE+1; // Num of partition = PE*N + GB
  public:
-// Accelerator I/O follows SMIV definition, clk, rst, IRQ (done), axi::slave::write, axi::slave::read
+// Accelerator I/O follows SMIV definition, clk, rst, IRQ (done), axi::subordinate::write, axi::subordinate::read
   sc_in<bool>  clk;
   sc_in<bool>  rst;   
   sc_out<bool> interrupt;
-  typename spec::Axi::axi4_::read::template slave<>   if_axi_rd;
-  typename spec::Axi::axi4_::write::template slave<>  if_axi_wr;
+  typename spec::Axi::axi4_::read::template subordinate<>   if_axi_rd;
+  typename spec::Axi::axi4_::write::template subordinate<>  if_axi_wr;
 /////////////////////////////////////////////////////////////////////////////////////////////////////
   
 // Internal Connections

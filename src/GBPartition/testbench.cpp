@@ -70,6 +70,9 @@ SC_MODULE(Source) {
   }
   
   void run(){
+    data_in.Reset();
+    pe_done.Reset();
+
     wait(1000);
     std::cout << "@" << sc_time_stamp() <<" TB checkpoint " << std::endl;
 
@@ -85,6 +88,13 @@ SC_MODULE(Dest) {
 
   spec::StreamType data_out_dest;
   bool pe_start_dest;
+  bool done_dest;
+
+  bool done_PopOutport = false;
+  bool done_PopStart = false;
+  bool done_PopDone = false;
+
+
 
   SC_CTOR(Dest) {
     SC_THREAD(PopOutport);
@@ -93,19 +103,29 @@ SC_MODULE(Dest) {
     SC_THREAD(PopStart);
     sensitive << clk.pos();
     async_reset_signal_is(rst, false);
+    SC_THREAD(PopDone);
+    sensitive << clk.pos();
+    async_reset_signal_is(rst, false);
+    SC_THREAD(SimStop); 
+    sensitive << clk.pos();
+    async_reset_signal_is(rst, false);
   }  
 
   void PopOutport() {
+   data_out.Reset();
    wait();
  
    while (1) {
      if (data_out.PopNB(data_out_dest)) {
         //cout << hex << sc_time_stamp() << " data_out data = " << data_out_dest.data << endl;
-        cout << sc_time_stamp() << "Design data_out result" << " \t " << endl;
+        cout << sc_time_stamp() << " Design data_out result: " << std::hex << " " << data_out_dest.data << endl;
+        cout << "adp float values: ";
         for (int i = 0; i < spec::kNumVectorLanes; i++) {
           AdpfloatType<8,3> tmp(data_out_dest.data[i]);
-          cout << tmp.to_float(2) << endl; 
+          cout << tmp.to_float(2) << " "; 
         }
+        cout << endl;
+        done_PopOutport = true;
      }
      wait(); 
    } // while
@@ -113,16 +133,42 @@ SC_MODULE(Dest) {
   } //PopOutputport
 
   void PopStart() {
+   pe_start.Reset();
    wait();
  
    while (1) {
      if (pe_start.PopNB(pe_start_dest)) {
-        cout << sc_time_stamp() << "PE Start signal isssued!!!" << " \t " << pe_start_dest << endl;
+        cout << sc_time_stamp() << " PE Start signal isssued!!!" << endl;
+        done_PopStart = true;
      }
      wait(); 
    } // while
    
   } //PopDone
+
+  void PopDone() {
+   done.Reset();
+   wait();
+ 
+   while (1) {
+     if (done.PopNB(done_dest)) {
+        cout << sc_time_stamp() << " Design done issued!!!" << endl;
+        done_PopDone = true;
+     }
+     wait(); 
+   } // while
+   
+  } //PopDone
+
+  void SimStop() {
+    wait ();
+    while(1) {
+      wait();
+      if (done_PopOutport && done_PopStart && done_PopDone) {
+        sc_stop(); 
+      }
+    }
+  }
 
 };
 
@@ -156,10 +202,7 @@ SC_MODULE(testbench) {
   
   testbench(sc_module_name name)
   : sc_module(name),
-  //SC_CTOR(testbench)
-  // : master("master", "axi_commands_for_kmeans_clustering_for_LSTM.csv"),
-     //master("master", "axi_commands_read_write.csv"),
-     master("master", "axi_commands_for_gbcontrol_configs_and_input_activations_in_GBCore.csv"),
+     master("master", "./axi_commands_test.csv"),
      clk("clk", 1.0, SC_NS, 0.5, 0, SC_NS, true),
      rst("rst"),
      dut("dut"),
@@ -207,15 +250,17 @@ SC_MODULE(testbench) {
     rst.write(true);
     std::cout << "@" << sc_time_stamp() <<" De-Asserting reset" << std::endl;
 
-    /*while (1) {
+    while (1) {
       wait(1, SC_NS);
       if (master_done==1) {
         cout << "Manager has finished issuing AXI Writes" << endl;
+        break;
       }
-    }*/
+    }
 
     wait(100000, SC_NS );
-    std::cout << "@" << sc_time_stamp() <<" sc_stop" << std::endl;
+    cout << "Error: Simulation timed out! No output popped from DUT" << endl;
+    SC_REPORT_ERROR("testbench", "Simulation timeout");
     sc_stop();
   }
 };

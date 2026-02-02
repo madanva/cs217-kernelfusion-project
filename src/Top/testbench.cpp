@@ -91,9 +91,12 @@ SC_MODULE(Dest) {
    while (1) {
      if (interrupt == 1) {
         cout << sc_time_stamp() << " - Interrupt signal issued!" << endl;
+        break;
      }
      wait(); 
    } // while
+
+   sc_stop();
    
   } //PopInterrupt
 
@@ -121,7 +124,7 @@ SC_MODULE(testbench) {
   
   testbench(sc_module_name name)
   : sc_module(name),
-     master("master", "axi_commands_for_kmeans_clustering_for_LSTM_4_timesteps_zero_first_enabled_4PEs.csv"),
+     master("master", "./axi_commands_test.csv"),
      clk("clk", 1.0, SC_NS, 0.5, 0, SC_NS, true),
      rst("rst"),
      dut("dut"),
@@ -162,20 +165,26 @@ SC_MODULE(testbench) {
     rst.write(true);
     std::cout << "@" << sc_time_stamp() <<" De-Asserting reset" << std::endl;
 
-    /*while (1) {
+    while (1) {
       wait(1, SC_NS);
       if (master_done==1) {
         cout << "Manager has finished issuing AXI Writes" << endl;
+        break;
       }
-    }*/
+    }
 
     wait(200000, SC_NS );
-    std::cout << "@" << sc_time_stamp() <<" sc_stop" << std::endl;
+    // If timeout happens, test is a fail
+    cout << "Error: Simulation timed out! No interrupt from DUT" << endl;
+    SC_REPORT_ERROR("testbench", "Simulation timeout");
     sc_stop();
   }
 };
 
 int sc_main(int argc, char *argv[]) {
+  sc_core::sc_report_handler::set_actions( "/IEEE_Std_1666/deprecated",
+                                           sc_core::SC_DO_NOTHING );
+
   nvhls::set_random_seed();
   NVINT8 test = 14;
   cout << fixed2float<8, 3>(test) << endl;  

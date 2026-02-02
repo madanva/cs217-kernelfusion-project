@@ -694,7 +694,7 @@ class Attention  : public match::Module {
   
   void AttentionRun(){
     Reset();
-    #pragma hls_pipeline_init_interval 1 
+    #pragma hls_pipeline_init_interval 4
     while(1) {
       Initialize();
       RunFSM();

@@ -55,7 +55,6 @@ matchlib/
 
 src/include/PPU.h
 *.nfs*
-*.csv
 
 ## CLion
 cmake-build-*
