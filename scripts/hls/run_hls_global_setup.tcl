@@ -107,6 +107,7 @@ directive set -CLUSTER_TYPE combinational
 directive set -COMPGRADE fast
 directive set -PIPELINE_RAMP_UP true
 directive set -BUILTIN_MODULARIO false
+directive set -SCHED_USE_MULTICYCLE true
 #directive set -EFFORT_LEVEL {high}
 
 # Enable clock Gating

@@ -127,7 +127,7 @@ void adpfloat_mean_template(const AdpfloatType<W,E>& in_a, const AdpfloatType<W,
 }
 
 // non-template type of adpfloat multiplication 
-void adpfloat_mul(const AdpfloatType<spec::kAdpfloatWordWidth,spec::kAdpfloatExpWidth> in_a, 
+inline void adpfloat_mul(const AdpfloatType<spec::kAdpfloatWordWidth,spec::kAdpfloatExpWidth> in_a, 
                   const AdpfloatType<spec::kAdpfloatWordWidth,spec::kAdpfloatExpWidth> in_b, 
                   NVINTW(spec::kAccumWordWidth)& out) {
   adpfloat_mul_template<spec::kAdpfloatWordWidth, 
@@ -135,7 +135,7 @@ void adpfloat_mul(const AdpfloatType<spec::kAdpfloatWordWidth,spec::kAdpfloatExp
                         spec::kAccumWordWidth> (in_a, in_b, out);
 }
 
-void adpfloat_add(const AdpfloatType<spec::kAdpfloatWordWidth,spec::kAdpfloatExpWidth> in_a, 
+inline void adpfloat_add(const AdpfloatType<spec::kAdpfloatWordWidth,spec::kAdpfloatExpWidth> in_a, 
                   const AdpfloatType<spec::kAdpfloatWordWidth,spec::kAdpfloatExpWidth> in_b, 
                   AdpfloatType<spec::kAdpfloatWordWidth,spec::kAdpfloatExpWidth>& out) {
                   
@@ -144,14 +144,14 @@ void adpfloat_add(const AdpfloatType<spec::kAdpfloatWordWidth,spec::kAdpfloatExp
                   
 }
 
-void adpfloat_max(const AdpfloatType<spec::kAdpfloatWordWidth,spec::kAdpfloatExpWidth> in_a, 
+inline void adpfloat_max(const AdpfloatType<spec::kAdpfloatWordWidth,spec::kAdpfloatExpWidth> in_a, 
                   const AdpfloatType<spec::kAdpfloatWordWidth,spec::kAdpfloatExpWidth> in_b, 
                   AdpfloatType<spec::kAdpfloatWordWidth,spec::kAdpfloatExpWidth>& out) {
   adpfloat_max_template<spec::kAdpfloatWordWidth, 
                         spec::kAdpfloatExpWidth> (in_a, in_b, out);       
 }
 
-void adpfloat_mean(const AdpfloatType<spec::kAdpfloatWordWidth,spec::kAdpfloatExpWidth> in_a, 
+inline void adpfloat_mean(const AdpfloatType<spec::kAdpfloatWordWidth,spec::kAdpfloatExpWidth> in_a, 
                   const AdpfloatType<spec::kAdpfloatWordWidth,spec::kAdpfloatExpWidth> in_b, 
                   AdpfloatType<spec::kAdpfloatWordWidth,spec::kAdpfloatExpWidth>& out) {
   adpfloat_mean_template<spec::kAdpfloatWordWidth, 

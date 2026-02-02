@@ -29,7 +29,7 @@
 #include "AdpfloatUtils.h"
 
 // Zero skipping 
-void ProductSum(const spec::VectorType in_1, const spec::VectorType in_2, spec::AccumScalarType& out) {
+inline void ProductSum(const spec::VectorType in_1, const spec::VectorType in_2, spec::AccumScalarType& out) {
   spec::AccumScalarType out_tmp = 0; 
   
   #pragma hls_unroll yes
@@ -46,7 +46,7 @@ void ProductSum(const spec::VectorType in_1, const spec::VectorType in_2, spec::
 }
 
 
-void Datapath(spec::VectorType weight_in[spec::kNumVectorLanes], 
+inline void Datapath(spec::VectorType weight_in[spec::kNumVectorLanes], 
               spec::VectorType input_in,
               spec::AccumVectorType& accum_out)
 {

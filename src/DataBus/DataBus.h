@@ -292,7 +292,7 @@ class GBRecv : public match::Module {
       data_out[out_lane].Reset();
     }
 
-    #pragma hls_pipeline_init_interval 1
+    #pragma hls_pipeline_init_interval 4
     while(1) {
       wait();
       T(1) << "##### Entered DUT #####" << EndT;

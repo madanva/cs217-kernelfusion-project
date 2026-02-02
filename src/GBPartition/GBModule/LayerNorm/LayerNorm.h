@@ -467,8 +467,7 @@ class LayerNorm : public match::Module {
 
   void LayerNormRun() {
     Reset();
-
-    #pragma hls_pipeline_init_interval 4 
+    //#pragma hls_pipeline_init_interval 4
     while(1) {
       Initialize();
       RunFSM();

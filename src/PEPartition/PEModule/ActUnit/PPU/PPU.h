@@ -48,7 +48,7 @@
 
 #pragma hls_design ccore
 #pragma hls_ccore_type combinational
-void Sigmoid (const spec::ActVectorType in, spec::ActVectorType& out)
+inline void Sigmoid (const spec::ActVectorType in, spec::ActVectorType& out)
 {
   spec::ActVectorType out_tmp;
   #pragma hls_unroll yes
@@ -69,7 +69,7 @@ void Sigmoid (const spec::ActVectorType in, spec::ActVectorType& out)
 
 #pragma hls_design ccore
 #pragma hls_ccore_type combinational
-void Tanh (const spec::ActVectorType in, spec::ActVectorType& out)
+inline void Tanh (const spec::ActVectorType in, spec::ActVectorType& out)
 {
   spec::ActVectorType out_tmp;
   #pragma hls_unroll yes
@@ -90,7 +90,7 @@ void Tanh (const spec::ActVectorType in, spec::ActVectorType& out)
 
 #pragma hls_design ccore
 #pragma hls_ccore_type combinational
-void EMul (const spec::ActVectorType in_1, const spec::ActVectorType in_2, spec::ActVectorType& out) {
+inline void EMul (const spec::ActVectorType in_1, const spec::ActVectorType in_2, spec::ActVectorType& out) {
   spec::ActVectorType out_tmp;
   #pragma hls_unroll yes
   for (int i = 0; i < spec::kNumVectorLanes; i++) {  
@@ -105,7 +105,7 @@ void EMul (const spec::ActVectorType in_1, const spec::ActVectorType in_2, spec:
 
 #pragma hls_design ccore
 #pragma hls_ccore_type combinational
-void EAdd (const spec::ActVectorType in_1, const spec::ActVectorType in_2, spec::ActVectorType& out)  {
+inline void EAdd (const spec::ActVectorType in_1, const spec::ActVectorType in_2, spec::ActVectorType& out)  {
   spec::ActVectorType out_tmp; 
   #pragma hls_unroll yes
   for (int i = 0; i < spec::kNumVectorLanes; i++) {  
@@ -117,7 +117,7 @@ void EAdd (const spec::ActVectorType in_1, const spec::ActVectorType in_2, spec:
 
 #pragma hls_design ccore
 #pragma hls_ccore_type combinational
-void Relu (const spec::ActVectorType in, spec::ActVectorType& out) {
+inline void Relu (const spec::ActVectorType in, spec::ActVectorType& out) {
   spec::ActVectorType out_tmp;   
   #pragma hls_unroll yes
   for (int i = 0; i < spec::kNumVectorLanes; i++) {  
@@ -129,7 +129,7 @@ void Relu (const spec::ActVectorType in, spec::ActVectorType& out) {
 
 #pragma hls_design ccore
 #pragma hls_ccore_type combinational
-void OneX (const spec::ActVectorType in, spec::ActVectorType& out) {
+inline void OneX (const spec::ActVectorType in, spec::ActVectorType& out) {
   spec::ActVectorType out_tmp;     
   #pragma hls_unroll yes
   for (int i = 0; i < spec::kNumVectorLanes; i++) {  
@@ -140,7 +140,7 @@ void OneX (const spec::ActVectorType in, spec::ActVectorType& out) {
 
 #pragma hls_design ccore
 #pragma hls_ccore_type combinational
-void VSum (const spec::ActVectorType in, spec::ActScalarType& out) {
+inline void VSum (const spec::ActVectorType in, spec::ActScalarType& out) {
   spec::ActScalarType out_tmp = 0;;         
   #pragma hls_unroll yes
   for (int i = 0; i < spec::kNumVectorLanes; i++) {
@@ -151,7 +151,7 @@ void VSum (const spec::ActVectorType in, spec::ActScalarType& out) {
 
 #pragma hls_design ccore
 #pragma hls_ccore_type combinational
-void Fixed2Adpfloat(const spec::ActVectorType in, spec::VectorType& out, const AdpfloatBiasType adpfloat_bias) {
+inline void Fixed2Adpfloat(const spec::ActVectorType in, spec::VectorType& out, const AdpfloatBiasType adpfloat_bias) {
   spec::VectorType out_tmp;
   #pragma hls_unroll yes
   for (int i = 0; i < spec::kNumVectorLanes; i++) {  
@@ -165,7 +165,7 @@ void Fixed2Adpfloat(const spec::ActVectorType in, spec::VectorType& out, const A
 // Scalar Square Root Inverse
 #pragma hls_design ccore
 #pragma hls_ccore_type combinational
-void SInvSqrt(const spec::ActScalarType in, spec::ActScalarType& out) {
+inline void SInvSqrt(const spec::ActScalarType in, spec::ActScalarType& out) {
   spec::ActScalarType out_tmp;
   
   ac_fixed<spec::kActWordWidth, spec::kActNumInt, false, AC_TRN, AC_WRAP> in_ac; 
@@ -180,7 +180,7 @@ void SInvSqrt(const spec::ActScalarType in, spec::ActScalarType& out) {
 
 #pragma hls_design ccore
 #pragma hls_ccore_type combinational
-void Adpfloat2Fixed(const spec::VectorType in, spec::ActVectorType& out, const AdpfloatBiasType adpfloat_bias){
+inline void Adpfloat2Fixed(const spec::VectorType in, spec::ActVectorType& out, const AdpfloatBiasType adpfloat_bias){
   spec::ActVectorType out_tmp;
   #pragma hls_unroll yes
   for (int i = 0; i < spec::kNumVectorLanes; i++) {  
