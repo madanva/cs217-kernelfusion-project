@@ -100,7 +100,7 @@ inline void EMul (const spec::ActVectorType in_1, const spec::ActVectorType in_2
     out_tmp[i] = nvhls::get_slc<spec::kActWordWidth>(tmp, 0);
   }
   out = out_tmp;  
-  // TODO: overflow checking ?
+  // overflow checking ?
 }
 
 #pragma hls_design ccore
@@ -111,7 +111,7 @@ inline void EAdd (const spec::ActVectorType in_1, const spec::ActVectorType in_2
   for (int i = 0; i < spec::kNumVectorLanes; i++) {  
     out_tmp[i] = in_1[i] + in_2[i];
   }  
-  // TODO: overflow checking ?
+  // overflow checking ?
   out = out_tmp;    
 }
 

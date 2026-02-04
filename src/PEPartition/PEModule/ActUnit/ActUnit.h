@@ -212,9 +212,7 @@ class ActUnit : public match::Module {
       }
     }
   }
-  
-  // TODO: Might implement Formal RF architecture in later updates
-  
+    
   
   void RunInst(ActConfig act_config_in) {
     // lock if recieve AXI request or the ActUnit is not started 

@@ -151,6 +151,13 @@ class PERVA : public match::Module {
     while(1){
       spec::Axi::SubordinateToRVA::Read rva_out_reg;
       bool is_valid = 0;
+
+      // TODO #1:
+      // 1. Arbitrate between pe_rva_out and act_rva_out.
+      // 2. Prioritize pe_rva_out, and if it is not ready, check act_rva_out.
+      // 3. Push the data to rva_out.
+
+      /////////////// YOUR CODE STARTS HERE ///////////////
       if (pe_rva_out.PopNB(rva_out_reg)) {
         is_valid = 1;
       }
@@ -161,6 +168,8 @@ class PERVA : public match::Module {
       if (is_valid) {
         rva_out.Push(rva_out_reg);
       }
+      /////////////// YOUR CODE ENDS HERE ///////////////
+
       wait();
     }		
 	}  

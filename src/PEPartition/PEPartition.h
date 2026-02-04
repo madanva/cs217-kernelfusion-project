@@ -38,23 +38,30 @@ SC_MODULE(PEPartition) {
   static const int kDebugLevel = 3;
  public:
   sc_in<bool>  clk;
-  sc_in<bool>  rst; 
- 
-  // AXI slave read write
-  // Update 02152020 for matching new AXI format
-  //typename spec::Axi::axi4_::read::slave   if_axi_rd;
-  //typename spec::Axi::axi4_::write::slave  if_axi_wr;
+  sc_in<bool>  rst;
+
+  //TODO #1:
+  // 1. Please refer to the testbench to determine the ports of the module
+  // 2. For the axi_rd and axi_wr dut ports, make sure to select the subordinate template for the port axi interface
+  // 3. Apart fromthe axi ports, all other ports are connections
+
+  /////////////// YOUR CODE STARTS HERE ///////////////
   typename spec::Axi::axi4_::read::template subordinate<>   if_axi_rd;
   typename spec::Axi::axi4_::write::template subordinate<>  if_axi_wr;
+
+  // Alternatively 
+  // typename axi::axi4<spec::Axi::axiCfg>::read::template subordinate<>   if_axi_rd;
+  // typename axi::axi4<spec::Axi::axiCfg>::write::template subordinate<>  if_axi_wr;
   
   Connections::In<spec::StreamType>     input_port;     
   Connections::Out<spec::StreamType>    output_port; 
   Connections::In<bool>                 start;
   Connections::Out<bool>                done;  
 
+  /////////////// YOUR CODE ENDS HERE ///////////////
+
   Connections::Combinational<spec::Axi::SubordinateToRVA::Write>     rva_in;
   Connections::Combinational<spec::Axi::SubordinateToRVA::Read>      rva_out;
-  
   
   PEModule                pemodule_inst;
   spec::Axi::SubordinateToRVA   rva_inst;
@@ -69,6 +76,11 @@ SC_MODULE(PEPartition) {
      pemodule_inst("pemodule_inst"),
      rva_inst  ("rva_inst")
   {
+    // TODO #2:
+    // 1. Connect the ports of the rva_inst and pemodule_inst
+    // 2. Take particular care of the rva_in and rva_out ports
+
+    /////////////// YOUR CODE STARTS HERE ///////////////
     rva_inst.clk(clk);
     rva_inst.reset_bar(rst);
     rva_inst.if_axi_rd(if_axi_rd);
@@ -83,7 +95,8 @@ SC_MODULE(PEPartition) {
     pemodule_inst.input_port(input_port);          
     pemodule_inst.output_port(output_port);
     pemodule_inst.start(start);
-    pemodule_inst.done(done);  
+    pemodule_inst.done(done);
+    /////////////// YOUR CODE ENDS HERE ///////////////
   }      
   
 };
