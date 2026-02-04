@@ -35,6 +35,8 @@ namespace eval nvhls {
         set_input_files $SRC_PATH $TOP_NAME $SYSTEMC_DESIGN
         set_compiler_flags $HLS_CATAPULT $COMPILER_FLAGS
         usercmd_pre_analyze
+        set_bup_blocks BUP_BLOCKS
+        load_bup_blocks_pre $BUP_BLOCKS
         go analyze
         setup_libs
         setup_clocks $CLK_PERIOD
@@ -42,6 +44,7 @@ namespace eval nvhls {
         usercmd_pre_compile
         go compile
         if { $RUN_CDESIGN_CHECKER eq "1" } { run_design_checker; exit }
+        load_bup_blocks_post $TOP_NAME $BUP_BLOCKS
         go libraries
         go assembly
         usercmd_post_assembly
@@ -138,6 +141,30 @@ namespace eval nvhls {
       #flow run /CDesignChecker/launch_sleccpc_sh ./CDesignChecker/design_checker.sh
       flow run /CDesignChecker/launch_sleccpc_sh ./SLEC_CPC/slec_cpc.sh
     }
+
+    proc set_bup_blocks {BUP_BLOCKS} {
+        #global BUP_BLOCKS
+        #set BUP_BLOCKS {}
+    }
+    proc load_bup_blocks_pre {BUP_BLOCKS} {
+        echo "load_bup_blocks_pre  $BUP_BLOCKS"
+        foreach bup_block $BUP_BLOCKS {
+            if {[file isdirectory ./${bup_block}/Catapult]} {
+                echo "loading $bup_block"
+                solution options set ComponentLibs/SearchPath [exec readlink -f ./${bup_block}/Catapult] -append
+                solution library add "\[Block\] ${bup_block}.v1"
+            }
+        }
+    }
+
+    proc load_bup_blocks_post {TOP_NAME BUP_BLOCKS} {
+        foreach bup_block $BUP_BLOCKS {
+            if {[file isdirectory ./${bup_block}/Catapult]} {
+                directive set /${TOP_NAME}/${bup_block} -MAP_TO_MODULE "\[Block\] ${bup_block}.v1"
+            }
+        }
+    }
+
 
     proc usercmd_pre_analyze {} {}
     proc usercmd_pre_compile {} {}

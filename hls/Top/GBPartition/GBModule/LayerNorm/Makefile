@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ROOT := ../..
-SRC_PATH := $(ROOT)/src/
+ROOT := ../../../../..
+SRC_PATH := $(ROOT)/src/GBPartition/GBModule
 SYSTEMC_DESIGN := 1
 COMPILER_FLAGS := HLS_ALGORITHMICC
 CLK_PERIOD := 4.0
