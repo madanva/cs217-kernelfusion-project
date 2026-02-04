@@ -84,8 +84,6 @@ class GBCore : public match::Module {
   Connections::Out<spec::GB::Large::DataRsp<1>>   layernorm_large_rsp;  
   Connections::In<spec::GB::Large::DataReq>       zeropadding_large_req;
   Connections::Out<spec::GB::Large::DataRsp<1>>   zeropadding_large_rsp;  
-  Connections::In<spec::GB::Large::DataReq>       attention_large_req;
-  Connections::Out<spec::GB::Large::DataRsp<16>>  attention_large_rsp;   
   
   Connections::In<spec::Axi::SubordinateToRVA::Write>   rva_in_small; 
   Connections::Out<spec::Axi::SubordinateToRVA::Read>   rva_out_small;  
@@ -93,9 +91,6 @@ class GBCore : public match::Module {
   Connections::Out<spec::GB::Small::DataRsp>      gbcontrol_small_rsp;    
   Connections::In<spec::GB::Small::DataReq>       layernorm_small_req;
   Connections::Out<spec::GB::Small::DataRsp>      layernorm_small_rsp;   
-
-  Connections::In<spec::GB::Small::DataReq>       attention_small_req;
-  Connections::Out<spec::GB::Small::DataRsp>      attention_small_rsp;   
 
     
   // Access only by the larger buffer thread
@@ -117,8 +112,6 @@ class GBCore : public match::Module {
        
         zeropadding_large_req ("zeropadding_large_req"),        
         zeropadding_large_rsp ("zeropadding_large_rsp"),
-        attention_large_req   ("attention_large_req"),
-        attention_large_rsp   ("attention_large_rsp"),
 
 
         rva_in_small          ("rva_in_small"),
@@ -127,8 +120,6 @@ class GBCore : public match::Module {
         gbcontrol_small_rsp   ("gbcontrol_small_rsp"),                                                        
         layernorm_small_req   ("layernorm_small_req"),
         layernorm_small_rsp   ("layernorm_small_rsp"),  
-        attention_small_req   ("attention_small_req"),
-        attention_small_rsp   ("attention_small_rsp"), 
                                
         SC_SRAM_CONFIG        ("SC_SRAM_CONFIG")
   {
@@ -218,9 +209,7 @@ class GBCore : public match::Module {
     layernorm_large_rsp.Reset();  
     zeropadding_large_req.Reset();     
     zeropadding_large_rsp.Reset();        
-    attention_large_req.Reset();
-    attention_large_rsp.Reset();
-    
+
     #pragma hls_unroll yes    
     for (int i = 0; i < spec::GB::Large::kMaxNumManagers; i++) {
       num_vector_large[i] = 1; 
@@ -311,17 +300,15 @@ class GBCore : public match::Module {
       }      
 
 // Change this part to Arxbar, If no axi, check streaming request  
-// TODO The req should be changed to array form 
       // 1. PopNB list
       NVUINT5 valid_regs = 0; 
       NVUINT3 pos = 0;
-      spec::GB::Large::DataReq large_req_regs[5];   
+      spec::GB::Large::DataReq large_req_regs[4];   
       if (is_axi == 0) {     
         valid_regs[0] = gbcontrol_large_req.  PopNB(large_req_regs[0]);
         valid_regs[1] = layerreduce_large_req.PopNB(large_req_regs[1]);
         valid_regs[2] = layernorm_large_req.  PopNB(large_req_regs[2]);
         valid_regs[3] = zeropadding_large_req.PopNB(large_req_regs[3]);
-        valid_regs[4] = attention_large_req.  PopNB(large_req_regs[4]);
                
       // 2. leading one detect
         pos = nvhls::leading_ones<5, NVUINT5, NVUINT3>(valid_regs); 
@@ -353,13 +340,7 @@ class GBCore : public match::Module {
             if (!large_req_reg.is_write) {
               rsp_mode = 0xA;      
             }            
-            break;      
-          case 4:
-            SetLargeBuffer<16>(large_req_reg);   
-            if (!large_req_reg.is_write) {
-              rsp_mode = 0xB;
-            }          
-            break;
+            break;        
           default:        
             break;          
         }
@@ -415,15 +396,6 @@ class GBCore : public match::Module {
           zeropadding_large_rsp.Push(large_rsp_reg);
           break;
         }
-        case 0xB: {// TODO attention start 
-          spec::GB::Large::DataRsp<16>  large_rsp_reg;                            
-          #pragma hls_unroll yes
-          for (int i = 0; i < 16; i++) {
-            large_rsp_reg.read_vector[i] = large_port_read_out[i];
-          }
-          attention_large_rsp.Push(large_rsp_reg);
-          break; 
-        }
         default: {
           break;  
         }
@@ -445,8 +417,6 @@ class GBCore : public match::Module {
     gbcontrol_small_rsp.Reset();       
     layernorm_small_req.Reset();       
     layernorm_small_rsp.Reset();   
-    attention_small_req.Reset(); 
-    attention_small_rsp.Reset(); 
     
     #pragma hls_unroll yes    
     for (int i = 0; i < spec::GB::Small::kMaxNumManagers; i++) {    
@@ -529,7 +499,6 @@ class GBCore : public match::Module {
       if (is_axi == 0) {
         valid_regs[0] = gbcontrol_small_req.  PopNB(small_req_regs[0]);
         valid_regs[1] = layernorm_small_req.  PopNB(small_req_regs[1]);
-        valid_regs[2] = attention_small_req.  PopNB(small_req_regs[2]);
                
       // 2. leading one detect
         pos = nvhls::leading_ones<3, NVUINT3, NVUINT3>(valid_regs); 
@@ -598,12 +567,6 @@ class GBCore : public match::Module {
           small_rsp_reg.read_data = small_port_read_out[0];
           layernorm_small_rsp.Push(small_rsp_reg);  
           break;
-        }
-        case 0xB: { // TODO attention start 
-          spec::GB::Small::DataRsp  small_rsp_reg;
-          small_rsp_reg.read_data = small_port_read_out[0];
-          attention_small_rsp.Push(small_rsp_reg);          
-          break; 
         }
         default: {
           break;

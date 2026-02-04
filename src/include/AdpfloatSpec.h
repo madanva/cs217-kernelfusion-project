@@ -186,7 +186,6 @@ class AdpfloatType : public nvhls_message{
   
   float min_value (AdpfloatBiasType adpfloat_bias = 0) const {
     float min_exp;
-    // TODO: print min Normal
     if (spec::Adpfloat::UseDenormal) {
       min_exp = (float) adpfloat_bias + spec::kAdpfloatOffset + 1;
       return pow(2,min_exp)*(1/(pow(2, man.width)));
@@ -202,7 +201,6 @@ class AdpfloatType : public nvhls_message{
   }
   
   // Rounding needed? 
-  // TODO: Only implement non-denormal version (only Zero Reserved version checked)
   void set_value(float value, AdpfloatBiasType adpfloat_bias = 0){
     assert(spec::Adpfloat::UseDenormal == 0 && spec::Adpfloat::ReserveZero == 1);
     bool sign_tmp = (value < 0)?1:0;
@@ -240,7 +238,6 @@ class AdpfloatType : public nvhls_message{
     // get mantissa bit
     NVUINTW(23) man_tmp;
     man_tmp.set_slc(0, nvuint32_tmp.slc<23>(0));
-    // TODO: Rounding not implemented  
     man.set_slc(0, man_tmp.slc<W-E-1>(23 - (W-E-1)));
   }
   

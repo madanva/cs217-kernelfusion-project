@@ -37,8 +37,19 @@ SC_MODULE(GBPartition) {
   static const int kDebugLevel = 3;
  public:
   sc_in<bool>  clk;
-  sc_in<bool>  rst; 
-  
+  sc_in<bool>  rst;
+
+  // TODO #1: 
+  // Note - Take PEPartition.h and testbench.cpp as reference
+  // 1. Define the ports for the GBPartition module. This includes the AXI subordinate interface,
+  //    the `done` signal, and dataflow channels for PE communication (`data_in`, `data_out`, `pe_start`, `pe_done`).
+  // 2. Instantiate the `GBModule` and the AXI-to-RVA converter (`spec::Axi::SubordinateToRVA`).
+  // 3. Create internal RVA channels to connect the two instances.
+  // 4. In the constructor, connect the ports of the instantiated modules.
+  //    - `rva_inst` connects the external AXI interface to the internal RVA channels.
+  //    - `gbmodule_inst` connects to the internal RVA channels and the other module ports.
+
+  /////////////// YOUR CODE STARTS HERE ///////////////
 
   Connections::Out<bool> done;
   
@@ -84,7 +95,10 @@ SC_MODULE(GBPartition) {
     gbmodule_inst.data_out(data_out);
     gbmodule_inst.pe_start(pe_start);
     gbmodule_inst.pe_done(pe_done);  
-  }      
+  }
+
+  /////////////// YOUR CODE ENDS HERE ///////////////
+
   
 };
 

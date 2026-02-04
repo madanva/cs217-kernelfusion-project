@@ -35,7 +35,7 @@
 #include "LayerReduce/LayerReduce.h"
 #include "LayerNorm/LayerNorm.h"
 #include "ZeroPadding/ZeroPadding.h"
-#include "Attention/Attention.h"
+
 class GBRVA : public match::Module { 
   static const int kDebugLevel = 3;
   SC_HAS_PROCESS(GBRVA);
@@ -48,7 +48,6 @@ class GBRVA : public match::Module {
   Connections::Out<bool> layerreduce_start;
   Connections::Out<bool> layernorm_start;
   Connections::Out<bool> zeropadding_start;
-  Connections::Out<bool> attention_start; 
   // 4, 5, 6
   Connections::Out<spec::Axi::SubordinateToRVA::Write>    gbcore_large_rva_in;
   Connections::In<spec::Axi::SubordinateToRVA::Read>      gbcore_large_rva_out; 
@@ -68,9 +67,6 @@ class GBRVA : public match::Module {
   // A
   Connections::Out<spec::Axi::SubordinateToRVA::Write>    zeropadding_rva_in;
   Connections::In<spec::Axi::SubordinateToRVA::Read>      zeropadding_rva_out;    
-  // B TODO: For Attention module
-  Connections::Out<spec::Axi::SubordinateToRVA::Write>    attention_rva_in;
-  Connections::In<spec::Axi::SubordinateToRVA::Read>      attention_rva_out;   
     
   sc_out<NVUINT32> SC_SRAM_CONFIG;  
   
@@ -83,7 +79,6 @@ class GBRVA : public match::Module {
         layerreduce_start("layerreduce_start"), 
         layernorm_start("layernorm_start"),
         zeropadding_start("zeropadding_start"),
-        attention_start("attention_start"),
         gbcore_large_rva_in("gbcore_large_rva_in"),
         gbcore_large_rva_out("gbcore_large_rva_out"),
         gbcore_small_rva_in("gbcore_small_rva_in"),
@@ -96,9 +91,7 @@ class GBRVA : public match::Module {
         layernorm_rva_in("layernorm_rva_in"),
         layernorm_rva_out("layernorm_rva_out"),
         zeropadding_rva_in("zeropadding_rva_in"),
-        zeropadding_rva_out("zeropadding_rva_out"),
-        attention_rva_in("attention_rva_in"),
-        attention_rva_out("attention_rva_out")
+        zeropadding_rva_out("zeropadding_rva_out")
   {
     SC_THREAD(RVAInRun);
     sensitive << clk.pos();
@@ -117,30 +110,16 @@ class GBRVA : public match::Module {
     layerreduce_rva_in.Reset();
     layernorm_rva_in.Reset();    
     zeropadding_rva_in.Reset();  
-    attention_rva_in.Reset();
     
     gbcontrol_start.Reset();
     layerreduce_start.Reset();
     layernorm_start.Reset();
     zeropadding_start.Reset();
-    attention_start.Reset();
     
     SC_SRAM_CONFIG.write(0);
 
     #pragma hls_pipeline_init_interval 1    
-    while(1){
-      // port TransferNB     rva_out.TransferNB();
-      //gbcore_rva_in.TransferNB();
-      //gbcontrol_rva_in.TransferNB();
-      //layerreduce_rva_in.TransferNB();
-      //layernorm_rva_in.TransferNB();    
-      //zeropadding_rva_in.TransferNB();   
-      
-      //gbcontrol_start.TransferNB();
-      //layerreduce_start.TransferNB();
-      //layernorm_start.TransferNB();
-      //zeropadding_start.TransferNB();
-      
+    while(1){      
       // Axi input
       spec::Axi::SubordinateToRVA::Write rva_in_reg;
       if (rva_in.PopNB(rva_in_reg)) {
@@ -148,6 +127,15 @@ class GBRVA : public match::Module {
         NVUINT16 local_index = nvhls::get_slc<16>(rva_in_reg.addr, 4);
         switch (tmp) {   
           case 0x0: {
+            // TODO #1:
+            // 1. Decode the `local_index` from the AXI address to identify the target sub-module.
+            // 2. Send a start signal to the corresponding module's start channel.
+            //    - 0x1: GBControl
+            //    - 0x2: LayerReduce
+            //    - 0x3: LayerNorm
+            //    - 0x4: ZeroPadding
+
+            /////////////// YOUR CODE STARTS HERE ///////////////
             switch (local_index) {
               case 0x1: 
                 gbcontrol_start.Push(1);
@@ -161,12 +149,10 @@ class GBRVA : public match::Module {
               case 0x4:
                 zeropadding_start.Push(1);
                 break;              
-              case 0x5: // TODO attention start 
-                attention_start.Push(1);
-                break; 
               default:
                 break;
             }
+            /////////////// YOUR CODE ENDS HERE ///////////////
             break;
           }
           case 0x3: 
@@ -207,10 +193,7 @@ class GBRVA : public match::Module {
             break;
           case 0xA:
             zeropadding_rva_in.Push(rva_in_reg);
-            break;
-          case 0xB: // Attehtion
-            attention_rva_in.Push(rva_in_reg);
-            break;         
+            break;    
           default: 
             break;
         }              
@@ -226,7 +209,6 @@ class GBRVA : public match::Module {
     layerreduce_rva_out.Reset();       
     layernorm_rva_out.Reset(); 
     zeropadding_rva_out.Reset(); 
-    attention_rva_out.Reset(); 
 
     #pragma hls_pipeline_init_interval 1
     while(1){
@@ -251,9 +233,6 @@ class GBRVA : public match::Module {
       else if (zeropadding_rva_out.PopNB(rva_out_reg)) {
         is_valid = 1; 
       }
-      else if (attention_rva_out.PopNB(rva_out_reg)) {
-        is_valid = 1;
-      }
       
       if (is_valid) {
         rva_out.Push(rva_out_reg);
@@ -272,7 +251,6 @@ class GBDone : public match::Module {
   Connections::In<bool> layerreduce_done;
   Connections::In<bool> layernorm_done;
   Connections::In<bool> zeropadding_done; 
-  Connections::In<bool> attention_done;   
   
    // Constructor
   GBDone (sc_module_name nm)
@@ -280,8 +258,7 @@ class GBDone : public match::Module {
         gbcontrol_done("gbcontrol_done"),
         layerreduce_done("layerreduce_done"), 
         layernorm_done("layernorm_done"),
-        zeropadding_done("zeropadding_done"),
-        attention_done("attention_done")
+        zeropadding_done("zeropadding_done")
   {
     SC_THREAD(GBDoneRun);
     sensitive << clk.pos();
@@ -294,10 +271,16 @@ class GBDone : public match::Module {
     layerreduce_done.Reset();
     layernorm_done.Reset();
     zeropadding_done.Reset(); 
-    attention_done.Reset();
 
     #pragma hls_pipeline_init_interval 1
     while(1) {
+
+      // TODO #2:
+      // 1. Check for done signals from all sub-modules: GBControl, LayerReduce, LayerNorm, and ZeroPadding.
+      // 2. If any of the modules signals completion, propagate the done signal to the output.
+      // 3. This can be implemented with a priority check, checking each channel in sequence.
+
+      /////////////// YOUR CODE STARTS HERE ///////////////
       bool is_done = 0, done_reg = 0;
       if (gbcontrol_done.PopNB(done_reg)) {
         is_done = 1;
@@ -311,12 +294,11 @@ class GBDone : public match::Module {
       else if (zeropadding_done.PopNB(done_reg)) {
         is_done = 1;
       }
-      else if (attention_done.PopNB(done_reg)) {
-        is_done = 1;
-      }
       if (is_done == 1){
         done.Push(1);       
       }
+      /////////////// YOUR CODE ENDS HERE ///////////////
+
       wait();
     }
   }
@@ -356,22 +338,17 @@ class GBModule : public match::Module {
   // ZeroPadding A
   Connections::Combinational<spec::Axi::SubordinateToRVA::Write>    zeropadding_rva_in;
   Connections::Combinational<spec::Axi::SubordinateToRVA::Read>     zeropadding_rva_out;    
-  // TODO: For Attention module B  
-  Connections::Combinational<spec::Axi::SubordinateToRVA::Write>    attention_rva_in;
-  Connections::Combinational<spec::Axi::SubordinateToRVA::Read>     attention_rva_out;     
  
  
   Connections::Combinational<bool> gbcontrol_start;
   Connections::Combinational<bool> layerreduce_start;
   Connections::Combinational<bool> layernorm_start;
   Connections::Combinational<bool> zeropadding_start; 
-  Connections::Combinational<bool> attention_start; 
     
   Connections::Combinational<bool> gbcontrol_done;
   Connections::Combinational<bool> layerreduce_done;
   Connections::Combinational<bool> layernorm_done;
   Connections::Combinational<bool> zeropadding_done; 
-  Connections::Combinational<bool> attention_done;   
   
   // GBControl
   Connections::Combinational<spec::GB::Large::DataReq>      gbcontrol_large_req;
@@ -390,10 +367,6 @@ class GBModule : public match::Module {
   Connections::Combinational<spec::GB::Large::DataReq>      zeropadding_large_req;
   Connections::Combinational<spec::GB::Large::DataRsp<1>>   zeropadding_large_rsp;    
   
-  Connections::Combinational<spec::GB::Large::DataReq>       attention_large_req;
-  Connections::Combinational<spec::GB::Large::DataRsp<16>>  attention_large_rsp;   
-  Connections::Combinational<spec::GB::Small::DataReq>       attention_small_req;
-  Connections::Combinational<spec::GB::Small::DataRsp>      attention_small_rsp;   
 
 
   
@@ -407,7 +380,6 @@ class GBModule : public match::Module {
   LayerReduce   layerreduce_inst;
   LayerNorm     layernorm_inst;
   ZeroPadding   zeropadding_inst;
-  Attention     attention_inst;
   
   
   GBModule(sc_module_name nm)
@@ -434,20 +406,16 @@ class GBModule : public match::Module {
         layernorm_rva_out   ("layernorm_rva_out"),  
         zeropadding_rva_in  ("zeropadding_rva_in"),
         zeropadding_rva_out ("zeropadding_rva_out"),
-        attention_rva_in    ("attention_rva_in"),
-        attention_rva_out   ("attention_rva_out"),
         
         gbcontrol_start     ("gbcontrol_start"),
         layerreduce_start   ("layerreduce_start"),
         layernorm_start     ("layernorm_start"),
         zeropadding_start   ("zeropadding_start"), 
-        attention_start     ("attention_start"),        
         
         gbcontrol_done      ("gbcontrol_done"),
         layerreduce_done    ("layerreduce_done"),
         layernorm_done      ("layernorm_done"),
         zeropadding_done    ("zeropadding_done"),         
-        attention_done      ("attention_done"),
         
         //GB Control, LayerReduce, LayerNorm, ZeroPadding
         gbcontrol_large_req   ("gbcontrol_large_req"),
@@ -465,22 +433,16 @@ class GBModule : public match::Module {
         
         zeropadding_large_req ("zeropadding_large_req"),
         zeropadding_large_rsp ("zeropadding_large_rsp"),
-        
-        attention_large_req ("attention_large_req"),
-        attention_large_rsp ("attention_large_rsp"),
-        attention_small_req ("attention_small_req"),
-        attention_small_rsp ("attention_small_rsp"),
                 
         SC_SRAM_CONFIG("SC_SRAM_CONFIG"),
         
         gbrva_inst("gbrva_inst"),
         gbdone_inst("gbdone_inst"),
         gbcore_inst("gbcore_inst"),
-	gbcontrol_inst("gbcontrol_inst"), 
-	layerreduce_inst("layerreduce_inst"),
-	layernorm_inst("layernorm_inst"),
-        zeropadding_inst("zeropadding_inst"),
-        attention_inst("attention_inst")
+        gbcontrol_inst("gbcontrol_inst"), 
+        layerreduce_inst("layerreduce_inst"),
+        layernorm_inst("layernorm_inst"),
+        zeropadding_inst("zeropadding_inst")
   {
     //gbrva_inst
     gbrva_inst.clk(clk);
@@ -491,7 +453,6 @@ class GBModule : public match::Module {
     gbrva_inst.layerreduce_start(layerreduce_start);
     gbrva_inst.layernorm_start(layernorm_start);
     gbrva_inst.zeropadding_start(zeropadding_start);
-    gbrva_inst.attention_start(attention_start);
     
     gbrva_inst.gbcore_large_rva_in      (gbcore_large_rva_in);
     gbrva_inst.gbcore_large_rva_out     (gbcore_large_rva_out); 
@@ -506,8 +467,6 @@ class GBModule : public match::Module {
     gbrva_inst.layernorm_rva_out  (layernorm_rva_out); 
     gbrva_inst.zeropadding_rva_in (zeropadding_rva_in);
     gbrva_inst.zeropadding_rva_out(zeropadding_rva_out);  
-    gbrva_inst.attention_rva_in   (attention_rva_in);
-    gbrva_inst.attention_rva_out  (attention_rva_out);  
         
           
     gbrva_inst.SC_SRAM_CONFIG(SC_SRAM_CONFIG);
@@ -521,7 +480,6 @@ class GBModule : public match::Module {
     gbdone_inst.layerreduce_done(layerreduce_done);
     gbdone_inst.layernorm_done(layernorm_done);
     gbdone_inst.zeropadding_done(zeropadding_done);    
-    gbdone_inst.attention_done(attention_done);
     //gbcore_inst
     gbcore_inst.clk                   (clk);
     gbcore_inst.rst                   (rst);
@@ -542,11 +500,6 @@ class GBModule : public match::Module {
     gbcore_inst.layernorm_small_rsp   (layernorm_small_rsp  );
     gbcore_inst.zeropadding_large_req (zeropadding_large_req);
     gbcore_inst.zeropadding_large_rsp (zeropadding_large_rsp);  
-    
-    gbcore_inst.attention_large_req   (attention_large_req);
-    gbcore_inst.attention_large_rsp   (attention_large_rsp);      
-    gbcore_inst.attention_small_req   (attention_small_req);
-    gbcore_inst.attention_small_rsp   (attention_small_rsp); 
       
     gbcore_inst.SC_SRAM_CONFIG(SC_SRAM_CONFIG);
     
@@ -598,16 +551,6 @@ class GBModule : public match::Module {
     zeropadding_inst.large_req  (zeropadding_large_req);
     zeropadding_inst.large_rsp  (zeropadding_large_rsp);  
     
-    attention_inst.clk        (clk);
-    attention_inst.rst        (rst);
-    attention_inst.rva_in     (attention_rva_in);
-    attention_inst.rva_out    (attention_rva_out);
-    attention_inst.start      (attention_start);
-    attention_inst.done       (attention_done);
-    attention_inst.large_req  (attention_large_req);
-    attention_inst.large_rsp  (attention_large_rsp);
-    attention_inst.small_req  (attention_small_req);
-    attention_inst.small_rsp  (attention_small_rsp);
   }
   
 };

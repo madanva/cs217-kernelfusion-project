@@ -184,7 +184,14 @@ SC_MODULE(Top){
      irq_inst ("irq_inst")
   {
     WriteAxiSplitterConfig();
-// GB Connections
+
+    // TODO #1: Connect GBPartition instance (gb_inst)
+    // 1. Connect clk, rst.
+    // 2. Connect AXI subordinate channels (read/write) for communication with the AXI splitter.
+    // 3. Connect data ports for PE communication (data_in, data_out).
+    // 4. Connect control signals for PE synchronization (pe_start, pe_done).
+    // 5. Connect the done signal to gb_done for interrupt generation.
+    /////////////// YOUR CODE STARTS HERE ///////////////
     gb_inst.clk(clk);
     gb_inst.rst(rst);      
     gb_inst.done(gb_done);
@@ -197,8 +204,16 @@ SC_MODULE(Top){
     gb_inst.data_out(gb_output);
     gb_inst.pe_start(all_pe_start);
     gb_inst.pe_done(all_pe_done);
+    /////////////// YOUR CODE ENDS HERE ///////////////
 
-// Instantiation of PEs (no unroll needed)
+    // TODO #2: Instantiate and connect PEPartition modules
+    // 1. Loop through the number of PEs (spec::kNumPE).
+    // 2. Dynamically create each PEPartition instance.
+    // 3. Connect clk, rst.
+    // 4. Connect AXI subordinate channels (read/write), starting from index 1 of the channel arrays.
+    // 5. Connect data ports for GB communication (input_port, output_port).
+    // 6. Connect control signals for synchronization (start, done).
+    /////////////// YOUR CODE STARTS HERE ///////////////
     for (int i = 0; i < spec::kNumPE; i++) {    
       pe_ptrs[i] = new PEPartition(sc_gen_unique_name("pe_inst"));    
       pe_ptrs[i]->clk(clk);
@@ -213,9 +228,15 @@ SC_MODULE(Top){
       pe_ptrs[i]->start(pe_start_array[i]);
       pe_ptrs[i]->done(pe_done_array[i]);
     }
+    /////////////// YOUR CODE ENDS HERE ///////////////
     
-    
-// AXI Spliter
+    // TODO #3: Connect the AxiSplitter instance (axispliter_inst)
+    // 1. Connect clk and rst.
+    // 2. Connect the AXI master ports to the Top module's AXI subordinate I/O.
+    // 3. Connect the AXI subordinate ports to the internal AXI channels for GB and PEs.
+    // 4. Connect the address bound signals for routing configuration.
+
+    /////////////// YOUR CODE STARTS HERE ///////////////
     axispliter_inst.clk(clk);
     axispliter_inst.reset_bar(rst);
     // Connect Splitter master to chip I/O    
@@ -232,7 +253,17 @@ SC_MODULE(Top){
       axispliter_inst.addrBound[i][0](addrBound[i][0]);
       axispliter_inst.addrBound[i][1](addrBound[i][1]);      
     }
-// Databus Modules
+    /////////////// YOUR CODE ENDS HERE /////////////////
+
+
+    // TODO #4: Connect the databus and interrupt handling modules
+    // 1. Connect PEStart (pe_start_inst) to distribute the start signal from GB to all PEs.
+    // 2. Connect PEDone (pe_done_inst) to aggregate done signals from all PEs and forward to GB.
+    // 3. Connect GBSend (gb_send_inst) to broadcast data from GB to all PEs.
+    // 4. Connect GBRecv (gb_recv_inst) to arbitrate and forward data from PEs to GB.
+    // 5. Connect Interrupt (irq_inst) to generate an interrupt when GB is done.
+
+    /////////////// YOUR CODE STARTS HERE ///////////////
     pe_start_inst.clk(clk);
     pe_start_inst.rst(rst);
     pe_start_inst.all_pe_start(all_pe_start);
@@ -260,11 +291,12 @@ SC_MODULE(Top){
       gb_recv_inst.data_in[i](data_in[i]);
     }  
     gb_recv_inst.data_out[0](data_out);
-// Interrupt Module
+
     irq_inst.clk(clk);
     irq_inst.rst(rst);
     irq_inst.interrupt(interrupt);
     irq_inst.IRQ_trigger(gb_done);
+    /////////////// YOUR CODE ENDS HERE ///////////////
   }
   
 };
