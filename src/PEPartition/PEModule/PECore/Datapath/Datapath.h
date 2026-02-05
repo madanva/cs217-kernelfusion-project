@@ -24,43 +24,51 @@
 //  Datapath that does computation on adpfloat 
 #include <nvhls_int.h>
 #include <nvhls_types.h>
-#include "SM6Spec.h"
-#include "AdpfloatSpec.h"
-#include "AdpfloatUtils.h"
+#include "Spec.h"
 
 // Zero skipping 
 inline void ProductSum(const spec::VectorType in_1, const spec::VectorType in_2, spec::AccumScalarType& out) {
   spec::AccumScalarType out_tmp = 0; 
   
+  // TODO 1:
+  //  1. Implement the product sum operation between in_1 and in_2, store the result in out
+  //  2. Consider the type of in_1, in_2, and out when implementing the function
+  //  3. You can use pragmas to optimize the loop for HLS synthesis
+  //  4. We want to have a adder tree structure for the summation operation (this impacts performace)
+  //  5. This can be achieved through proper use of pragmas
+
+  //////// YOUR CODE STARTS HERE ////////
   #pragma hls_unroll yes
   #pragma cluster addtree 
   #pragma cluster_type both  
   for (int j = 0; j < spec::kVectorSize; j++) {
-    AdpfloatType<8,3> in_1_adpfloat(in_1[j]);
-    AdpfloatType<8,3> in_2_adpfloat(in_2[j]);
-    spec::AccumScalarType acc_tmp;
-    adpfloat_mul(in_1_adpfloat, in_2_adpfloat, acc_tmp);
-    out_tmp += acc_tmp;
+    out_tmp += in_1[j]*in_2[j];
   }
   out = out_tmp;
+  //////// YOUR CODE ENDS HERE ////////
 }
-
 
 inline void Datapath(spec::VectorType weight_in[spec::kNumVectorLanes], 
               spec::VectorType input_in,
               spec::AccumVectorType& accum_out)
 {
-  spec::AccumVectorType accum_out_tmp;            
+  spec::AccumVectorType accum_out_tmp; 
+  
+  // TODO 2:
+  //  1. Implement the datapath that computes the product sum between each weight vector lane and the input vector
+  //  2. Store the result in accum_out
+  //  3. You can use pragmas to optimize the loop for HLS synthesis 
+  //  4. It is important to remember that input is broadcasted to all lanes
+
+  //////// YOUR CODE STARTS HERE ////////
   #pragma hls_unroll yes 
   for (int i = 0; i < spec::kNumVectorLanes; i++) {
     ProductSum(weight_in[i], input_in, accum_out_tmp[i]);
   }
   
   accum_out = accum_out_tmp;
+  //////// YOUR CODE ENDS HERE ////////
 }
-
-
-
 
 
 #endif
