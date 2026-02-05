@@ -24,7 +24,6 @@
 #include <nvhls_int.h>
 #include <nvhls_types.h>
 #include "AxiSpec.h"
-#include "AdpfloatSpec.h"
 
 namespace spec {
   namespace PE {
@@ -73,7 +72,7 @@ namespace spec {
       typedef NVUINTW(kLocalIndexSize) LocalIndex;
     }
     
-    const unsigned int kNumPEManagers = 2;
+    const unsigned int kNumPEManagers = 1;
   }
 }
 
@@ -82,7 +81,7 @@ namespace spec {
 template <unsigned int kAddressWidth>
 class PEManager {
   static const int kDebugLevel = 5;
-  static const int write_width = 128;
+  static const int write_width = spec::VectorType::width;
  public:  
   typedef NVUINTW(kAddressWidth)        Address;
   typedef NVUINTW(kAddressWidth+1)      AddressPlus1;
@@ -90,9 +89,6 @@ class PEManager {
   // FIXME: the naming adp"l"float_bias_weight contain typo
   
   NVUINT1   zero_active;                        // 8 (whether zero output functionality is activate)
-  spec::AdpfloatBiasType adplfloat_bias_weight; // 8
-  spec::AdpfloatBiasType adplfloat_bias_bias;   // 8
-  spec::AdpfloatBiasType adplfloat_bias_input;  // 8
   NVUINT8   num_input;                          // 16
   Address   base_weight;                        // 16
   Address   base_bias;                          // 16
@@ -107,9 +103,6 @@ class PEManager {
   
   void Reset() {
     zero_active = 0;                      
-    adplfloat_bias_weight = 0;
-    adplfloat_bias_bias = 0; 
-    adplfloat_bias_input = 0; 
     num_input = 1;    // avoid error                           
     base_weight = 0;                       
     base_bias = 0;                         
@@ -135,24 +128,18 @@ class PEManager {
   
   void PEManagerWrite(const NVUINTW(write_width)& write_data) {
     zero_active             = nvhls::get_slc<1>(write_data, 0);
-    adplfloat_bias_weight   = nvhls::get_slc<spec::kAdpfloatBiasWidth>(write_data, 8);
-    adplfloat_bias_bias     = nvhls::get_slc<spec::kAdpfloatBiasWidth>(write_data, 16);
-    adplfloat_bias_input    = nvhls::get_slc<spec::kAdpfloatBiasWidth>(write_data, 24);
-    num_input               = nvhls::get_slc<8>(write_data, 32);  
-    base_weight             = nvhls::get_slc<kAddressWidth>(write_data, 48);  
-    base_bias               = nvhls::get_slc<kAddressWidth>(write_data, 64);  
-    base_input              = nvhls::get_slc<kAddressWidth>(write_data, 80);  
+    num_input               = nvhls::get_slc<8>(write_data, 8);  
+    base_weight             = nvhls::get_slc<kAddressWidth>(write_data, 16);  
+    base_bias               = nvhls::get_slc<kAddressWidth>(write_data, 32);  
+    base_input              = nvhls::get_slc<kAddressWidth>(write_data, 48);  
   }
 
   void PEManagerRead(NVUINTW(write_width)& read_data) const {
     read_data.set_slc<1>(0, zero_active);
-    read_data.set_slc<spec::kAdpfloatBiasWidth>(8, adplfloat_bias_weight);
-    read_data.set_slc<spec::kAdpfloatBiasWidth>(16, adplfloat_bias_bias);
-    read_data.set_slc<spec::kAdpfloatBiasWidth>(24, adplfloat_bias_input);
-    read_data.set_slc<8>(32, num_input);
-    read_data.set_slc<kAddressWidth>(48, base_weight);
-    read_data.set_slc<kAddressWidth>(64, base_bias);
-    read_data.set_slc<kAddressWidth>(80, base_input);
+    read_data.set_slc<8>(8, num_input);
+    read_data.set_slc<kAddressWidth>(16, base_weight);
+    read_data.set_slc<kAddressWidth>(32, base_bias);
+    read_data.set_slc<kAddressWidth>(48, base_input);
   }
 
   void ClusterWrite(const NVUINTW(write_width)& write_data) {
@@ -181,7 +168,7 @@ class PEManager {
 };
 
 class PEConfig {
-  static const int write_width = 128;
+  static const int write_width = spec::VectorType::width;
 
  public:
   NVUINT1   is_valid;

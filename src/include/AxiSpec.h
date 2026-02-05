@@ -26,7 +26,7 @@
 
 #include "axi/AxiSplitter.h"
 #include "axi/AxiSubordinateToReadyValid.h"
-#include "SM6Spec.h"
+#include "Spec.h"
 
 // 20190125 NOTE: AXI dataWidth is modified from standard 64 bits to 128 bits 
 //                if the Vector size is 16 

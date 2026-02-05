@@ -23,7 +23,6 @@
 #include <nvhls_int.h>
 #include <nvhls_types.h>
 #include <nvhls_assert.h>
-#include "SM6Spec.h"
 
 /*** New set of instrunction set and config only for act unit ***/
 /*** Main goal is to simplify the PECore thread (previously L1Datapath) operations***/
@@ -42,8 +41,18 @@ namespace spec {
     typedef NVUINTW(kBankIndexSize) BankIndex;
     typedef NVUINTW(kLocalIndexSize) LocalIndex;
 
+    typedef ac_fixed<kActWordWidth,kActWordWidth - kActNumFrac, true> kActOutputPortScalar;
+    const int kActOutNumFrac = 4;
+    typedef ac_fixed<kIntWordWidth, kIntWordWidth - kActOutNumFrac, true, AC_RND, AC_SAT> kActOutputPortType;
+
+    
+
     const unsigned int kNumInstEntries = 32;
   }
+}
+
+inline spec::Act::kActOutputPortType ConvertToActOutput(spec::Act::kActOutputPortScalar in){
+  return in;
 }
 
 /* New version Mini instruction (only tries to support a minimum number of operations)
@@ -63,8 +72,8 @@ namespace spec {
   B: TANH:
   C: RELU:
   D: ONEX:
-  E: SIGN: (XXX: not support now)
-  F: COMP: (XXX: not support now)
+  E: SILU:
+  F: GELU:
 */
 
 
@@ -74,7 +83,6 @@ class ActConfig {
  public:
   NVUINT1                 is_valid;
   NVUINT1                 is_zero_first;
-  spec::AdpfloatBiasType  adpfloat_bias;
   NVUINT6                 num_inst;
   NVUINT8                 num_output; // maximum is much larger than the required
   spec::Act::Address      buffer_addr_base;
@@ -117,7 +125,6 @@ class ActConfig {
     ResetCounter();
     is_valid        = 0;
     is_zero_first   = 0;
-    adpfloat_bias   = 0;
     num_inst        = 1;    // should be initialize to 1 to avoid error
     num_output      = 1;    // should be initialize to 1 to avoid error
     buffer_addr_base = 0;
@@ -130,12 +137,11 @@ class ActConfig {
   }
   
   
-  void ActConfigWrite(const NVUINT8 write_index, const NVUINTW(write_width) write_data) {
+  void ActConfigWrite(const NVUINT8 write_index, const NVUINTW(write_width)& write_data) {
     ResetCounter();
     if (write_index == 0x01) {
       is_valid              = nvhls::get_slc<1>(write_data, 0);
       is_zero_first         = nvhls::get_slc<1>(write_data, 8);
-      adpfloat_bias         = nvhls::get_slc<spec::kAdpfloatBiasWidth>(write_data, 16);  // spec::kAdpfloatBiasWidth = 4
       num_inst              = nvhls::get_slc<6>(write_data, 24);
       num_output            = nvhls::get_slc<8>(write_data, 32);
       buffer_addr_base      = nvhls::get_slc<spec::Act::kAddressWidth>(write_data, 48);
@@ -156,12 +162,11 @@ class ActConfig {
     }
   }
   
-  void ActConfigRead(const NVUINT8 read_index, NVUINTW(write_width)& read_data) const {
-    read_data = 0;
+  NVUINTW(write_width) ActConfigRead(NVUINT8 read_index) const {
+    NVUINTW(write_width) read_data = 0;
     if (read_index == 0x01) {
       read_data.set_slc<1>(0, is_valid);
       read_data.set_slc<1>(8, is_zero_first);
-      read_data.set_slc<spec::kAdpfloatBiasWidth>(16, adpfloat_bias);
       read_data.set_slc<6>(24, num_inst);
       read_data.set_slc<8>(32, num_output);
       read_data.set_slc<spec::Act::kAddressWidth>(48, buffer_addr_base);
@@ -180,6 +185,7 @@ class ActConfig {
         read_data.set_slc<8>(8*i, inst_regs[i+16]);
       }
     }
+    return read_data;
   }
 };
 
