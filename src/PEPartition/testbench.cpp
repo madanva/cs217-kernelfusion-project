@@ -35,10 +35,8 @@
 #include <queue>
 
 #include "axi/testbench/ManagerFromFile.h"
-#include "SM6Spec.h"
+#include "Spec.h"
 #include "AxiSpec.h"
-#include "AdpfloatSpec.h"
-#include "AdpfloatUtils.h"
 
 #include "helper.h"
 #include "PEPartition.h"
@@ -112,9 +110,6 @@ SC_MODULE(Dest) {
    while (1) {
      if (output_port.PopNB(output_port_dest)) {
         cout << "Design output_port result: " << std::hex << output_port_dest.data << endl;
-        for (int i = 0; i < spec::kNumVectorLanes; i++) {
-          AdpfloatType<8,3> tmp(output_port_dest.data[i]);
-        }
         output_port_popped = true;
      }
      wait(); 

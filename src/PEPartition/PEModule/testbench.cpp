@@ -196,6 +196,7 @@ SC_MODULE(Dest) {
 
   spec::StreamType dut_output;
   spec::StreamType output_port_dest;
+  spec::StreamType output_check;
   bool dut_output_popped = false;
   bool done_signal_received = false;
 
@@ -233,6 +234,7 @@ SC_MODULE(Dest) {
     while (1) {
       if (output_port.PopNB(output_port_dest)) {
         cout << sc_time_stamp() << " Dest: Received output port data:" << output_port_dest.data << endl;
+        output_check = output_port_dest;
         dut_output_popped = true;
       }
       wait();
@@ -259,12 +261,14 @@ SC_MODULE(Dest) {
     double percent_diff = 0.0;
     double accumulated_percent_diff = 0.0;
     while (1) {
+      wait();
       if (dut_output_popped && done_signal_received) {
         cout << "Starting comparison with golden model" << endl;
+
           bool passed = true;
           
           for (size_t i = 0; i < spec::kNumVectorLanes; ++i) {              
-              float dut_output_float = fixed2float<spec::kIntWordWidth, spec::Act::kActOutNumFrac>(output_port_dest.data[i]);
+              float dut_output_float = fixed2float<spec::kIntWordWidth, spec::Act::kActOutNumFrac>(output_check.data[i]);
               float golden_y_float = fixed2float<spec::kActWordWidth, spec::kActNumFrac>(golden_y[i]);
               
               diff = std::abs(dut_output_float - golden_y_float);
@@ -287,7 +291,8 @@ SC_MODULE(Dest) {
             cout << "TESTBENCH PASSED" << endl;
           } else {
             cout << "TESTBENCH FAILED" << endl;
-            sc_assert(false);
+            SC_REPORT_ERROR("testbench", "TESTBENCH FAILED");
+            sc_stop();
           }
           sc_stop();
       }
