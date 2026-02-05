@@ -66,6 +66,16 @@ namespace spec {
   const int kNumClusterEntries = 16;
   typedef typename nvhls::nv_scvector<ScalarType, kNumClusterEntries> ClusterType;
 
+  // Attention intermediate storage
+  const int kAttentionWordWidth = 32;
+  const int kAttentionWordMin   = -(1 << (kAttentionWordWidth - 2));
+  const int kAttentionNumFrac   = 20;
+  const int kAttentionNumInt    = kAttentionWordWidth - kAttentionNumFrac;
+  typedef NVINTW(kAttentionWordWidth) AttentionScalarType;
+  // AttentionVectorType has the same width as the VectorType
+  typedef typename nvhls::nv_scvector<AttentionScalarType, kNumVectorLanes / 4>
+      AttentionVectorType;
+
   // Standard datatype for streaming protacol between GB and PEs 
   // data: VectorType
   // index: the index to locate memory manager ONLY for PE
