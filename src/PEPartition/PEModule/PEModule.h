@@ -26,7 +26,7 @@
 #include <nvhls_types.h>
 #include <nvhls_vector.h>
 #include <nvhls_module.h>
-#include "SM6Spec.h"
+#include "Spec.h"
 #include "AxiSpec.h"
 
 #include "PECore/PECore.h"
