@@ -33,13 +33,7 @@
 #include <queue>
 
 #include "ActUnit.h"
-#include "SM6Spec.h"
 #include "AxiSpec.h"
-//#include "BufferSpec.h"
-//#include "BufferManager.h"
-//#include "ControlSpec.h"
-#include "AdpfloatSpec.h"
-#include "AdpfloatUtils.h"
 
 #include "helper.h"
 
@@ -54,51 +48,95 @@
 #ifdef COV_ENABLE
    #pragma CTC SKIP
 #endif
+
 SC_MODULE(Source) {
   sc_in<bool> clk;
   sc_in<bool> rst;  
   Connections::Out<spec::ActVectorType> act_port;
   Connections::Out<spec::Axi::SubordinateToRVA::Write> rva_in;
+  Connections::Out<spec::ActVectorType> expected_output;
 
   Connections::Out<bool> start;    
 
   bool start_src;
   spec::ActVectorType act_port_src;
   spec::ActVectorType test_in[16];
+  spec::ActVectorType expected_out[16];
  
   SC_CTOR(Source) {
     SC_THREAD(run);
     sensitive << clk.pos();
     async_reset_signal_is(rst, false);
   }
+
+  void Reset() {
+    act_port.Reset();
+    rva_in.Reset();
+    start.Reset();
+    expected_output.Reset();
+  }
+
+  void Tanh_ref(const spec::ActVectorType& in, spec::ActVectorType& out) {
+    for (int i = 0; i < spec::kNumVectorLanes; i++) {
+      float in_float = fixed2float<spec::kActWordWidth, spec::kActNumFrac>(in[i]);
+      float out_float = tanh(in_float);
+      out[i] = float2fixed(out_float, spec::kActNumFrac);
+    }
+  }
+
+  void Relu_ref(const spec::ActVectorType& in, spec::ActVectorType& out) {
+    for (int i = 0; i < spec::kNumVectorLanes; i++) {
+      float in_float = fixed2float<spec::kActWordWidth, spec::kActNumFrac>(in[i]);
+      float out_float = (in_float > 0) ? in_float : 0;
+      out[i] = float2fixed(out_float, spec::kActNumFrac);
+    }
+  }
+
+  NVINTW(spec::kActWordWidth) float2fixed(const float in, const int frac_bits) {
+    return in * (1 << frac_bits);
+  }
+
+  void Silu_ref(const spec::ActVectorType& in, spec::ActVectorType& out) {
+    for (int i = 0; i < spec::kNumVectorLanes; i++) {
+      float in_float = fixed2float<spec::kActWordWidth, spec::kActNumFrac>(in[i]);
+      float out_float = in_float * sigmoid(in_float);
+      out[i] = float2fixed(out_float, spec::kActNumFrac);
+    }
+  }
+
+  void Gelu_ref(const spec::ActVectorType& in, spec::ActVectorType& out) {
+    for (int i = 0; i < spec::kNumVectorLanes; i++) {
+      float in_float = fixed2float<spec::kActWordWidth, spec::kActNumFrac>(in[i]);
+      float out_float = 0.5 * in_float * (1 + tanh(sqrt(2/M_PI) * (in_float + 0.044715 * pow(in_float, 3))));
+      out[i] = float2fixed(out_float, spec::kActNumFrac);
+    }
+  }
+
+
   
   void run(){
+    Reset();
     spec::Axi::SubordinateToRVA::Write  rva_in_src;
 
-    float ref_in[16][spec::kNumVectorLanes];
     for (int i = 0; i < 16; i++) {
       for (int j = 0; j < spec::kNumVectorLanes; j++) {
         test_in[i][j] = nvhls::get_rand<spec::kActWordWidth>();
-        //cout << test_in[i][j] << " ";
-        ref_in[i][j] = test_in[i][j];
-        ref_in[i][j] = ref_in[i][j] / (1 << spec::kActNumFrac);
       }
     }
-    float ref_out[16][spec::kNumVectorLanes];
 
     wait(); 
 
     //Axi Config 0x01
     rva_in_src.rw = 1;
-    rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_01_01_15_04_00_01"); //is_valid=1, is_zero_first=0, adpfloat_bias=4, num_inst=10, num_output=257, addr_base=0
+    rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_01_01_0A_04_00_01"); //is_valid=1, is_zero_first=0, adpfloat_bias=4, num_inst=10, num_output=1, addr_base=0
     rva_in_src.addr = set_bytes<3>("80_00_10");  // last 4 bits never used 
     rva_in.Push(rva_in_src);
     wait(); 
 
-    //inpe inst_reg[00] --> tanh actregs[00] --> and output_port --> inpe inst_reg[01] --> sigmoid actregs[01] --> output_port --> EADD actregs[01] --> output_port --> EMUL actregs [01] --> output_port
-    //onex actregs[01] --> output_port --> copy actregs[00] to actregs[01] --> output_port
+    //inpe inst_reg[00] --> tanh actregs[00] --> and output_port --> inpe inst_reg[01] --> silu actregs[01] --> output_port --> EADD actregs[01] --> output_port --> EMUL actregs [01] --> output_port
+    //gelu actregs[01] --> output_port --> relu actregs[01] --> output_port
     rva_in_src.rw = 1;
-    rva_in_src.data = set_bytes<16>("44_C4_44_74_44_D4_44_94_44_84_44_A4_34_40_B0_30");
+    rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_44_C4_44_F4_44_E4_34_40_B0_30");
     rva_in_src.addr = set_bytes<3>("80_00_20");  // last 4 bits never used 
     rva_in.Push(rva_in_src);
     wait();
@@ -114,81 +152,33 @@ SC_MODULE(Source) {
     start.Push(start_src);
     wait();
 
-    cout << "\nTest Tanh" << endl;     
-    cout << "ref_in" << " \t " << "ref_out" << endl;
-    //cout << "ref_in1" << " \t " << "ref_in2" << " \t " << "ref_out" << " \t " << endl; 
-    for (int i = 0; i < spec::kNumVectorLanes; i++) {
-      ref_out[0][i] = tanh(ref_in[0][i]);
-      cout << ref_in[0][i] << " \t " << ref_out[0][i] << " \t " << endl; 
-    }    
-
-    //push actport for act_regs[00]
-    act_port_src = test_in[0];
-    act_port.Push(act_port_src);
-    //wait();    
+    // Tanh
+    cout << "\nTest Tanh" << endl;
+    act_port.Push(test_in[0]);
+    Tanh_ref(test_in[0], expected_out[0]);
+    expected_output.Push(expected_out[0]);
     wait(5);
 
-    cout << "\nTest Sigmoid" << endl;     
-    cout << "ref_in" << " \t " << "ref_out" << endl;
-    //cout << "ref_in1" << " \t " << "ref_in2" << " \t " << "ref_out" << " \t " << endl; 
-    for (int i = 0; i < spec::kNumVectorLanes; i++) {
-      ref_out[1][i] = sigmoid(ref_in[1][i]);
-      cout << ref_in[1][i] << " \t " << ref_out[1][i] << " \t " << endl; 
-    }   
+    // Silu
+    cout << "\nTest Silu" << endl;
+    act_port.Push(test_in[1]);
+    Silu_ref(test_in[1], expected_out[1]);
+    expected_output.Push(expected_out[1]);
+    wait(5);
 
-    //push actport for act_regs[01]
-    act_port_src = test_in[1];
-    act_port.Push(act_port_src);
-    wait(5); 
-
-    cout << "\nTest EADD" << endl;     
-    cout << "ref_in1" << " \t " << "ref_in2" << " \t " << "ref_out" << " \t " << endl; 
-    for (int i = 0; i < spec::kNumVectorLanes; i++) {
-      ref_out[2][i] = ref_out[0][i] + ref_out[1][i];
-      cout << ref_out[0][i] << " \t " << ref_out[1][i] << " \t " << ref_out[2][i] << " \t " << endl; 
-    } 
+    // Gelu
+    cout << "\nTest Gelu" << endl;
+    Gelu_ref(expected_out[1], expected_out[2]);
+    expected_output.Push(expected_out[2]);
     wait(2);
 
-    cout << "\nTest EMUL" << endl;     
-    cout << "ref_in1" << " \t " << "ref_in2" << " \t " << "ref_out" << " \t " << endl; 
-    for (int i = 0; i < spec::kNumVectorLanes; i++) {
-      ref_out[3][i] = ref_out[0][i] * ref_out[2][i];
-      cout << ref_out[0][i] << " \t " << ref_out[2][i] << " \t " << ref_out[3][i] << " \t " << endl; 
-    } 
+    // Relu
+    cout << "\nTest Relu" << endl;
+    Relu_ref(expected_out[2], expected_out[3]);
+    expected_output.Push(expected_out[3]);
     wait(2);
 
-    cout << "\nTest OneX" << endl;     
-    cout << "ref_in" << " \t " << "ref_out" << " \t " << endl; 
-    for (int i = 0; i < spec::kNumVectorLanes; i++) {
-      ref_out[4][i] = 1 - ref_out[3][i];
-      cout << ref_out[3][i] << " \t " << ref_out[4][i] << " \t " << endl; 
-    } 
-    wait(2);     
-
-    cout << "\nTest Copy" << endl;     
-    cout << "ref_in" << " \t " << "ref_out" << " \t " << endl; 
-    for (int i = 0; i < spec::kNumVectorLanes; i++) {
-      ref_out[5][i] = ref_out[0][i];
-      cout << ref_out[0][i] << " \t " << ref_out[5][i] << " \t " << endl; 
-    } 
-    wait(2); 
-
-    cout << "\nTest Relu" << endl;     
-    cout << "ref_in" << " \t " << "ref_out" << " \t " << endl; 
-    for (int i = 0; i < spec::kNumVectorLanes; i++) {
-      if (ref_out[5][i] < 0) ref_out[6][i] = 0;
-          else ref_out[6][i] = ref_out[5][i];
-      cout << ref_out[5][i] << " \t " << ref_out[6][i] << " \t " << endl; 
-    } 
-    wait(2);
-
-    cout << "\nTest OneX" << endl;     
-    cout << "ref_in" << " \t " << "ref_out" << " \t " << endl; 
-    for (int i = 0; i < spec::kNumVectorLanes; i++) {
-      ref_out[7][i] = 1 - ref_out[6][i];
-      cout << ref_out[6][i] << " \t " << ref_out[7][i] << " \t " << endl; 
-    } 
-    wait(2); 
+    wait(100);
    
   }// void run()
 
@@ -199,49 +189,105 @@ SC_MODULE(Dest) {
   sc_in<bool> rst;
   Connections::In<spec::Axi::SubordinateToRVA::Read> rva_out;
   Connections::In<spec::StreamType> output_port; 
+  Connections::In<spec::ActVectorType> expected_output;
   Connections::In<bool> done;
 
   spec::StreamType output_port_dest;
   spec::Axi::SubordinateToRVA::Read rva_out_dest;
+  spec::ActVectorType expected_output_dest;
+
+  int matches = 0;
+  int mismatches = 0;
 
   SC_CTOR(Dest) {
-    SC_THREAD(Pop_rva_out);
-    sensitive << clk.pos();
-    async_reset_signal_is(rst, false);
-    SC_THREAD(PopOutport);
+    SC_THREAD(run);
     sensitive << clk.pos();
     async_reset_signal_is(rst, false);
   }
+
+  void Reset() {
+    rva_out.Reset();
+    output_port.Reset();
+    expected_output.Reset();
+    done.Reset();
+  }
   
-  void Pop_rva_out(){
+  void run() {
+    Reset();
     wait();
     
+    const float kTolerance = 10.0; 
+    const float mseTolerance = 2.0;
+
     while (1) {
       if (rva_out.PopNB(rva_out_dest)) {
-        //cout << hex << sc_time_stamp() << " Dest rva data = " << rva_out_dest.data << endl;
+        cout << hex << sc_time_stamp() << " Dest rva data = " << rva_out_dest.data << endl;
+      }
+      if (output_port.PopNB(output_port_dest) && expected_output.PopNB(expected_output_dest)) {
+        cout << hex << sc_time_stamp() << " output_port data = " << output_port_dest.data << endl;
+        cout << hex << sc_time_stamp() << " expected_output data = " << expected_output_dest << endl;
+        bool match = true;
+        float total_percent_diff = 0.0;
+        float total_diff = 0.0;
+        for (int i = 0; i < spec::kNumVectorLanes; i++) {
+          float actual_float = fixed2float<spec::kActWordWidth, spec::kActNumFrac>(expected_output_dest[i]);
+          float pwl_float = fixed2float<spec::kIntWordWidth, spec::Act::kActOutNumFrac>(output_port_dest.data[i]);
+
+          float diff = std::abs(actual_float - pwl_float);
+          float percent_diff = 0.0;
+          total_diff += diff*diff;
+
+          if (abs(actual_float) < 1){
+            percent_diff = (diff) * 100.0;
+          } else {
+            percent_diff = (diff / std::abs(actual_float)) * 100.0; 
+          }
+          
+          total_percent_diff += percent_diff;
+          
+          /*cout << "Index " << i << ": PWL=" << pwl_float << ", Actual=" << actual_float 
+               << ", Diff=" << diff << ", %Diff=" << percent_diff << "%" << endl;
+
+          if (percent_diff > kTolerance) {
+            match = false;
+            cout << "MISMATCH detected with tolerance " << percent_diff << "%" << endl;
+          }*/
+        }
+        float average_percent_diff = total_percent_diff / spec::kNumVectorLanes;
+        if (average_percent_diff > kTolerance) {
+          match = false;
+        }
+        float average_mse = 100 * total_diff / spec::kNumVectorLanes;
+        if (average_mse > mseTolerance) {
+          match = false;
+        }
+        
+        cout << "\tAverage % Difference: " << average_percent_diff << "%" << endl;
+        cout << "\tMSE %: " << (average_mse) << "%" << endl;
+        if (match) {
+          matches++;
+        } else {
+          mismatches++;
+        }
+      }
+      bool done_val;
+      if (done.PopNB(done_val)) {
+        cout << "\n" << endl;
+        cout << "SIMULATION DONE" << endl;
+        cout << "Matches: " << matches << endl;
+        cout << "Mismatches: " << mismatches << endl;
+        if (mismatches > 0) {
+          cout << "TEST FAILED" << endl;
+        } else {
+          cout << "TEST PASSED" << endl;
+        }
+        sc_stop();
       }
       wait();    
     } // while
-  } //Pop_rva_out
+  } //run
 
-  void PopOutport() {
-   wait();
- 
-   while (1) {
-     if (output_port.PopNB(output_port_dest)) {
-        //cout << hex << sc_time_stamp() << " output_port data = " << output_port_dest.data << endl;
-        cout << "Design Output" << " \t " << endl;
-        for (int i = 0; i < spec::kNumVectorLanes; i++) {
-          AdpfloatType<8,3> tmp(output_port_dest.data[i]);
-          cout << tmp.to_float(4) << endl; 
-        }
-     }
-     wait(); 
-   } // while
-   
-  } //PopOutputport
-
-}; //SC_MODULE Dest
+};
 
 
 SC_MODULE(testbench) {
@@ -253,6 +299,7 @@ SC_MODULE(testbench) {
   Connections::Combinational<spec::Axi::SubordinateToRVA::Write> rva_in;
   Connections::Combinational<spec::Axi::SubordinateToRVA::Read> rva_out;
   Connections::Combinational<spec::StreamType> output_port; 
+  Connections::Combinational<spec::ActVectorType> expected_output;
   
   Connections::Combinational<bool> start;
   Connections::Combinational<bool> done;
@@ -284,11 +331,13 @@ SC_MODULE(testbench) {
 	  source.act_port(act_port);
 		source.rva_in(rva_in);
     source.start(start);
+    source.expected_output(expected_output);
     		
 		dest.clk(clk);
 		dest.rst(rst);
 		dest.rva_out(rva_out);
 		dest.output_port(output_port);
+    dest.expected_output(expected_output);
     dest.done(done);		
     
     SC_THREAD(run);
@@ -314,8 +363,8 @@ SC_MODULE(testbench) {
 
 int sc_main(int argc, char *argv[]) {
   nvhls::set_random_seed();
-  NVINT8 test = 14;
-  cout << fixed2float<8, 3>(test) << endl;
+  /*NVINT8 test = 14;
+  cout << fixed2float<8, 3>(test) << endl;*/
 
   
   testbench tb("tb");

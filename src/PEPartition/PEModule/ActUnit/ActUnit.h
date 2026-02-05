@@ -34,13 +34,11 @@
 #include <ac_math/ac_tanh_pwl.h>
 #include <ArbitratedScratchpadDP.h>
 
-#include "SM6Spec.h"
 #include "AxiSpec.h"
-#include "AdpfloatSpec.h"
-#include "AdpfloatUtils.h"
 #include "ActUnitSpec.h"
+#include "Spec.h"
 
-#include "PPU/PPU.h"
+#include "PPU.h"
 
 // Use terminology OP A2 A1
 class ActUnit : public match::Module {
@@ -135,10 +133,9 @@ class ActUnit : public match::Module {
   /*** change Act Config format ***/
   void DecodeAxiRead(const spec::Axi::SubordinateToRVA::Write& rva_in_reg) {
     NVUINT4 tmp = nvhls::get_slc<4>(rva_in_reg.addr, 20);
-    rva_out_reg.data = 0;
     if (tmp == 0x8) {         // Act Config
       NVUINT8 local_index = nvhls::get_slc<8>(rva_in_reg.addr, 4);
-      act_config.ActConfigRead(local_index, rva_out_reg.data);
+      rva_out_reg.data = act_config.ActConfigRead(local_index);
       //cout << rva_out_reg.data << endl;
     }
     else if (tmp == 0x9) {    // Act buffer
@@ -192,7 +189,7 @@ class ActUnit : public match::Module {
   void CheckStart() {
     bool start_reg;
     if (start.PopNB(start_reg)) {
-      CDCOUT(sc_time_stamp()  << " ActUnit: " << name() << " Start" << endl, kDebugLevel);
+      //CDCOUT(sc_time_stamp()  << " ActUnit: " << name() << " Start" << endl, kDebugLevel);
       is_start = act_config.is_valid && start_reg;
     }
   }
@@ -202,7 +199,7 @@ class ActUnit : public match::Module {
   void DecodeAxi() {
     spec::Axi::SubordinateToRVA::Write rva_in_reg;
     if (rva_in.PopNB(rva_in_reg)) {
-      CDCOUT(sc_time_stamp()  << " Act: " << name() << "RVA Pop " << endl, kDebugLevel);
+      //CDCOUT(sc_time_stamp()  << " Act: " << name() << "RVA Pop " << endl, kDebugLevel);
       if(rva_in_reg.rw) {
         DecodeAxiWrite(rva_in_reg);
       }
@@ -212,7 +209,8 @@ class ActUnit : public match::Module {
       }
     }
   }
-    
+  
+  
   
   void RunInst(ActConfig act_config_in) {
     // lock if recieve AXI request or the ActUnit is not started 
@@ -234,7 +232,9 @@ class ActUnit : public match::Module {
       case 0x2: { // STORE SRAM <- A2 FIXME: Store address is determined by the output_counter + buffer_addr_base
         act_write_addrs[0] = act_config_in.output_counter + act_config_in.buffer_addr_base;
         act_write_req_valid[0] = 1;
-        Fixed2Adpfloat(act_regs[a2], act_write_data[0], act_config_in.adpfloat_bias);
+        for (int i = 0; i < spec::kNumVectorLanes; i++) {
+          act_write_data[0][i] = act_regs[a2][i];
+        }
         break;
       }
       case 0x3: { // INPE act_port -> A2 FIXME: Do not increment instruction if nothing recieved 
@@ -255,18 +255,14 @@ class ActUnit : public match::Module {
         act_regs[a2] = act_regs[a1];
         break;      
       } 
-      case 0x8: { // EADD
+      /*case 0x8: { // EADD
         EAdd(act_regs[a1], act_regs[a2], act_regs[a2]); 
         break;
       }
       case 0x9: { // EMUL
         EMul(act_regs[a1], act_regs[a2], act_regs[a2]); 
         break;
-      }        
-      case 0xA: { // SIGM Sigm(A2) -> A2 
-        Sigmoid(act_regs[a2], act_regs[a2]);
-        break;
-      }
+      }*/        
       case 0xB: { // TANH
         Tanh(act_regs[a2], act_regs[a2]);
         break;
@@ -275,8 +271,12 @@ class ActUnit : public match::Module {
         Relu(act_regs[a2], act_regs[a2]);
         break;
       }
-      case 0xD: { // ONEX
-        OneX(act_regs[a2], act_regs[a2]);
+      case 0xE: { // SILU
+        Silu(act_regs[a2], act_regs[a2]);
+        break;
+      }
+      case 0xF: { // GELU
+        Gelu(act_regs[a2], act_regs[a2]);
         break;
       }
       default: {
@@ -312,7 +312,9 @@ class ActUnit : public match::Module {
       }
       // or convert from Adpfloat to fixed point and load to reg
       else {
-        Adpfloat2Fixed(act_port_read_out[0], act_regs[a2], act_config_in.adpfloat_bias);
+        for (int i = 0; i < spec::kNumVectorLanes; i++) {
+          act_regs[a2][i] = act_port_read_out[0][i];
+        }
       }
     }
   }
@@ -322,10 +324,20 @@ class ActUnit : public match::Module {
     if (w_out) {
       spec::StreamType output_port_reg;
       NVUINT8 curr_inst = act_config_in.InstFetch();
-      NVUINT2 a2 = nvhls::get_slc<2>(curr_inst, 2);     
-      //NVUINT2 a1 = nvhls::get_slc<2>(curr_inst, 0);         
-      // fix2float
-      Fixed2Adpfloat(act_regs[a2], output_port_reg.data, act_config_in.adpfloat_bias);
+      NVUINT2 a2 = nvhls::get_slc<2>(curr_inst, 2);  
+      
+      spec::ActScalarType tmp = 0;
+      spec::Act::kActOutputPortScalar tmp_scalar = 0;
+      spec::Act::kActOutputPortType tmp_output = 0;
+      
+      for (int i = 0; i < spec::kNumVectorLanes; i++) {
+        tmp = act_regs[a2][i];
+        tmp_scalar.set_slc(0, tmp);
+        tmp_output = ConvertToActOutput(tmp_scalar);
+        /*cout << "tmp, tmp_ac_fixed, output_port_reg: " << std::hex << tmp << ", " << std::hex <<  tmp_scalar << ", " 
+          << std::hex << tmp_output << endl;*/
+        output_port_reg.data[i] = nvhls::get_slc<spec::kIntWordWidth>(tmp_output, 0);
+      }
       
       // push output 
       // 0322 this follows the format of GB
@@ -373,7 +385,7 @@ class ActUnit : public match::Module {
         if (is_incr) {
           bool is_end;
           is_end = act_config.InstIncr();  
-          CDCOUT(sc_time_stamp()  << " ActUnit: " << name() << " is_end signal: " << is_end << endl, kDebugLevel);
+          //CDCOUT(sc_time_stamp()  << " ActUnit: " << name() << " is_end signal: " << is_end << endl, kDebugLevel);
            
           // End condition (num_output iterations on instruction is done)
           if (is_end == 1) {
@@ -390,6 +402,4 @@ class ActUnit : public match::Module {
   
 };
 
-
- 
 #endif
