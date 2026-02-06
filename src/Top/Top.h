@@ -48,8 +48,8 @@
 #include <nvhls_array.h>
 #include "Spec.h"
 #include "AxiSpec.h" // AxiSplitter
-#include "PEPartition/PEPartition.h"
 #include "GBPartition/GBPartition.h"
+#include "PEPartition/PEPartition.h"
 #include "DataBus/DataBus.h"
 
 SC_MODULE(Interrupt) {
