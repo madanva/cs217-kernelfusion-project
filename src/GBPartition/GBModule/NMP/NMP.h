@@ -237,6 +237,7 @@ public:
       spec::NMP::FixedType out_fixed = output_fixed[i];
       spec::NMP::InputFixedType out_tmp = ConvertToNmpOutputType(out_fixed);
       write_data[i] = nvhls::get_slc<spec::kIntWordWidth>(out_tmp, 0);
+      //cout << "out_fixed, out_tmp, write_data: " << out_fixed << " " << out_tmp << " " << write_data[i] << endl;
     }
   } // ConvertOutputToInt
 

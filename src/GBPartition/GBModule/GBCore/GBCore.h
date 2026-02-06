@@ -65,7 +65,8 @@ class GBCore : public match::Module {
     RSP_SRAM_CFG = 0x3, // AXI read of SC_SRAM_CONFIG
     RSP_ADDR_CFG = 0x4, // AXI read of address config registers
     RSP_AXI_SRAM = 0x5, // AXI direct SRAM read
-    RSP_NMP      = 0x7  // NMP streaming read response
+    RSP_NMP      = 0x7,  // NMP streaming read response
+    RSP_GBControl = 0x8
   };
 
   // Number of vectors per timestep for each memory region
@@ -132,6 +133,10 @@ public:
   Connections::In<spec::GB::Large::DataReq> nmp_large_req;
   Connections::Out<spec::GB::Large::DataRsp<1>> nmp_large_rsp;
 
+  // GB Control interface
+  Connections::In<spec::GB::Large::DataReq> gbcontrol_large_req;
+  Connections::Out<spec::GB::Large::DataRsp<1>> gbcontrol_large_rsp;
+
   // 32-bit SRAM configuration register
   sc_in<NVUINT32> SC_SRAM_CONFIG;
 
@@ -158,6 +163,9 @@ public:
     rva_out_large.Reset();
     nmp_large_req.Reset();
     nmp_large_rsp.Reset();
+    gbcontrol_large_req.Reset();
+    gbcontrol_large_rsp.Reset();
+
 
     // Reset address mapping registers
 #pragma hls_unroll yes
@@ -214,6 +222,7 @@ public:
         large_write_addrs[0]     = local_index;
         large_write_req_valid[0] = 1;
         large_write_data[0]      = rva_in_reg.data;
+        //cout << "local index and data:" << local_index << " " << rva_in_reg.data << endl;
         break;
       }
       default: {
@@ -337,6 +346,12 @@ public:
         rsp_mode = RSP_NMP;
       }
     }
+    else if (gbcontrol_large_req.PopNB(large_req_reg)){
+      SetLargeBuffer<1>(large_req_reg);
+      if (!large_req_reg.is_write) {
+        rsp_mode = RSP_GBControl;
+      }
+    }
   }
 
   /**
@@ -363,6 +378,11 @@ public:
       case RSP_NMP: {
         large_rsp_reg.read_vector[0] = large_port_read_out[0];
         nmp_large_rsp.Push(large_rsp_reg);
+        break;
+      }
+      case RSP_GBControl: {
+        large_rsp_reg.read_vector[0] = large_port_read_out[0];
+        gbcontrol_large_rsp.Push(large_rsp_reg);
         break;
       }
       // Default: no response this cycle

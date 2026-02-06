@@ -90,6 +90,8 @@ SC_MODULE(Source) {
   sc_in<bool> rst;
   Connections::Out<spec::Axi::SubordinateToRVA::Write> rva_in_large;
   Connections::Out<spec::GB::Large::DataReq> nmp_large_req;
+  Connections::Out<spec::GB::Large::DataReq> gbcontrol_large_req;
+
 
   SC_CTOR(Source) {
     SC_THREAD(run);
@@ -100,6 +102,7 @@ SC_MODULE(Source) {
   void run() {
     rva_in_large.Reset();
     nmp_large_req.Reset();
+    gbcontrol_large_req.Reset();
     wait();
 
     spec::Axi::SubordinateToRVA::Write rva_write;
@@ -166,6 +169,8 @@ SC_MODULE(Dest) {
   Connections::In<spec::Axi::SubordinateToRVA::Read> rva_out_large;
   // NMP read response interface - receives SRAM read data
   Connections::In<spec::GB::Large::DataRsp<1>> nmp_large_rsp;
+  Connections::In<spec::GB::Large::DataRsp<1>> gbcontrol_large_rsp;
+
 
   SC_CTOR(Dest) {
     SC_THREAD(run);
@@ -176,6 +181,7 @@ SC_MODULE(Dest) {
   void run() {
     rva_out_large.Reset();
     nmp_large_rsp.Reset();
+    gbcontrol_large_rsp.Reset();
     wait();
 
     while (1) {
@@ -246,6 +252,11 @@ SC_MODULE(testbench) {
   Connections::Combinational<spec::GB::Large::DataReq> nmp_large_req;
   Connections::Combinational<spec::GB::Large::DataRsp<1>> nmp_large_rsp;
 
+  Connections::Combinational<spec::GB::Large::DataReq> gbcontrol_large_req;
+  Connections::Combinational<spec::GB::Large::DataRsp<1>> gbcontrol_large_rsp;
+
+
+
   // Module instances
   NVHLS_DESIGN(GBCore) dut;
   Source source;
@@ -265,17 +276,23 @@ SC_MODULE(testbench) {
     dut.rva_out_large(rva_out_large);
     dut.nmp_large_req(nmp_large_req);
     dut.nmp_large_rsp(nmp_large_rsp);
+    dut.gbcontrol_large_req(gbcontrol_large_req);
+    dut.gbcontrol_large_rsp(gbcontrol_large_rsp);
     dut.SC_SRAM_CONFIG(sc_sram_config);
 
     source.clk(clk);
     source.rst(rst);
     source.rva_in_large(rva_in_large);
     source.nmp_large_req(nmp_large_req);
+    source.gbcontrol_large_req(gbcontrol_large_req);
+
 
     dest.clk(clk);
     dest.rst(rst);
     dest.rva_out_large(rva_out_large);
     dest.nmp_large_rsp(nmp_large_rsp);
+    dest.gbcontrol_large_rsp(gbcontrol_large_rsp);
+
 
     SC_THREAD(run);
   }

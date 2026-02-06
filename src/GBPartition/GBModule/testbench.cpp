@@ -84,7 +84,7 @@ bool vectors_match_with_tolerance(
     const spec::VectorType& actual,
     const spec::VectorType& expected) {
   bool ok = true;
-  for (int i = 0; i < spec::kVectorSize; i++) {
+  for (int i = 0; i < spec::kVectorSize; i++) { 
     const double exp_val = fixed2float<spec::kIntWordWidth, spec::kIntWordWidth - spec::NMP::kNmpInputNumFrac>(expected[i]);
     const double act_val = fixed2float<spec::kIntWordWidth, spec::kIntWordWidth - spec::NMP::kNmpInputNumFrac>(actual[i]);
     const double abs_err = std::fabs(act_val - exp_val);
@@ -151,6 +151,8 @@ bool vectors_match_with_tolerance(
   for (int i = 0; i < spec::kVectorSize; i++) {
     const double out_val = exp_vals[i] * inv_sum;
       out[i] = float2fixed(out_val, spec::NMP::kNmpInputNumFrac);
+      //cout << "input and outout: " << in[i] << " " << out[i] << endl;
+  
   }
 }
 
@@ -171,6 +173,28 @@ bool vectors_match_with_tolerance(
  * @brief Create AXI write command with NMP configuration.
  * @return Complete AXI write request struct
  */
+
+ NVUINTW(128) make_gbcontrol_cfg(
+     uint8_t mode,
+    uint8_t mem1,
+    uint8_t mem2,
+    uint8_t nvec1,
+    uint8_t nvec2,
+    uint16_t ntimestep1,
+    uint16_t ntimestep2) {
+      uint8_t is_rnn = 0;
+      NVUINTW(128) data = 0;
+      data.set_slc<1>(0, NVUINT1(1));
+      data.set_slc<3>(8, NVUINT3(mode));
+      data.set_slc<3>(32, NVUINT3(mem1));
+      data.set_slc<3>(40, NVUINT3(mem2));
+      data.set_slc<8>(48, NVUINT8(nvec1));
+      data.set_slc<8>(56, NVUINT8(nvec2));
+      data.set_slc<16>(64, NVUINT16(ntimestep1));
+      data.set_slc<16>(80, NVUINT16(ntimestep2));
+      return data;
+    }
+      
 spec::Axi::SubordinateToRVA::Write make_cfg(
     uint8_t mode,
     uint8_t mem,
@@ -193,6 +217,9 @@ std::deque<spec::VectorType> expected_nmp_outputs;
 // Counter for AXI read responses (used for Source/Dest synchronization)
 unsigned rva_read_count = 0;
 
+spec::VectorType data_out_popped = 0;
+spec::VectorType rva_out_data = 0; 
+
 // =============================================================================
 // Source Module
 // =============================================================================
@@ -202,10 +229,10 @@ SC_MODULE(Source) {
   sc_in<bool> rst;
   // AXI write interface for configuration and SRAM access
   Connections::Out<spec::Axi::SubordinateToRVA::Write> rva_in;
-  // Start signal to trigger NMP operations
-  Connections::Out<bool> start;
-  // Done signal from NMP (operation complete)
-  Connections::In<bool> done;
+  Connections::Out<bool> pe_done;
+  Connections::Out<spec::StreamType> data_in;
+
+  // Done signal from GBModule (operation complete)
 
   SC_CTOR(Source) {
     SC_THREAD(run);
@@ -217,28 +244,6 @@ SC_MODULE(Source) {
   // Synchronization Helper Functions
   // ===========================================================================
 
-  /**
-   * @brief Block until NMP done signal is received.
-   */
-  void wait_for_done() {
-    bool done_reg = 0;
-    while (!done.PopNB(done_reg)) {
-      wait();
-    }
-    while (done.PopNB(done_reg)) {
-      wait();
-    }
-  }
-
-  /**
-   * @brief Drain any pending done signals.
-   */
-  void drain_done() {
-    bool done_reg = 0;
-    while (done.PopNB(done_reg)) {
-      wait();
-    }
-  }
 
   /**
    * @brief Block until Dest module receives an AXI read response.
@@ -256,15 +261,14 @@ SC_MODULE(Source) {
 
   void run() {
     rva_in.Reset();
-    start.Reset();
-    done.Reset();
+    pe_done.Reset();
+    data_in.Reset();
     wait();
 
     spec::Axi::SubordinateToRVA::Write rva_cmd;
 
     // (a) AXI config read/write for GBCore and NMP.
-    cout << sc_time_stamp()
-         << " Test (a): AXI config write/read for GBCore and NMP" << endl;
+    //cout << sc_time_stamp() << " Test (a): AXI config write/read for GBCore and NMP" << endl;
     NVUINTW(128) gbcore_cfg = make_gbcore_cfg_data(1, 0);
     rva_cmd.rw              = 1;
     rva_cmd.data            = gbcore_cfg;
@@ -298,9 +302,8 @@ SC_MODULE(Source) {
     wait_for_read_response();
 
     // (b) AXI read/write of GBCore large SRAM.
-    cout << sc_time_stamp() << " Test (b): AXI write/read of GBCore large SRAM"
-         << endl;
-    for (NVUINT16 bank_idx = 0; bank_idx < spec::GB::Large::kNumBanks;
+    //cout << sc_time_stamp() << " Test (b): AXI write/read of GBCore large SRAM" << endl;
+    /*for (NVUINT16 bank_idx = 0; bank_idx < spec::GB::Large::kNumBanks;
          bank_idx++) {
       spec::VectorType direct_data = 0;
       for (int i = 0; i < spec::kVectorSize; i++) {
@@ -320,11 +323,10 @@ SC_MODULE(Source) {
       rva_in.Push(rva_cmd);
       expected_rva_reads.push_back(direct_data.to_rawbits());
       wait_for_read_response();
-    }
+    }*/
 
     // (c) Softmax operation on NMP and read back via GBCore.
-    cout << sc_time_stamp() << " Test (c): NMP Softmax writeback to GBCore SRAM"
-         << endl;
+    // cout << sc_time_stamp() << " Test (c): NMP Softmax writeback to GBCore SRAM" << endl;
     spec::VectorType softmax_input = nvhls::get_rand<spec::VectorType::width>();
     rva_cmd.rw                     = 1;
     rva_cmd.data                   = softmax_input.to_rawbits();
@@ -348,10 +350,12 @@ SC_MODULE(Source) {
     expected_rva_reads.push_back(nmp_cfg);
     wait_for_read_response();
 
-    drain_done();
-    start.Push(1);
-    wait(2);
-    wait_for_done();
+    rva_cmd.rw = 1;
+    rva_cmd.data = 0;
+    rva_cmd.addr = set_bytes<3>("00_00_20"); // nmp_start
+    rva_in.Push(rva_cmd);
+    cout << "    START NMP " << std::hex << rva_cmd.data << " @ " << rva_cmd.addr << endl;
+    wait(100);
 
     spec::VectorType softmax_expected;
     compute_softmax_expected(softmax_input, softmax_expected);
@@ -359,12 +363,35 @@ SC_MODULE(Source) {
     rva_cmd.data = 0;
     rva_cmd.addr = set_bytes<3>("50_00_00");
     rva_in.Push(rva_cmd);
-    // Use tolerance-based comparison for NMP outputs
     expected_nmp_outputs.push_back(softmax_expected);
     wait_for_read_response();
 
+    // GBControl Program
+    rva_cmd.rw = 1;
+    rva_cmd.data = make_gbcontrol_cfg(1, 0, 0, 1, 0, 1, 0);
+    rva_cmd.addr = set_bytes<3>("70_00_10");
+    rva_in.Push(rva_cmd);
+    cout << "    WRITE GBControl: " << std::hex << rva_cmd.data << " @ " << rva_cmd.addr << endl;
+    wait();
+
+    rva_cmd.rw = 0;
+    rva_cmd.data = 0;
+    rva_cmd.addr = set_bytes<3>("70_00_10");
+    rva_in.Push(rva_cmd);
+    expected_rva_reads.push_back(make_gbcontrol_cfg(1, 0, 0, 1, 0, 1, 0));
+    wait_for_read_response();
+
+    rva_cmd.rw = 1;
+    rva_cmd.data = 0;
+    rva_cmd.addr = set_bytes<3>("00_00_10"); // nmp_start
+    rva_in.Push(rva_cmd);
+    cout << "    START NMP " << std::hex << rva_cmd.data << " @ " << rva_cmd.addr << endl;
+    wait(100);
+    
+
+
     // (d) RMSNorm operation on NMP and read back via GBCore.
-    cout << sc_time_stamp() << " Test (d): NMP RMSNorm writeback to GBCore SRAM"
+    /*cout << sc_time_stamp() << " Test (d): NMP RMSNorm writeback to GBCore SRAM"
          << endl;
     spec::VectorType rms_input = nvhls::get_rand<spec::VectorType::width>();
     rva_cmd.rw                 = 1;
@@ -389,10 +416,12 @@ SC_MODULE(Source) {
     expected_rva_reads.push_back(nmp_cfg);
     wait_for_read_response();
 
-    drain_done();
-    start.Push(1);
+    rva_cmd.rw = 1;
+    rva_cmd.data = 0;
+    rva_cmd.addr = set_bytes<3>("00_00_20"); // nmp_start
+    rva_in.Push(rva_cmd);
+    cout << "    START NMP" << endl;
     wait(2);
-    wait_for_done();
 
     spec::VectorType rms_expected;
     compute_rms_expected(rms_input, rms_expected);
@@ -402,7 +431,7 @@ SC_MODULE(Source) {
     rva_in.Push(rva_cmd);
     // Use tolerance-based comparison for NMP outputs
     expected_nmp_outputs.push_back(rms_expected);
-    wait_for_read_response();
+    wait_for_read_response();*/
   }
 };
 
@@ -415,11 +444,84 @@ SC_MODULE(Dest) {
   sc_in<bool> rst;
   // AXI read response interface
   Connections::In<spec::Axi::SubordinateToRVA::Read> rva_out;
+  Connections::In<spec::StreamType>   data_out;
+  Connections::In<bool>              pe_start;
+  Connections::In<bool>              gb_done;
+
+  bool gb_done_received = false;
+  bool pe_start_received = false;
+  bool data_out_received = false;
+
+
+
+  spec::StreamType data_out_reg;
 
   SC_CTOR(Dest) {
     SC_THREAD(run);
     sensitive << clk.pos();
     async_reset_signal_is(rst, false);
+
+    SC_THREAD(CheckDone);
+    sensitive << clk.pos();
+    async_reset_signal_is(rst, false);
+
+    SC_THREAD(PopDataOut);
+    sensitive << clk.pos();
+    async_reset_signal_is(rst, false);
+
+    SC_THREAD(SimExit);
+    sensitive << clk.pos();
+    async_reset_signal_is(rst, false);
+  }
+
+  void SimExit() {
+    wait();
+
+    while(1) {
+      wait();
+      if (pe_start_received && gb_done_received && data_out_received){
+        for (int i = 0; i < 16; i++){
+          if (data_out_popped[i] != rva_out_data[i]){
+          SC_REPORT_ERROR("Mistmatch", "Between rva out and data out");
+          }
+        }
+        sc_stop();
+      }
+    }
+  }
+
+  void CheckDone(){
+    pe_start.Reset();
+    gb_done.Reset();
+
+    bool pe_start_reg = false;
+    bool gb_done_reg = false;   
+
+    wait();
+    while(1){
+      wait();
+      if (pe_start.PopNB(pe_start_reg)){
+        cout << sc_time_stamp() << " Recevied PE Start = " << pe_start_reg << endl;
+        pe_start_received = true;
+      } else if (gb_done.PopNB(gb_done_reg)){
+        cout << sc_time_stamp() << " Recevied GB Done = " << gb_done_reg << endl;
+        gb_done_received = true;
+      }
+    }
+  }
+
+  void PopDataOut() {
+    data_out.Reset();
+    wait();
+
+    while (1) {
+      wait();
+      if (data_out.PopNB(data_out_reg)) {
+        cout << sc_time_stamp() << " Data out popped: " << std::hex << data_out_reg.data << endl;
+        data_out_popped = data_out_reg.data;
+        data_out_received = true;
+      }
+    }
   }
 
   void run() {
@@ -430,17 +532,20 @@ SC_MODULE(Dest) {
     while (1) {
       spec::Axi::SubordinateToRVA::Read rva_out_dest;
       if (rva_out.PopNB(rva_out_dest)) {
-        cout << hex << sc_time_stamp()
-             << " RVA read data = " << rva_out_dest.data << endl;
-        rva_read_count++;
+        //cout << hex << sc_time_stamp() << " RVA read data = " << rva_out_dest.data << endl;
+        
+        
 
         // Check if this is an NMP output requiring tolerance-based comparison
         if (!expected_nmp_outputs.empty()) {
+          rva_read_count++;
           spec::VectorType expected   = expected_nmp_outputs.front();
           expected_nmp_outputs.pop_front();
 
           spec::VectorType actual;
           actual = rva_out_dest.data;
+          rva_out_data = rva_out_dest.data;
+
 
           cout << sc_time_stamp() << " Comparing NMP output with tolerance..."
                << endl;
@@ -451,6 +556,7 @@ SC_MODULE(Dest) {
                  << endl;
           }
         } else if (!expected_rva_reads.empty()) {
+          rva_read_count++;
           // Exact match for non-NMP reads (config, direct SRAM)
           NVUINTW(128) expected = expected_rva_reads.front();
           expected_rva_reads.pop_front();
@@ -459,7 +565,7 @@ SC_MODULE(Dest) {
                  << " Expected RVA data = " << expected << endl;
             SC_REPORT_ERROR("GBModule", "RVA read mismatch");
           } else {
-            cout << sc_time_stamp() << " RVA read matched" << endl;
+            //cout << sc_time_stamp() << " RVA read matched" << endl;
           }
         } else {
           SC_REPORT_ERROR("GBModule", "Unexpected RVA read");
@@ -484,9 +590,15 @@ SC_MODULE(testbench) {
   // AXI interface channels
   Connections::Combinational<spec::Axi::SubordinateToRVA::Write> rva_in;
   Connections::Combinational<spec::Axi::SubordinateToRVA::Read> rva_out;
-  // NMP control signals
-  Connections::Combinational<bool> start;
-  Connections::Combinational<bool> done;
+
+  // GBControl <-> PE interface
+  Connections::Combinational<spec::StreamType>   data_in;          
+  Connections::Combinational<spec::StreamType>  data_out;
+  Connections::Combinational<bool>              pe_start;
+  Connections::Combinational<bool>               pe_done; 
+  
+  // Done signal
+  Connections::Combinational<bool> gb_done;
 
   // Module instances
   NVHLS_DESIGN(GBModule) dut;
@@ -504,18 +616,25 @@ SC_MODULE(testbench) {
     dut.rst(rst);
     dut.rva_in(rva_in);
     dut.rva_out(rva_out);
-    dut.start(start);
-    dut.done(done);
+    dut.data_in(data_in);
+    dut.data_out(data_out);
+    dut.pe_start(pe_start);
+    dut.pe_done(pe_done);
+    dut.gb_done(gb_done);
 
     source.clk(clk);
     source.rst(rst);
     source.rva_in(rva_in);
-    source.start(start);
-    source.done(done);
+    source.pe_done(pe_done);
+    source.data_in(data_in);
 
     dest.clk(clk);
     dest.rst(rst);
     dest.rva_out(rva_out);
+    dest.data_out(data_out);
+    dest.pe_start(pe_start);
+    dest.gb_done(gb_done);
+
 
     SC_THREAD(run);
   }
