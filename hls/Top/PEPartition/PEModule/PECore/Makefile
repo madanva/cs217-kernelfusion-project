@@ -13,7 +13,7 @@
 # limitations under the License.
 
 ROOT := ../../../../..
-SRC_PATH := $(ROOT)/src/PEPartition/PEModule
+SRC_PATH := $(ROOT)/src/Top/PEPartition/PEModule
 SYSTEMC_DESIGN := 1
 COMPILER_FLAGS := HLS_ALGORITHMICC
 CLK_PERIOD := 4.0

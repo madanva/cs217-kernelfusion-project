@@ -13,7 +13,7 @@
 # limitations under the License.
 
 ROOT := ../../../..
-SRC_PATH := $(ROOT)/src/GBPartition
+SRC_PATH := $(ROOT)/src/Top/GBPartition
 SYSTEMC_DESIGN := 1
 COMPILER_FLAGS := HLS_ALGORITHMICC
 CLK_PERIOD := 4.0
