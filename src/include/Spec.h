@@ -75,6 +75,8 @@ namespace spec {
   // AttentionVectorType has the same width as the VectorType
   typedef typename nvhls::nv_scvector<AttentionScalarType, kNumVectorLanes / 4>
       AttentionVectorType;
+  
+  const int kGlobalTriggerDelay = 10; 
 
   // Standard datatype for streaming protacol between GB and PEs 
   // data: VectorType

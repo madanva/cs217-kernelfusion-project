@@ -27,7 +27,7 @@
 #include <nvhls_vector.h>
 #include <nvhls_module.h>
 
-#include "SM6Spec.h"
+#include "Spec.h"
 #include "AxiSpec.h"
 
 #include "GBModule/GBModule.h"
@@ -42,7 +42,7 @@ SC_MODULE(GBPartition) {
   // TODO #1: 
   // Note - Take PEPartition.h and testbench.cpp as reference
   // 1. Define the ports for the GBPartition module. This includes the AXI subordinate interface,
-  //    the `done` signal, and dataflow channels for PE communication (`data_in`, `data_out`, `pe_start`, `pe_done`).
+  //    the `gb_done` signal, and dataflow channels for PE communication (`data_in`, `data_out`, `pe_start`, `pe_done`).
   // 2. Instantiate the `GBModule` and the AXI-to-RVA converter (`spec::Axi::SubordinateToRVA`).
   // 3. Create internal RVA channels to connect the two instances.
   // 4. In the constructor, connect the ports of the instantiated modules.
@@ -51,7 +51,7 @@ SC_MODULE(GBPartition) {
 
   /////////////// YOUR CODE STARTS HERE ///////////////
 
-  Connections::Out<bool> done;
+  Connections::Out<bool> gb_done;
   
   // AXI subordinate read write
   typename spec::Axi::axi4_::read::template subordinate<>   if_axi_rd;
@@ -90,7 +90,7 @@ SC_MODULE(GBPartition) {
     gbmodule_inst.rst(rst);    
     gbmodule_inst.rva_in(rva_in);
     gbmodule_inst.rva_out(rva_out);
-    gbmodule_inst.done(done);  
+    gbmodule_inst.gb_done(gb_done);  
     gbmodule_inst.data_in(data_in);          
     gbmodule_inst.data_out(data_out);
     gbmodule_inst.pe_start(pe_start);

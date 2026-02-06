@@ -34,10 +34,8 @@
 #include <queue>
 
 #include "axi/testbench/ManagerFromFile.h"
-#include "SM6Spec.h"
+#include "Spec.h"
 #include "AxiSpec.h"
-#include "AdpfloatSpec.h"
-#include "AdpfloatUtils.h"
 
 #include "helper.h"
 #include "Top.h"

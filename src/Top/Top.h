@@ -46,7 +46,7 @@
 #include <nvhls_vector.h>
 #include <nvhls_module.h>
 #include <nvhls_array.h>
-#include "SM6Spec.h"
+#include "Spec.h"
 #include "AxiSpec.h" // AxiSplitter
 #include "PEPartition/PEPartition.h"
 #include "GBPartition/GBPartition.h"
@@ -194,7 +194,7 @@ SC_MODULE(Top){
     /////////////// YOUR CODE STARTS HERE ///////////////
     gb_inst.clk(clk);
     gb_inst.rst(rst);      
-    gb_inst.done(gb_done);
+    gb_inst.gb_done(gb_done);
     gb_inst.if_axi_rd.ar(axi_rd_c_ar[0]);
     gb_inst.if_axi_rd.r (axi_rd_c_r [0]);        
     gb_inst.if_axi_wr.aw(axi_wr_c_aw[0]);

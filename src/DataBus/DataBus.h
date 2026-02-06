@@ -28,7 +28,7 @@
 #include <nvhls_module.h>
 #include <arbitrated_crossbar.h>
 
-#include "SM6Spec.h"
+#include "Spec.h"
 #include "AxiSpec.h"
 
 // kNumPE = 8

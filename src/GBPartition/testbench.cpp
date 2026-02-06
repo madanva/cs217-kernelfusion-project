@@ -35,10 +35,8 @@
 #include <queue>
 
 #include "axi/testbench/ManagerFromFile.h"
-#include "SM6Spec.h"
+#include "Spec.h"
 #include "AxiSpec.h"
-#include "AdpfloatSpec.h"
-#include "AdpfloatUtils.h"
 
 #include "helper.h"
 #include "GBPartition.h"
@@ -116,18 +114,15 @@ SC_MODULE(Dest) {
    wait();
  
    while (1) {
-     if (data_out.PopNB(data_out_dest)) {
-        //cout << hex << sc_time_stamp() << " data_out data = " << data_out_dest.data << endl;
-        cout << sc_time_stamp() << " Design data_out result: " << std::hex << " " << data_out_dest.data << endl;
-        cout << "adp float values: ";
-        for (int i = 0; i < spec::kNumVectorLanes; i++) {
-          AdpfloatType<8,3> tmp(data_out_dest.data[i]);
-          cout << tmp.to_float(2) << " "; 
-        }
-        cout << endl;
-        done_PopOutport = true;
-     }
-     wait(); 
+    if (done_PopDone){
+      if (data_out.PopNB(data_out_dest)) {
+          //cout << hex << sc_time_stamp() << " data_out data = " << data_out_dest.data << endl;
+          cout << sc_time_stamp() << " Design data_out result: " << std::hex << " " << data_out_dest.data << endl;
+          done_PopOutport = true;
+      }
+    }
+    wait(); 
+
    } // while
    
   } //PopOutputport
@@ -218,7 +213,7 @@ SC_MODULE(testbench) {
     dut.data_in(data_in);
     dut.data_out(data_out);
     dut.pe_done(pe_done);
-    dut.done(done);
+    dut.gb_done(done);
     dut.pe_start(pe_start);
 
     master.clk(clk);
