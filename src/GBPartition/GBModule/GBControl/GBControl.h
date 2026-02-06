@@ -74,6 +74,10 @@ class GBControl : public match::Module {
   Connections::Out<bool> pe_start;
   Connections::In<bool>  pe_done;
 
+  spec::GB::Large::DataReq large_req_reg;
+  spec::GB::Large::DataRsp<1> large_rsp_reg;
+
+
   // Constructor
   GBControl (sc_module_name nm)
       : match::Module(nm),
@@ -192,19 +196,17 @@ class GBControl : public match::Module {
         if (gbcontrol_config.mode == 1 || gbcontrol_config.mode == 2) timestep_index = timestep_index >> 1;
         
         //XXX: use GB control version of GetTimestepIndex, the func is controlled by config.mode
-        spec::GB::Large::DataReq large_req_reg;
+        
         large_req_reg.is_write = 0;
         large_req_reg.memory_index = memory_index;
         large_req_reg.vector_index = vector_index;
         large_req_reg.timestep_index = timestep_index;
         //cout << "large_req_reg.vector_index: " << large_req_reg.vector_index << "\t large_req_reg.timestep_index: " << large_req_reg.timestep_index << endl;
-        large_req.Push(large_req_reg);
         break;
       }
       case SEND2: {
         spec::StreamType data_out_reg;
         NVUINT8  vector_index = gbcontrol_config.GetVectorIndex();
-        spec::GB::Large::DataRsp<1> large_rsp_reg;
         large_rsp_reg = large_rsp.Pop();
         
         data_out_reg.data = large_rsp_reg.read_vector[0];
@@ -225,13 +227,11 @@ class GBControl : public match::Module {
         if (data_in.PopNB(data_in_reg)) {
           NVUINT3  memory_index = gbcontrol_config.memory_index_2;
           NVUINT16 timestep_index = gbcontrol_config.GetTimestepIndexGBControl();
-          spec::GB::Large::DataReq large_req_reg;
           large_req_reg.is_write = 1;
           large_req_reg.memory_index = memory_index;
           large_req_reg.vector_index = data_in_reg.logical_addr;
           large_req_reg.timestep_index = timestep_index;
           large_req_reg.write_data = data_in_reg.data;
-          large_req.Push(large_req_reg);
           CDCOUT(sc_time_stamp() << name() << " CASE RECV " << endl, kDebugLevel);
         }
         break;
@@ -244,12 +244,10 @@ class GBControl : public match::Module {
         NVUINT8  vector_index = gbcontrol_config.GetVectorIndex();
         NVUINT16 timestep_index = gbcontrol_config.GetTimestepIndexGBControl();
         
-        spec::GB::Large::DataReq large_req_reg;
         large_req_reg.is_write = 0;
         large_req_reg.memory_index = memory_index;
         large_req_reg.vector_index = vector_index;
         large_req_reg.timestep_index = timestep_index;
-        large_req.Push(large_req_reg);
         break;
       }
       case SENDBACK2: {
@@ -296,6 +294,7 @@ class GBControl : public match::Module {
         break;
       }
       case SEND: {
+        large_req.Push(large_req_reg);
         next_state = SEND2;
         break;
       }
@@ -320,6 +319,7 @@ class GBControl : public match::Module {
       case RECV: {
         // wait for Done while recieving data from PE and forward it to GB
         bool pe_done_reg;
+        large_req.Push(large_req_reg);
         if (pe_done.PopNB(pe_done_reg)) {
           if (gbcontrol_config.is_rnn) {
             next_state = SENDBACK;
@@ -334,6 +334,8 @@ class GBControl : public match::Module {
         break;
       }
       case SENDBACK: {
+        large_req.Push(large_req_reg);
+
         next_state = SENDBACK2;
         break;
       }
