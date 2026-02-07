@@ -36,7 +36,9 @@ namespace eval nvhls {
         set_compiler_flags $HLS_CATAPULT $COMPILER_FLAGS
         usercmd_pre_analyze
         set_bup_blocks BUP_BLOCKS
-        load_bup_blocks_pre $BUP_BLOCKS
+        echo "I am after set_bup_blocks"
+        load_bup_blocks_pre $BUP_BLOCKS $TOP_NAME
+        echo "I am before go analuse"
         go analyze
         setup_libs
         setup_clocks $CLK_PERIOD
@@ -146,15 +148,58 @@ namespace eval nvhls {
         #global BUP_BLOCKS
         #set BUP_BLOCKS {}
     }
-    proc load_bup_blocks_pre {BUP_BLOCKS} {
+    proc load_bup_blocks_pre {BUP_BLOCKS TOP_NAME} {
         echo "load_bup_blocks_pre  $BUP_BLOCKS"
-        foreach bup_block $BUP_BLOCKS {
-            if {[file isdirectory ./${bup_block}/Catapult]} {
-                echo "loading $bup_block"
-                solution options set ComponentLibs/SearchPath [exec readlink -f ./${bup_block}/Catapult] -append
-                solution library add "\[Block\] ${bup_block}.v1"
-            }
-        }
+
+
+
+        solution options set ComponentLibs/SearchPath [exec readlink -f ./PEPartition/PEModule/PECore/Catapult] -append
+        solution library add "\[Block\] PECore.v1"
+
+        solution options set ComponentLibs/SearchPath [exec readlink -f ./PEPartition/PEModule/ActUnit/Catapult] -append
+        solution library add "\[Block\] ActUnit.v1"
+
+        solution options set ComponentLibs/SearchPath [exec readlink -f ./PEPartition/PEModule/Catapult] -append
+        solution library add "\[Block\] PEModule.v1"
+
+        solution options set ComponentLibs/SearchPath [exec readlink -f ./PEPartition/Catapult] -append
+        solution library add "\[Block\] PEPartition.v1"
+
+        solution options set ComponentLibs/SearchPath [exec readlink -f ./GBPartition/GBModule/NMP/Catapult] -append
+        solution library add "\[Block\] NMP.v1"
+
+        solution options set ComponentLibs/SearchPath [exec readlink -f ./GBPartition/GBModule/GBCore/Catapult] -append
+        solution library add "\[Block\] GBCore.v1"
+
+        solution options set ComponentLibs/SearchPath [exec readlink -f ./GBPartition/GBModule/GBControl/Catapult] -append
+        solution library add "\[Block\] GBControl.v1"
+
+        solution options set ComponentLibs/SearchPath [exec readlink -f ./GBPartition/GBModule/Catapult] -append
+        solution library add "\[Block\] GBModule.v1"
+
+        solution options set ComponentLibs/SearchPath [exec readlink -f ./GBPartition/Catapult] -append
+        solution library add "\[Block\] GBPartition.v1"
+
+
+
+
+
+
+
+        #TODO make if if TOP or else for both this and next one
+
+
+        #foreach bup_block $BUP_BLOCKS {
+        #echo "trying to loading $bup_block"
+
+        #    if {[file isdirectory ./${bup_block}/Catapult]} {
+        #        echo "loading $bup_block"
+        #        solution options set ComponentLibs/SearchPath [exec readlink -f ./${bup_block}/Catapult] -append
+        #        echo "stuck here"
+        #        solution library add "\[Block\] ${bup_block}.v1"
+        #    }
+        #}
+        #echo "done"
     }
 
     proc load_bup_blocks_post {TOP_NAME BUP_BLOCKS} {
@@ -163,7 +208,8 @@ namespace eval nvhls {
                 directive set /${TOP_NAME}/${bup_block} -MAP_TO_MODULE "\[Block\] ${bup_block}.v1"
             }
         }
-    }
+
+   }
 
 
     proc usercmd_pre_analyze {} {}

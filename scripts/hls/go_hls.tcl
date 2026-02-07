@@ -17,7 +17,7 @@ source $env(HLS_SCRIPTS)/nvhls_exec.tcl
 namespace eval nvhls {
     proc set_bup_blocks {BUP_BLOCKS} {
       upvar 1 $BUP_BLOCKS MY_BLOCKS
-      set MY_BLOCKS {"PEPartition"  "PEModule" "PECore" "ActUnit" "GBPartition" "GBModule" "NMP" "GBCore" "GBControl"}
+      set MY_BLOCKS {"PEPartition" "PEModule" "PECore" "ActUnit" "GBPartition" "GBModule" "NMP" "GBCore" "GBControl"}
     }
 
 }
