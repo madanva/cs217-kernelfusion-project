@@ -16,11 +16,10 @@
 // ============================================================================
 
 //====================================================================================
-// Top level module file for design_top - GBModule wrapper for AWS F2
+// Top level module file for design_top - Top module wrapper for AWS F2
 //====================================================================================
 
 `include "./concat_Top.v"
-`include "./counter.v"
 
 module design_top
   #(
@@ -30,8 +29,6 @@ module design_top
    (
 `include "cl_ports.vh"
    );
-
-
 
 `include "design_top_defines.vh"
 `include "cl_id_defines.vh"
@@ -51,99 +48,46 @@ module design_top
   logic [1:0]   axil_rresp_m;
   logic         axil_rvalid_m, axil_rready_m;
 
-  // ---------- GBModule RVA channels ----------
-  // rva_in: data(128) + addr(24) + wstrb(16) + rw(1) = 169 bits
-  logic         rvain_vld,  rvain_rdy;
-  logic [168:0] rvain_dat;
+  // ---------- Top module AXI-like interface signals ----------
+  logic rst_main;
+  assign rst_main = ~rst_main_n;
 
-  // rva_out: 128 bits
-  logic         rvaout_vld, rvaout_rdy;
-  logic [127:0] rvaout_dat;
-
-  // ---------- GBModule start/done ----------
-  logic         start_vld, start_rdy;
-  logic         start_dat;
-
-  logic         done_vld, done_rdy, done_dat;
-
-  //==============================
-  // Simple counter Instantiation
-  //==============================
-  logic [31:0] data_transfer_cycles;
-  logic [31:0] compute_cycles;
-
-  logic transfer_en, compute_en;
-  assign compute_en = start_reg & ~done_received;
-
-  counter #(.WIDTH(32)) u_data_transfer_counter (
-            .clk (clk_main_a0),
-            .rst_n (rst_main_n),
-            .en (transfer_en),
-            .q (data_transfer_cycles)
-          );
-
-  counter #(.WIDTH(32)) u_compute_counter (
-            .clk (clk_main_a0),
-            .rst_n (rst_main_n),
-            .en (compute_en),
-            .q (compute_cycles)
-          );
+  logic interrupt;
+  logic if_axi_rd_ar_vld, if_axi_rd_ar_rdy;
+  logic [49:0] if_axi_rd_ar_dat;
+  logic if_axi_rd_r_vld, if_axi_rd_r_rdy;
+  logic [140:0] if_axi_rd_r_dat;
+  logic if_axi_wr_aw_vld, if_axi_wr_aw_rdy;
+  logic [49:0] if_axi_wr_aw_dat;
+  logic if_axi_wr_w_vld, if_axi_wr_w_rdy;
+  logic [144:0] if_axi_wr_w_dat;
+  logic if_axi_wr_b_vld, if_axi_wr_b_rdy;
+  logic [11:0] if_axi_wr_b_dat;
 
   //==============================
-  // GBModule instance
+  // Top module instance
   //==============================
+  Top u_top (
+      .clk(clk_main_a0),
+      .rst(rst_main),
+      .interrupt(interrupt),
+      .if_axi_rd_ar_vld(if_axi_rd_ar_vld),
+      .if_axi_rd_ar_rdy(if_axi_rd_ar_rdy),
+      .if_axi_rd_ar_dat(if_axi_rd_ar_dat),
+      .if_axi_rd_r_vld(if_axi_rd_r_vld),
+      .if_axi_rd_r_rdy(if_axi_rd_r_rdy),
+      .if_axi_rd_r_dat(if_axi_rd_r_dat),
+      .if_axi_wr_aw_vld(if_axi_wr_aw_vld),
+      .if_axi_wr_aw_rdy(if_axi_wr_aw_rdy),
+      .if_axi_wr_aw_dat(if_axi_wr_aw_dat),
+      .if_axi_wr_w_vld(if_axi_wr_w_vld),
+      .if_axi_wr_w_rdy(if_axi_wr_w_rdy),
+      .if_axi_wr_w_dat(if_axi_wr_w_dat),
+      .if_axi_wr_b_vld(if_axi_wr_b_vld),
+      .if_axi_wr_b_rdy(if_axi_wr_b_rdy),
+      .if_axi_wr_b_dat(if_axi_wr_b_dat)
+  );
 
-  logic [168:0] rvain_dat_sig;
-  logic start_reg;
-  logic done_received;
-
-  GBModule u_gbmodule (
-           .clk             (clk_main_a0),
-           .rst             (rst_main_n),         
-
-           // RVA in/out
-           .rva_in_vld      (rvain_vld),
-           .rva_in_rdy      (rvain_rdy),
-           .rva_in_dat      (rvain_dat),
-           .rva_out_vld     (rvaout_vld),
-           .rva_out_rdy     (rvaout_rdy),
-           .rva_out_dat     (rvaout_dat),
-
-           // Start/done handshake
-           .start_vld       (start_vld),
-           .start_rdy       (start_rdy),
-           .start_dat       (start_dat),
-           .done_vld        (done_vld),
-           .done_rdy        (done_rdy),
-           .done_dat        (done_dat)
-         );
-/*
-module Top (
-  clk, rst, interrupt, if_axi_rd_ar_vld, if_axi_rd_ar_rdy, if_axi_rd_ar_dat, if_axi_rd_r_vld,
-      if_axi_rd_r_rdy, if_axi_rd_r_dat, if_axi_wr_aw_vld, if_axi_wr_aw_rdy, if_axi_wr_aw_dat,
-      if_axi_wr_w_vld, if_axi_wr_w_rdy, if_axi_wr_w_dat, if_axi_wr_b_vld, if_axi_wr_b_rdy,
-      if_axi_wr_b_dat
-);
-  input clk;
-  input rst;
-  output interrupt;
-  input if_axi_rd_ar_vld;
-  output if_axi_rd_ar_rdy;
-  input [49:0] if_axi_rd_ar_dat;
-  output if_axi_rd_r_vld;
-  input if_axi_rd_r_rdy;
-  output [140:0] if_axi_rd_r_dat;
-  input if_axi_wr_aw_vld;
-  output if_axi_wr_aw_rdy;
-  input [49:0] if_axi_wr_aw_dat;
-  input if_axi_wr_w_vld;
-  output if_axi_wr_w_rdy;
-  input [144:0] if_axi_wr_w_dat;
-  output if_axi_wr_b_vld;
-  input if_axi_wr_b_rdy;
-  output [11:0] if_axi_wr_b_dat;
-
-*/
   //=============================================================================
   // GLOBALS
   //=============================================================================
@@ -233,7 +177,7 @@ module Top (
                            );
 
   //=============================================================================
-  // AXI-Lite to internal logic (simple decoder + RVA bridge for GBModule)
+  // AXI-Lite to Top module bridge
   //=============================================================================
   // Simple AXI-Lite slave accepting one write/read at a time
   // Write channel bookkeeping
@@ -249,8 +193,11 @@ module Top (
   assign axil_awready_m = ~wr_aw_captured && axi_ready;
   assign axil_wready_m  = ~wr_w_captured && axi_ready;
 
+  // BRESP/valid generation - Write path for Top module
+  logic [WIDTH_TOP_AXI_AW-1:0] top_aw_dat_sig;
+  logic [WIDTH_TOP_AXI_W-1:0]  top_w_dat_sig;
+  logic [WIDTH_TOP_AXI_AR-1:0] top_ar_dat_sig;
 
-  // BRESP/valid generation - Write path for GBModule
   always_ff @(posedge clk_main_a0 or negedge rst_main_n) begin
     if (!rst_main_n) begin
       wr_aw_captured <= 1'b0;
@@ -260,17 +207,9 @@ module Top (
       axil_bvalid_m  <= 1'b0;
       axil_bresp_m   <= 2'b00;
 
-      // RVA in defaults (169-bit for GBModule)
-      rvain_dat_sig      <= '0;
-      rvain_dat          <= '0;
-      rvain_vld          <= 1'b0;
-
-      // Start defaults
-      start_dat         <= 1'b0;
-      start_vld         <= 1'b0;
-      start_reg         <= 1'b0;
-
-      transfer_en <= 1'b0;
+      if_axi_wr_aw_vld <= 1'b0;
+      if_axi_wr_w_vld  <= 1'b0;
+      if_axi_rd_ar_vld <= 1'b0;
 
       axi_ready <= 1'b1;
 
@@ -287,64 +226,79 @@ module Top (
 
       // Fire a write when both parts captured and no BRESP pending
       if (wr_aw_captured && wr_w_captured && !axil_bvalid_m) begin
-        // GBModule RVA input: 169 bits = 6 words (LOOP_RVA_IN = 6)
-        for (int i = 0; i < LOOP_RVA_IN; i++) begin 
-            if (wr_addr_q == (ADDR_RVA_IN_START + i*4)) begin
-              if (i == LOOP_RVA_IN - 1) begin // Last write (word 5)
-                // Word 5 contains bits [191:160], but we only need [168:160] = 9 bits
-                rvain_dat_sig[168:160] <= wr_data_q[8:0];
-                rvain_dat <= {wr_data_q[8:0], rvain_dat_sig[159:0]};
-                rvain_vld <= 1'b1;
+        
+        // AXI Write Address Channel
+        for (int i = 0; i < LOOP_TOP_AXI_AW; i++) begin 
+            if (wr_addr_q == (ADDR_TOP_AXI_AW_START + i*4)) begin
+              top_aw_dat_sig[(i+1)*32-1 -: 32] <= wr_data_q;
+              if (i == LOOP_TOP_AXI_AW - 1) begin
+                if_axi_wr_aw_dat <= top_aw_dat_sig;
+                if_axi_wr_aw_vld <= 1'b1;
                 axi_ready <= 1'b0;
-              end
-              else begin
-                  rvain_dat_sig[(i+1)*32-1 -: 32] <= wr_data_q;
-                  axi_ready <= 1'b1;
               end
             end
         end
 
-        unique case (wr_addr_q)
-          ADDR_START_CFG: begin
-            start_dat <= wr_data_q[0];
-            start_vld <= 1'b1;
-            start_reg <= wr_data_q[0];
-            axi_ready <= 1'b0;
-          end
-          ADDR_TX_COUNTER_EN: begin
-            transfer_en <= wr_data_q[0];
-            axi_ready <= 1'b1;
-          end
-          default: begin
-          end
-        endcase
+        // AXI Write Data Channel
+        for (int i = 0; i < LOOP_TOP_AXI_W; i++) begin 
+            if (wr_addr_q == (ADDR_TOP_AXI_W_START + i*4)) begin
+              top_w_dat_sig[(i+1)*32-1 -: 32] <= wr_data_q;
+              if (i == LOOP_TOP_AXI_W - 1) begin
+                if_axi_wr_w_dat <= top_w_dat_sig;
+                if_axi_wr_w_vld <= 1'b1;
+                axi_ready <= 1'b0;
+              end
+            end
+        end
+
+        // AXI Read Address Channel
+        for (int i = 0; i < LOOP_TOP_AXI_AR; i++) begin 
+            if (wr_addr_q == (ADDR_TOP_AXI_AR_START + i*4)) begin
+              top_ar_dat_sig[(i+1)*32-1 -: 32] <= wr_data_q;
+              if (i == LOOP_TOP_AXI_AR - 1) begin
+                if_axi_rd_ar_dat <= top_ar_dat_sig;
+                if_axi_rd_ar_vld <= 1'b1;
+                axi_ready <= 1'b0;
+              end
+            end
+        end
+
         wr_aw_captured <= 1'b0;
         wr_w_captured  <= 1'b0;
         axil_bvalid_m  <= 1'b1;
       end
 
-      else if (rvain_rdy && rvain_vld && ~axil_bvalid_m) begin
-        rvain_vld <= 1'b0;
+      // Handle ready signals
+      if (if_axi_wr_aw_vld && if_axi_wr_aw_rdy) begin
+        if_axi_wr_aw_vld <= 1'b0;
         axi_ready <= 1'b1;
       end
-      
-      else if (start_rdy && start_vld) begin
-        start_vld <= 1'b0;
+      if (if_axi_wr_w_vld && if_axi_wr_w_rdy) begin
+        if_axi_wr_w_vld <= 1'b0;
+        axi_ready <= 1'b1;
+      end
+      if (if_axi_rd_ar_vld && if_axi_rd_ar_rdy) begin
+        if_axi_rd_ar_vld <= 1'b0;
         axi_ready <= 1'b1;
       end
 
-      else if (axil_bvalid_m && axil_bready_m) begin
+      if (axil_bvalid_m && axil_bready_m) begin
         axil_bvalid_m <= 1'b0;
       end
     end
   end
 
-  logic [127:0] rvaout_dat_q;
-  logic rva_valid_q;
+  logic [WIDTH_TOP_AXI_R-1:0] top_r_dat_q;
+  logic top_r_valid_q;
+  logic [WIDTH_TOP_AXI_B-1:0] top_b_dat_q;
+  logic top_b_valid_q;
 
-  // Helper function to check if address is in RVA output range
-  function automatic logic is_rva_out_addr(input logic [15:0] addr);
-    return (addr >= ADDR_RVA_OUT_START) && (addr < (ADDR_RVA_OUT_START + LOOP_RVA_OUT*4));
+  // Helper functions to check address ranges
+  function automatic logic is_top_r_addr(input logic [15:0] addr);
+    return (addr >= ADDR_TOP_AXI_R_START) && (addr < (ADDR_TOP_AXI_R_START + LOOP_TOP_AXI_R*4));
+  endfunction
+  function automatic logic is_top_b_addr(input logic [15:0] addr);
+    return (addr >= ADDR_TOP_AXI_B_START) && (addr < (ADDR_TOP_AXI_B_START + LOOP_TOP_AXI_B*4));
   endfunction
 
   // AXI-Lite read handshake: respond in-place
@@ -355,63 +309,69 @@ module Top (
       axil_rdata_m   <= 32'h0;
       axil_rresp_m   <= 2'b00;
 
-      done_rdy <= 1'b1;
-      done_received <= 1'b0;
+      if_axi_rd_r_rdy <= 1'b1;
+      if_axi_wr_b_rdy <= 1'b1;
 
-      rvaout_rdy <= 1'b1; 
-      rvaout_dat_q <= '0;
-      rva_valid_q <= 1'b0;
+      top_r_dat_q <= '0;
+      top_r_valid_q <= 1'b0;
+      top_b_dat_q <= '0;
+      top_b_valid_q <= 1'b0;
 
     end else begin
-
-      // Capture done signal from GBModule
-      if (done_rdy && done_vld) begin
-        done_rdy <= 1'b0;
-        done_received <= done_dat;
+      // Capture data from Top module
+      if (if_axi_rd_r_vld && if_axi_rd_r_rdy) begin
+        top_r_dat_q <= if_axi_rd_r_dat;
+        if_axi_rd_r_rdy <= 1'b0; 
+        top_r_valid_q <= 1'b1;
+      end else begin
+        if_axi_rd_r_rdy <= 1'b1;
       end
-      else 
-        done_rdy <= 1'b1; 
 
-      // Capture RVA output from GBModule (128 bits)
-      if (rvaout_vld && rvaout_rdy) begin
-        rvaout_dat_q <= rvaout_dat;
-        rvaout_rdy <= 1'b0; 
-        rva_valid_q <= 1'b1;
+      if (if_axi_wr_b_vld && if_axi_wr_b_rdy) begin
+        top_b_dat_q <= if_axi_wr_b_dat;
+        if_axi_wr_b_rdy <= 1'b0;
+        top_b_valid_q <= 1'b1;
+      end else begin
+        if_axi_wr_b_rdy <= 1'b1;
       end
-      else 
-        rvaout_rdy <= 1'b1; 
       
-      // Handle AXI-Lite read when RVA output is valid and addr is RVA output
-      if (axil_arvalid_m && axil_arready_m && rva_valid_q && is_rva_out_addr(axil_araddr_m)) begin
+      // Handle AXI-Lite read
+      if (axil_arvalid_m && axil_arready_m) begin
         axil_arready_m <= 1'b0;
-        // GBModule RVA output: 128 bits = 4 words (LOOP_RVA_OUT = 4)
-        for (int i = 0; i < LOOP_RVA_OUT; i++) begin
-            if (axil_araddr_m == (ADDR_RVA_OUT_START + i*4)) begin
-                axil_rdata_m <= rvaout_dat_q[(i+1)*32-1 -: 32];
-                if (i == (LOOP_RVA_OUT - 1)) begin
-                    rva_valid_q <= 1'b0;
+        axil_rvalid_m <= 1'b1;
+        axil_rresp_m  <= 2'b00;
+
+        if (is_top_r_addr(axil_araddr_m)) begin
+          if (top_r_valid_q) begin
+            for (int i = 0; i < LOOP_TOP_AXI_R; i++) begin
+                if (axil_araddr_m == (ADDR_TOP_AXI_R_START + i*4)) begin
+                    axil_rdata_m <= top_r_dat_q[(i+1)*32-1 -: 32];
+                    if (i == (LOOP_TOP_AXI_R - 1)) begin
+                        top_r_valid_q <= 1'b0;
+                    end
                 end
             end
-        end
-        axil_rresp_m  <= 2'b00;
-        axil_rvalid_m <= 1'b1;
-      end
-
-      // Handle counter/status reads and RVA output reads when data not ready
-      if (axil_arvalid_m && axil_arready_m && ~rva_valid_q) begin
-        axil_arready_m <= 1'b0;
-        if (is_rva_out_addr(axil_araddr_m)) begin
-          // Return zeros for RVA output if data not yet ready (caller should retry)
-          axil_rdata_m <= 32'h0;
+          end else begin
+            axil_rdata_m <= 32'h0; // Data not ready
+          end
+        end else if (is_top_b_addr(axil_araddr_m)) begin
+          if (top_b_valid_q) begin
+            for (int i = 0; i < LOOP_TOP_AXI_B; i++) begin
+                if (axil_araddr_m == (ADDR_TOP_AXI_B_START + i*4)) begin
+                    axil_rdata_m <= top_b_dat_q[(i+1)*32-1 -: 32];
+                    if (i == (LOOP_TOP_AXI_B - 1)) begin
+                        top_b_valid_q <= 1'b0;
+                    end
+                end
+            end
+          end else begin
+            axil_rdata_m <= 32'h0; // Data not ready
+          end
+        end else if (axil_araddr_m == ADDR_TOP_INTERRUPT) begin
+          axil_rdata_m <= interrupt;
         end else begin
-          unique case (axil_araddr_m)
-            ADDR_TX_COUNTER_READ: axil_rdata_m <= data_transfer_cycles;
-            ADDR_COMPUTE_COUNTER_READ: axil_rdata_m <= compute_cycles;
-            default : axil_rdata_m <= 32'hDEADBEEF;
-          endcase
+          axil_rdata_m <= 32'hDEADBEEF;
         end
-        axil_rresp_m  <= 2'b00;
-        axil_rvalid_m <= 1'b1;
       end
 
       if (axil_rvalid_m && axil_rready_m) begin

@@ -27,52 +27,34 @@
 `endif
 
 // ============================================================================
-// GBModule Interface Parameters
+// Top Module Interface Parameters
 // ============================================================================
-// These parameters match the HLS-generated GBModule interface from
-// design_top/design/concat_GBModule.v
 
-// Vector and data widths
-localparam int kVectorSize = 16;
-localparam int kAdpfloatWordWidth = 8;
-localparam int kVectorWidth = kVectorSize * kAdpfloatWordWidth; // 128 bits
+// AXI Write Address Channel (Host to Top)
+localparam int WIDTH_TOP_AXI_AW = 50;
+localparam int LOOP_TOP_AXI_AW = (WIDTH_TOP_AXI_AW + 31) / 32; // 2 words
+localparam int ADDR_TOP_AXI_AW_START = 16'h500;
 
-// RVA interface widths (from AxiSpec.h)
-// rva_in_dat: data(128) + addr(24) + wstrb(16) + rw(1) = 169 bits
-localparam int kRVADataWidth = 128;
-localparam int kRVAAddrWidth = 24;
-localparam int kRVAWstrbWidth = 16;
-localparam int kRVAInWidth = 169;
+// AXI Write Data Channel (Host to Top)
+localparam int WIDTH_TOP_AXI_W = 145;
+localparam int LOOP_TOP_AXI_W = (WIDTH_TOP_AXI_W + 31) / 32; // 5 words
+localparam int ADDR_TOP_AXI_W_START = 16'h510;
 
-// rva_out_dat: 128 bits
-localparam int kRVAOutWidth = 128;
+// AXI Write Response Channel (Top to Host)
+localparam int WIDTH_TOP_AXI_B = 12;
+localparam int LOOP_TOP_AXI_B = (WIDTH_TOP_AXI_B + 31) / 32; // 1 word
+localparam int ADDR_TOP_AXI_B_START = 16'h530;
 
-// Legacy compatibility (for existing infrastructure)
-localparam int kIntWordWidth = 16;
-localparam int kNumVectorLanes = 16;
-localparam int kActWordWidth = 32;
-localparam int kAccumWordWidth = 2*kIntWordWidth + kNumVectorLanes - 1;
-localparam int kActNumFrac = 24;
+// AXI Read Address Channel (Host to Top)
+localparam int WIDTH_TOP_AXI_AR = 50;
+localparam int LOOP_TOP_AXI_AR = (WIDTH_TOP_AXI_AR + 31) / 32; // 2 words
+localparam int ADDR_TOP_AXI_AR_START = 16'h540;
 
-localparam int WIDTH_AXI = 32;
-localparam int ADDR_WIDTH_OCL = 16;
+// AXI Read Data Channel (Top to Host)
+localparam int WIDTH_TOP_AXI_R = 141;
+localparam int LOOP_TOP_AXI_R = (WIDTH_TOP_AXI_R + 31) / 32; // 5 words
+localparam int ADDR_TOP_AXI_R_START = 16'h550;
 
-// Transfer Counter
-localparam int ADDR_TX_COUNTER_EN = 16'h0400;         // Write 
-localparam int ADDR_TX_COUNTER_READ = 16'h0400;       // Read
-localparam int ADDR_COMPUTE_COUNTER_READ = 16'h0404;  // Read
+// Interrupt (Top to Host)
+localparam int ADDR_TOP_INTERRUPT = 16'h570; // Read
 
-// Start enable
-localparam int ADDR_START_CFG = 16'h0404;             //Write
-
-// RVA IN Port (Input) - updated for GBModule 169-bit interface
-localparam int DATA_WIDTH_RVA_IN = kRVADataWidth;                             // 128 bits
-localparam int ADDR_WIDTH_RVA_IN = kRVAAddrWidth;                             // 24 bits
-localparam int WIDTH_RVA_IN = kRVAInWidth;                                    // 169 bits
-localparam int LOOP_RVA_IN =  (int((WIDTH_RVA_IN + 31)/ 32));                 // 6 words
-localparam int ADDR_RVA_IN_START = 16'h408;
-
-// RVA Out Port (Output)
-localparam int WIDTH_RVA = kRVAOutWidth;                                      // 128 bits
-localparam int LOOP_RVA_OUT = int((WIDTH_RVA + 31) / 32);                     // 4 words
-localparam int ADDR_RVA_OUT_START = 16'h44C;
