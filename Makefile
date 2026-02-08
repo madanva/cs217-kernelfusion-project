@@ -49,7 +49,7 @@ hls_sim_debug:
 
 # Clean all generated files
 clean:
-	cd $(SRC_HOME)/PEPartition && make clean
+	cd $(SRC_HOME)/Top/PEPartition && make clean
 	cd $(SRC_HOME)/Top/PEPartition/PEModule/ActUnit && make clean
 	cd $(SRC_HOME)/Top/PEPartition/PEModule/PECore && make clean
 	cd $(SRC_HOME)/Top/PEPartition/PEModule/PECore/Datapath && make clean
