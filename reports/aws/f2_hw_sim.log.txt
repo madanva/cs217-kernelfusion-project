@@ -724,6 +724,8 @@ INFO: [VRFC 10-311] analyzing module Top_PEDone
 INFO: [VRFC 10-311] analyzing module Top_GBRecv
 INFO: [VRFC 10-311] analyzing module Top_Interrupt
 INFO: [VRFC 10-311] analyzing module Top
+INFO: [VRFC 10-311] analyzing module counter
+WARNING: [VRFC 10-3609] overwriting previous definition of module 'counter' [/home/ubuntu/solution-lab-4/design_top/design/./counter.v:1]
 INFO: [VRFC 10-311] analyzing module design_top
 WARNING: [VRFC 10-3381] ignoring re-definition of command line macro 'CL_NAME' [/home/ubuntu/solution-lab-4/design_top/design/design_top_defines.vh:21]
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/opt/Xilinx/Vivado/2024.1/data/verilog/src/glbl.v" into library xil_defaultlib
@@ -849,10 +851,10 @@ INFO: [VRFC 10-311] analyzing module hbm_apb_arbiter
 INFO: [VRFC 10-311] analyzing module hbm_data_fetch
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module design_top_base_test
-WARNING: [VRFC 10-543] converting concatenation to assignment pattern [/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv:101]
-WARNING: [VRFC 10-543] converting concatenation to assignment pattern [/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv:142]
-WARNING: [VRFC 10-3824] variable 'write_commands' must explicitly be declared as automatic or static [/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv:101]
-WARNING: [VRFC 10-3824] variable 'read_commands' must explicitly be declared as automatic or static [/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv:142]
+WARNING: [VRFC 10-543] converting concatenation to assignment pattern [/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv:102]
+WARNING: [VRFC 10-543] converting concatenation to assignment pattern [/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv:143]
+WARNING: [VRFC 10-3824] variable 'write_commands' must explicitly be declared as automatic or static [/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv:102]
+WARNING: [VRFC 10-3824] variable 'read_commands' must explicitly be declared as automatic or static [/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv:143]
 cd /home/ubuntu/solution-lab-4/design_top/verif/sim/xsim/design_top_base_test_sv && xelab -m64   --define plusarg_save  --define timeout=1ms  --define AWS_SIM --define USE_64GB_DDR_DIMM=1 --timescale 1ps/1ps --debug typical --relax --mt 8  -L unisims_ver -L unisim -L unifast_ver -L unifast -L unimacro_ver -L unimacro -L secureip -L xpm -L xil_defaultlib -L axi_dwidth_converter_v2_1_31 -L axi_protocol_converter_v2_1_31 -L axi_protocol_checker_v2_0_17 -L hbm2e_pl_v1_0_1 -L noc_hbm_v1_0_0 -L hbm_v1_0_16 -L axi_register_slice_v2_1_31 -L axi_infrastructure_v1_1_0 -L axi_crossbar_v2_1_32 -L axi_clock_converter_v2_1_30 -L fifo_generator_v13_2_10 -L axi_data_fifo_v2_1_30 -L generic_baseblocks_v2_1_2 -L lut_buffer_v2_0_1 -L xsdbm_v3_0_2 -L xdma_v4_1_29 -L xlconstant_v1_1_9 -L smartconnect_v1_0 -sv_lib dpi --snapshot tb xil_defaultlib.tb xil_defaultlib.glbl xil_defaultlib.design_top_base_test
 Vivado Simulator v2024.1
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
@@ -863,14 +865,14 @@ Starting static elaboration
 Pass Through NonSizing Optimizer
 WARNING: [VRFC 10-9543] actual bit length 2 differs from formal bit length 1 for port 'ddr4_ck_t' [/home/ubuntu/aws-fpga/hdk/common/verif/models/fpga/fpga_ddr.svh:117]
 WARNING: [VRFC 10-9543] actual bit length 2 differs from formal bit length 1 for port 'ddr4_ck_c' [/home/ubuntu/aws-fpga/hdk/common/verif/models/fpga/fpga_ddr.svh:118]
-WARNING: [VRFC 10-9543] actual bit length 16 differs from formal bit length 32 for port 'm_axi_awaddr' [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:168]
-WARNING: [VRFC 10-9543] actual bit length 16 differs from formal bit length 32 for port 'm_axi_araddr' [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:180]
+WARNING: [VRFC 10-9543] actual bit length 16 differs from formal bit length 32 for port 'm_axi_awaddr' [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:180]
+WARNING: [VRFC 10-9543] actual bit length 16 differs from formal bit length 32 for port 'm_axi_araddr' [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:192]
 WARNING: [VRFC 10-9543] actual bit length 32 differs from formal bit length 3 for port 's_axi_awsize' [/home/ubuntu/aws-fpga/hdk/common/ip/cl_ip/cl_ip.gen/sources_1/ip/axi_register_slice_light/sim/axi_register_slice_light.v:227]
 WARNING: [VRFC 10-9543] actual bit length 32 differs from formal bit length 3 for port 's_axi_arsize' [/home/ubuntu/aws-fpga/hdk/common/ip/cl_ip/cl_ip.gen/sources_1/ip/axi_register_slice_light/sim/axi_register_slice_light.v:252]
 WARNING: [VRFC 10-8967] first argument of $fatal is invalid; expected 0, 1 or 2 [/home/ubuntu/aws-fpga/hdk/common/verif/models/sh_bfm/sh_bfm.sv:1888]
 WARNING: [VRFC 10-8967] first argument of $fatal is invalid; expected 0, 1 or 2 [/home/ubuntu/aws-fpga/hdk/common/verif/models/sh_bfm/sh_bfm.sv:2046]
-WARNING: [VRFC 10-5021] port 's_axi_arprot' is not connected on this instance [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:143]
-WARNING: [VRFC 10-3823] variable 'axil_awprot_m' might have multiple concurrent drivers [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:201]
+WARNING: [VRFC 10-5021] port 's_axi_arprot' is not connected on this instance [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:155]
+WARNING: [VRFC 10-3823] variable 'axil_awprot_m' might have multiple concurrent drivers [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:213]
 WARNING: [VRFC 10-3705] select index 7 into 'dq_temp' is out of bounds [/home/ubuntu/aws-fpga/hdk/common/verif/models/ddr4_model/ddr4_model.sv:1615]
 WARNING: [VRFC 10-3705] select index 7 into 'dq_temp' is out of bounds [/home/ubuntu/aws-fpga/hdk/common/verif/models/ddr4_model/ddr4_model.sv:1617]
 Completed static elaboration
@@ -1715,6 +1717,7 @@ Compiling module xil_defaultlib.Top_PEPartition_AxiSubordinateTo...
 Compiling module xil_defaultlib.Top_PEPartition_AxiSubordinateTo...
 Compiling module xil_defaultlib.Top_PEPartition
 Compiling module xil_defaultlib.Top
+Compiling module xil_defaultlib.counter
 Compiling module axi_infrastructure_v1_1_0.axi_infrastructure_v1_1_0_axi2ve...
 Compiling module axi_infrastructure_v1_1_0.axi_infrastructure_v1_1_0_vector...
 Compiling module axi_register_slice_v2_1_31.axi_register_slice_v2_1_31_axic_...
@@ -1740,7 +1743,7 @@ cd /home/ubuntu/solution-lab-4/design_top/verif/sim/xsim/design_top_base_test_sv
   **** SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
   **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
   **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
-  **** Start of session at: Sun Feb  8 07:34:32 2026
+  **** Start of session at: Sun Feb  8 21:12:26 2026
     ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
     ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 source xsim.dir/tb/xsim_script.tcl
@@ -2193,11 +2196,13 @@ Loading timesets for 'tb.card.u_ddr4_rdimm.rcd_enabled.NOT_LRDIMM.u_ddr4_dimm.ra
 	Loaded timeset:TS_625
 Model based on DDR4 DDS version 0.999 6/06/2014 (build data 5/06/2016)
 tb.card.u_ddr4_rdimm.rcd_enabled.NOT_LRDIMM.u_ddr4_dimm.rank_instances[1].mc_ca_mirroring_odd_rank.u_ddr4_rank.Micron_model.instance_of_sdram_devices[17].micron_mem_model.u_ddr4_model:Configured as x4 16G stack:1
+ Starting AXI reads and writes...
 Read value matches the expected = 0x00000000000000010100000008000003 at 0x33500010
 Read value matches the expected = 0xd4c04352a0a882bf584169b29ee3e635 at 0x34600000
 Read value matches the expected = 0x10101010101010101010101010101010 at 0x33500000
+Interrupt cycles =         20
 ---- TEST PASSED ----
-$finish called at time : 36430 ns : File "/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv" Line 172
+$finish called at time : 36470 ns : File "/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv" Line 183
 ## quit
-INFO: [Common 17-206] Exiting xsim at Sun Feb  8 07:34:38 2026...
+INFO: [Common 17-206] Exiting xsim at Sun Feb  8 21:12:32 2026...
 make[1]: Leaving directory '/home/ubuntu/solution-lab-4/design_top/verif/scripts'

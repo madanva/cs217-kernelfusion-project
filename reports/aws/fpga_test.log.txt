@@ -4,4 +4,7 @@
 Read value matches the expected = 0x00000000_00000001_01000000_08000003 at 0x33500010
 Read value matches the expected = 0x10101010_10101010_10101010_10101010 at 0x33500000
 
+---- Reading Interrupt Cycles Counter ----
+Interrupt cycles = 20
+
 ---- TEST FAILED ----

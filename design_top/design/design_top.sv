@@ -20,6 +20,7 @@
 //====================================================================================
 
 `include "./concat_Top.v"
+`include "./counter.v"
 
 module design_top
   #(
@@ -97,6 +98,17 @@ module design_top
     if (if_axi_wr_b_vld & if_axi_wr_b_rdy)
       $display("if_axi_wr_b_vld = %b, if_axi_wr_b_rdy = %b, if_axi_wr_b_dat = %h", if_axi_wr_b_vld, if_axi_wr_b_rdy, if_axi_wr_b_dat);
   end*/
+
+  // Interrupt cycles counter
+
+  logic [31:0] interrupt_cycles;
+  counter #(.WIDTH(32)) u_interrupt_cycles_counter (
+            .clk (clk_main_a0),
+            .rst_n (rst_main_n),
+            .en (interrupt),
+            .q (interrupt_cycles)
+          );
+
 
   //=============================================================================
   // GLOBALS
@@ -366,7 +378,7 @@ module design_top
         end
         else begin
           if (axil_araddr_m == ADDR_TOP_INTERRUPT) begin
-            axil_rdata_m <= interrupt;
+            axil_rdata_m <= interrupt_cycles;
           end else begin
             axil_rdata_m <= 32'hDEADBEEF;
           end

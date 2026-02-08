@@ -97,6 +97,7 @@ import tb_type_defines_pkg::*;
   // Main Test Sequence
   // =========================================================================
   initial begin
+    logic [31:0] interrupt_cycles;
     // --- Command Arrays ---
     AxiWriteCommand write_commands[] = {
       '{32'h33500000, 128'hD4C04352A0A882BF584169B29EE3E635},
@@ -127,16 +128,16 @@ import tb_type_defines_pkg::*;
       '{32'h33500010, 128'h298E1EFC3652115C5D0340C6761D3767},
       '{32'h33C00010, 128'h10001000000000101},
       '{32'h33000020, 128'h0},
-      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}, 
-      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
-      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
-      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
-      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
-      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
-      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
-      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
-      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
-      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+      '{32'h345000F0, 128'hDEADBEEFDEADBEEFDEADBEEFDEADBEEF}, 
+      '{32'h345000F0, 128'hDEADBEEFDEADBEEFDEADBEEFDEADBEEF},
+      '{32'h345000F0, 128'hDEADBEEFDEADBEEFDEADBEEFDEADBEEF},
+      '{32'h345000F0, 128'hDEADBEEFDEADBEEFDEADBEEFDEADBEEF},
+      '{32'h345000F0, 128'hDEADBEEFDEADBEEFDEADBEEFDEADBEEF},
+      '{32'h345000F0, 128'hDEADBEEFDEADBEEFDEADBEEFDEADBEEF},
+      '{32'h345000F0, 128'hDEADBEEFDEADBEEFDEADBEEFDEADBEEF},
+      '{32'h345000F0, 128'hDEADBEEFDEADBEEFDEADBEEFDEADBEEF},
+      '{32'h345000F0, 128'hDEADBEEFDEADBEEFDEADBEEFDEADBEEF},
+      '{32'h345000F0, 128'hDEADBEEFDEADBEEFDEADBEEFDEADBEEF}
     };
 
     AxiReadCommand read_commands[] = {
@@ -152,6 +153,8 @@ import tb_type_defines_pkg::*;
 
     #500ns;
 
+    $display("\n Starting AXI reads and writes...\n");
+
     // --- Execute Commands ---
     foreach (write_commands[i]) begin
       top_write(write_commands[i]);
@@ -160,7 +163,15 @@ import tb_type_defines_pkg::*;
     foreach (read_commands[i]) begin
       top_read(read_commands[i]);
     end
-    
+
+    // Count Interrupt cycles and read the value
+    ocl_rd32(ADDR_TOP_INTERRUPT, interrupt_cycles);
+    $display("Interrupt cycles = %d", interrupt_cycles);
+    if (interrupt_cycles <= 10) begin
+      $error(" Interrupt cycles lesser than expected! Interrupt cycles = %d", interrupt_cycles);
+      test_failed = 1'b1;
+    end
+
     #500ns;
     tb.power_down();
     

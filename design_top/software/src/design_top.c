@@ -213,16 +213,16 @@ int main(int argc, char** argv) {
       {0x33500010, {0x761D3767, 0x5D0340C6, 0x3652115C, 0x298E1EFC}},
       {0x33C00010, {0x101, 0x0, 0x10001, 0x0}},
       {0x33000020, {0x0, 0x0, 0x0, 0x0}},
-      {0x345000F0, {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF}},
-      {0x345000F0, {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF}},
-      {0x345000F0, {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF}},
-      {0x345000F0, {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF}},
-      {0x345000F0, {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF}},
-      {0x345000F0, {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF}},
-      {0x345000F0, {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF}},
-      {0x345000F0, {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF}},
-      {0x345000F0, {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF}},
-      {0x345000F0, {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF}},
+      {0x345000F0, {0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF}},
+      {0x345000F0, {0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF}},
+      {0x345000F0, {0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF}},
+      {0x345000F0, {0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF}},
+      {0x345000F0, {0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF}},
+      {0x345000F0, {0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF}},
+      {0x345000F0, {0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF}},
+      {0x345000F0, {0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF}},
+      {0x345000F0, {0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF}},
+      {0x345000F0, {0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF}},
   };
 
   AxiReadCommand read_commands[] = {
@@ -245,6 +245,21 @@ int main(int argc, char** argv) {
           rc = 1;
       }
       usleep(10);
+  }
+
+  // =========================================================================
+  // Read Interrupt Cycles Counter
+  // =========================================================================
+  uint32_t interrupt_cycles = 0;
+  printf("\n---- Reading Interrupt Cycles Counter ----\n");
+  if (ocl_rd32(bar_handle, ADDR_TOP_INTERRUPT, &interrupt_cycles)) {
+      rc = 1;
+  }
+  
+  printf("Interrupt cycles = %u\n", interrupt_cycles);
+  if (interrupt_cycles <= 10) {
+      fprintf(stderr, "ERROR: Interrupt cycles lesser than expected! Interrupt cycles = %u\n", interrupt_cycles);
+      rc = 1;
   }
 
   // ========================================================================= 
