@@ -97,8 +97,53 @@ import tb_type_defines_pkg::*;
   // Main Test Sequence
   // =========================================================================
   initial begin
-    AxiWriteCommand write_command;
-    AxiReadCommand  read_command;
+    // --- Command Arrays ---
+    AxiWriteCommand write_commands[] = {
+      '{32'h33500000, 128'hD4C04352A0A882BF584169B29EE3E635},
+      '{32'h34500000, 128'hC74278675C7F32026BD421D788E1D68C},
+      '{32'h34500010, 128'hD0319B6C21E7A2FDA174272E5EC23966},
+      '{32'h34500020, 128'h5781547CB8E9DD33A331DDE2178B1B85},
+      '{32'h34500030, 128'h4C8C4B8304BCB9614E92D9208D22BBEB},
+      '{32'h34500040, 128'h67AD5414A9D9B7200DC7A487C5BFA479},
+      '{32'h34500050, 128'h69AB46F7D70083F70292B32C4A09CF2D},
+      '{32'h34500060, 128'h161F65749B261E3FD103A7F427208FCB},
+      '{32'h34500070, 128'hAABCB5EFB2819ED0ED6A7A4AE1356000},
+      '{32'h34500080, 128'hF6D7D9415D2D4CDAC59C9EC4A9695EE4},
+      '{32'h34500090, 128'h17899ACBF78E9E7F7F1519733E0DFD81},
+      '{32'h345000A0, 128'hFCFD96D169A343A4ACC647814E3AD635},
+      '{32'h345000B0, 128'h5C0F148DE065D4848582459D58371BA5},
+      '{32'h345000C0, 128'hCC77DBF7B30AE0F6A96684FC1E5515A8},
+      '{32'h345000D0, 128'hC5AA491813F2CD9DC97FD011DF439320},
+      '{32'h345000E0, 128'hB8E6F69A72129DD4520BE5B52C4EE908},
+      '{32'h345000F0, 128'h38B305DEDFD4E551679295D0AE2D9CD6},
+      '{32'h34400010, 128'h10100000001},
+      '{32'h34400020, 128'h100},
+      '{32'h34800010, 128'h103020001},
+      '{32'h34800020, 128'h40B030},
+      '{32'h33400010, 128'h1},
+      '{32'h33700010, 128'h100010101010000000001},
+      '{32'h33000010, 128'h0},
+      '{32'h33400010, 128'h10001},
+      '{32'h33500010, 128'h298E1EFC3652115C5D0340C6761D3767},
+      '{32'h33C00010, 128'h10001000000000101},
+      '{32'h33000020, 128'h0},
+      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}, 
+      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
+      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
+      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
+      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
+      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
+      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
+      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
+      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
+      '{32'h345000F0, 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+    };
+
+    AxiReadCommand read_commands[] = {
+      '{32'h33500010, '0, 128'h00000000000000010100000008000003},
+      '{32'h34600000, '0, 128'hD4C04352A0A882BF584169B29EE3E635},
+      '{32'h33500000, '0, 128'h10101010101010101010101010101010}
+    };
 
     // Power up the testbench
     tb.power_up(.clk_recipe_a(ClockRecipe::A0),
@@ -106,25 +151,21 @@ import tb_type_defines_pkg::*;
                 .clk_recipe_c(ClockRecipe::C0));
 
     #500ns;
-    read_command.data = 'b0000000000000000;
 
+    // --- Execute Commands ---
+    foreach (write_commands[i]) begin
+      top_write(write_commands[i]);
+    end
 
-    write_command.addr = 32'h33500000;
-    write_command.data = 127'hD4C04352A0A882BF584169B29EE3E635;
-
-    read_command.addr = 32'h33500000;
-    read_command.expected_read_data = write_command.data;
-
-
-    top_write(write_command);
-    top_read(read_command);
-
+    foreach (read_commands[i]) begin
+      top_read(read_commands[i]);
+    end
     
     #500ns;
     tb.power_down();
     
     if (!test_failed)
-      $display("---- TEST FINISHED SUCCESSFULLY ----");
+      $display("---- TEST PASSED ----");
     else
       $display("---- TEST FAILED ----");
       
