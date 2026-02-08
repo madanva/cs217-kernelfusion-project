@@ -53,6 +53,8 @@
 #endif
 
 bool correct = true;
+bool axiManagerDone = false;
+
 
 SC_MODULE(Source) {
   sc_in<bool> clk;
@@ -159,7 +161,7 @@ SC_MODULE(Dest) {
     wait ();
     while(1) {
       wait();
-      if (done_PopOutport && done_PopStart && done_PopDone) {
+      if (done_PopOutport && done_PopStart && done_PopDone && axiManagerDone) {
         sc_stop(); 
       }
     }
@@ -249,6 +251,7 @@ SC_MODULE(testbench) {
       wait(1, SC_NS);
       if (master_done==1) {
         cout << "Manager has finished issuing AXI Writes" << endl;
+        axiManagerDone = true;
         break;
       }
     }

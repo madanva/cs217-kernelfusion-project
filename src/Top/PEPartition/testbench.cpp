@@ -53,6 +53,7 @@
 #endif
 
 bool correct = true;
+bool axiManagerDone = false;
 
 SC_MODULE(Source) {
   sc_in<bool> clk;
@@ -135,7 +136,7 @@ SC_MODULE(Dest) {
     wait ();
     while(1) {
       wait();
-      if (output_port_popped && done_signal_received) {
+      if (output_port_popped && done_signal_received && axiManagerDone) {
         sc_stop(); 
       }
     }
@@ -222,6 +223,7 @@ SC_MODULE(testbench) {
       //cout << "manager.waddr_q.read() = " << hex << manager.addr_pld.addr << endl;
       if (manager_done==1) {      
         std::cout << "@" << sc_time_stamp() <<" AXI Manager has finished issuing AXI commands" << std::endl;
+        axiManagerDone = true;
         break;
       }
     }

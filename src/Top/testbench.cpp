@@ -52,6 +52,7 @@
 #endif
 
 bool correct = true;
+bool axiManagerDone = false;
 
 SC_MODULE(Source) {
   sc_in<bool> clk;
@@ -76,6 +77,8 @@ SC_MODULE(Dest) {
   sc_in<bool> rst;
   sc_in<bool> interrupt;
 
+  int interrupt_count  = 0;
+
   SC_CTOR(Dest) {
     SC_THREAD(PopInterrupt);
     sensitive << clk.pos();
@@ -89,7 +92,11 @@ SC_MODULE(Dest) {
    while (1) {
      if (interrupt == 1) {
         cout << sc_time_stamp() << " - Interrupt signal issued!" << endl;
-        break;
+        interrupt_count++;
+     }
+
+     if (interrupt_count >= 5 && axiManagerDone) {
+      break;
      }
      wait(); 
    } // while
@@ -166,12 +173,13 @@ SC_MODULE(testbench) {
     while (1) {
       wait(1, SC_NS);
       if (master_done==1) {
-        cout << "Manager has finished issuing AXI Writes" << endl;
+        cout << sc_time_stamp() << " Manager has finished issuing AXI Writes" << endl;
+        axiManagerDone = true;
         break;
       }
     }
 
-    wait(200000, SC_NS );
+    wait(2000, SC_NS );
     // If timeout happens, test is a fail
     cout << "Error: Simulation timed out! No interrupt from DUT" << endl;
     SC_REPORT_ERROR("testbench", "Simulation timeout");
