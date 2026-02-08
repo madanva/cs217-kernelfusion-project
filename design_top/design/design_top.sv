@@ -85,6 +85,15 @@ module design_top
       .if_axi_wr_b_dat(if_axi_wr_b_dat)
   );
 
+  always_ff @(posedge clk_main_a0 or negedge rst_main_n) begin
+    $display("if_axi_rd_ar_vld = %b, if_axi_rd_ar_rdy = %b, if_axi_rd_ar_dat = %h", if_axi_rd_ar_vld, if_axi_rd_ar_rdy, if_axi_rd_ar_dat);
+    $display("if_axi_rd_r_vld = %b, if_axi_rd_r_rdy = %b, if_axi_rd_r_dat = %h", if_axi_rd_r_vld, if_axi_rd_r_rdy, if_axi_rd_r_dat);
+    $display("if_axi_wr_aw_vld = %b, if_axi_wr_aw_rdy = %b, if_axi_wr_aw_dat = %h", if_axi_wr_aw_vld, if_axi_wr_aw_rdy, if_axi_wr_aw_dat);
+    $display("if_axi_wr_w_vld = %b, if_axi_wr_w_rdy = %b, if_axi_wr_w_dat = %h", if_axi_wr_w_vld, if_axi_wr_w_rdy, if_axi_wr_w_dat);
+    $display("if_axi_wr_b_vld = %b, if_axi_wr_b_rdy = %b, if_axi_wr_b_dat = %h", if_axi_wr_b_vld, if_axi_wr_b_rdy, if_axi_wr_b_dat);
+
+  end
+
   //=============================================================================
   // GLOBALS
   //=============================================================================
@@ -182,6 +191,8 @@ module design_top
   logic [15:0] wr_addr_q;
   logic [31:0] wr_data_q;
 
+  logic [11:0] if_axi_wr_b_dat_sig;
+
   // Default AXI responses
   assign axil_awprot_m = 3'b000;
 
@@ -191,8 +202,6 @@ module design_top
   assign axil_wready_m  = ~wr_w_captured && axi_ready;
 
   // BRESP/valid generation - Write path for Top module
-  logic [WIDTH_TOP_AXI_AW-1:0] top_aw_dat_sig;
-  logic [WIDTH_TOP_AXI_W-1:0]  top_w_dat_sig;
   logic [WIDTH_TOP_AXI_AR-1:0] top_ar_dat_sig;
 
   always_ff @(posedge clk_main_a0 or negedge rst_main_n) begin
@@ -208,6 +217,13 @@ module design_top
       if_axi_wr_w_vld  <= 1'b0;
       if_axi_rd_ar_vld <= 1'b0;
 
+
+      if_axi_wr_aw_dat <= '0;
+      if_axi_wr_w_dat  <= '0;
+      if_axi_rd_ar_dat <= '0;
+      if_axi_wr_b_dat_sig <= '0;
+
+      if_axi_wr_b_rdy <= 1'b1;
       axi_ready <= 1'b1;
 
     end else begin
@@ -227,36 +243,44 @@ module design_top
         // AXI Write Address Channel
         for (int i = 0; i < LOOP_TOP_AXI_AW; i++) begin 
             if (wr_addr_q == (ADDR_TOP_AXI_AW_START + i*4)) begin
-              top_aw_dat_sig[(i+1)*32-1 -: 32] <= wr_data_q;
               if (i == LOOP_TOP_AXI_AW - 1) begin
-                if_axi_wr_aw_dat <= top_aw_dat_sig;
-                if_axi_wr_aw_vld <= 1'b1;
-                axi_ready <= 1'b0;
+                if_axi_wr_aw_dat[49:32] <= {wr_data_q[17:0], if_axi_wr_aw_dat[31:0]};
+                if_axi_wr_aw_vld <= 1'b0;
+                axi_ready <= 1'b1;
               end
+              else
+                if_axi_wr_aw_dat[(i+1)*32-1 -: 32] <= wr_data_q;
+              $display("if_axi_wr_aw_dat = %h", wr_data_q);
             end
         end
 
         // AXI Write Data Channel
         for (int i = 0; i < LOOP_TOP_AXI_W; i++) begin 
             if (wr_addr_q == (ADDR_TOP_AXI_W_START + i*4)) begin
-              top_w_dat_sig[(i+1)*32-1 -: 32] <= wr_data_q;
               if (i == LOOP_TOP_AXI_W - 1) begin
-                if_axi_wr_w_dat <= top_w_dat_sig;
+                if_axi_wr_w_dat[144:128] <= {wr_data_q[16:0], if_axi_wr_w_dat[127:0]};
                 if_axi_wr_w_vld <= 1'b1;
+                if_axi_wr_aw_vld <= 1'b1;
                 axi_ready <= 1'b0;
               end
+              else
+                if_axi_wr_w_dat[(i+1)*32-1 -: 32] <= wr_data_q;
+
+              $display("if_axi_wr_w_dat = %h", wr_data_q);
             end
         end
 
         // AXI Read Address Channel
         for (int i = 0; i < LOOP_TOP_AXI_AR; i++) begin 
             if (wr_addr_q == (ADDR_TOP_AXI_AR_START + i*4)) begin
-              top_ar_dat_sig[(i+1)*32-1 -: 32] <= wr_data_q;
               if (i == LOOP_TOP_AXI_AR - 1) begin
-                if_axi_rd_ar_dat <= top_ar_dat_sig;
+                if_axi_rd_ar_dat[49:32] <= {wr_data_q[17:0], if_axi_rd_ar_dat[31:0]};
                 if_axi_rd_ar_vld <= 1'b1;
                 axi_ready <= 1'b0;
               end
+              else
+                if_axi_rd_ar_dat[(i+1)*32-1 -: 32] <= wr_data_q;
+              $display("if_axi_rd_ar_dat = %h", wr_data_q);
             end
         end
 
@@ -268,12 +292,22 @@ module design_top
       // Handle ready signals
       if (if_axi_wr_aw_vld && if_axi_wr_aw_rdy) begin
         if_axi_wr_aw_vld <= 1'b0;
-        axi_ready <= 1'b1;
       end
+
       if (if_axi_wr_w_vld && if_axi_wr_w_rdy) begin
         if_axi_wr_w_vld <= 1'b0;
-        axi_ready <= 1'b1;
       end
+
+      if (if_axi_wr_b_vld && if_axi_wr_b_rdy) begin
+        if_axi_wr_b_rdy <= 1'b0;
+        axi_ready <= 1'b1;
+        if_axi_wr_b_dat_sig <= if_axi_wr_b_dat;
+        // display if_axi_wr_b_dat
+        $display("if_axi_wr_b_dat = %h", if_axi_wr_b_dat);
+      end else begin
+        if_axi_wr_b_rdy <= 1'b1;
+      end
+
       if (if_axi_rd_ar_vld && if_axi_rd_ar_rdy) begin
         if_axi_rd_ar_vld <= 1'b0;
         axi_ready <= 1'b1;
@@ -288,15 +322,6 @@ module design_top
   logic [WIDTH_TOP_AXI_R-1:0] top_r_dat_q;
   logic top_r_valid_q;
   logic [WIDTH_TOP_AXI_B-1:0] top_b_dat_q;
-  logic top_b_valid_q;
-
-  // Helper functions to check address ranges
-  function automatic logic is_top_r_addr(input logic [15:0] addr);
-    return (addr >= ADDR_TOP_AXI_R_START) && (addr < (ADDR_TOP_AXI_R_START + LOOP_TOP_AXI_R*4));
-  endfunction
-  function automatic logic is_top_b_addr(input logic [15:0] addr);
-    return (addr >= ADDR_TOP_AXI_B_START) && (addr < (ADDR_TOP_AXI_B_START + LOOP_TOP_AXI_B*4));
-  endfunction
 
   // AXI-Lite read handshake: respond in-place
   always_ff @(posedge clk_main_a0 or negedge rst_main_n) begin
@@ -307,12 +332,10 @@ module design_top
       axil_rresp_m   <= 2'b00;
 
       if_axi_rd_r_rdy <= 1'b1;
-      if_axi_wr_b_rdy <= 1'b1;
 
       top_r_dat_q <= '0;
       top_r_valid_q <= 1'b0;
       top_b_dat_q <= '0;
-      top_b_valid_q <= 1'b0;
 
     end else begin
       // Capture data from Top module
@@ -323,14 +346,6 @@ module design_top
       end else begin
         if_axi_rd_r_rdy <= 1'b1;
       end
-
-      if (if_axi_wr_b_vld && if_axi_wr_b_rdy) begin
-        top_b_dat_q <= if_axi_wr_b_dat;
-        if_axi_wr_b_rdy <= 1'b0;
-        top_b_valid_q <= 1'b1;
-      end else begin
-        if_axi_wr_b_rdy <= 1'b1;
-      end
       
       // Handle AXI-Lite read
       if (axil_arvalid_m && axil_arready_m) begin
@@ -338,36 +353,25 @@ module design_top
         axil_rvalid_m <= 1'b1;
         axil_rresp_m  <= 2'b00;
 
-        if (is_top_r_addr(axil_araddr_m)) begin
-          if (top_r_valid_q) begin
-            for (int i = 0; i < LOOP_TOP_AXI_R; i++) begin
-                if (axil_araddr_m == (ADDR_TOP_AXI_R_START + i*4)) begin
+        if (top_r_valid_q) begin
+          for (int i = 0; i < LOOP_TOP_AXI_R; i++) begin
+              if (axil_araddr_m == (ADDR_TOP_AXI_R_START + i*4)) begin
+                  if (i == (LOOP_TOP_AXI_R - 1)) begin
+                    top_r_valid_q <= 1'b0;
+                    if_axi_rd_r_rdy <= 1'b1;
+                    axil_rdata_m <= {19'b0, top_r_dat_q[140:128]};
+                  end
+                  else
                     axil_rdata_m <= top_r_dat_q[(i+1)*32-1 -: 32];
-                    if (i == (LOOP_TOP_AXI_R - 1)) begin
-                        top_r_valid_q <= 1'b0;
-                    end
-                end
-            end
-          end else begin
-            axil_rdata_m <= 32'h0; // Data not ready
+              end
           end
-        end else if (is_top_b_addr(axil_araddr_m)) begin
-          if (top_b_valid_q) begin
-            for (int i = 0; i < LOOP_TOP_AXI_B; i++) begin
-                if (axil_araddr_m == (ADDR_TOP_AXI_B_START + i*4)) begin
-                    axil_rdata_m <= top_b_dat_q[(i+1)*32-1 -: 32];
-                    if (i == (LOOP_TOP_AXI_B - 1)) begin
-                        top_b_valid_q <= 1'b0;
-                    end
-                end
-            end
+        end
+        else begin
+          if (axil_araddr_m == ADDR_TOP_INTERRUPT) begin
+            axil_rdata_m <= interrupt;
           end else begin
-            axil_rdata_m <= 32'h0; // Data not ready
+            axil_rdata_m <= 32'hDEADBEEF;
           end
-        end else if (axil_araddr_m == ADDR_TOP_INTERRUPT) begin
-          axil_rdata_m <= interrupt;
-        end else begin
-          axil_rdata_m <= 32'hDEADBEEF;
         end
       end
 

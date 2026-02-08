@@ -33,27 +33,27 @@
 // AXI Write Address Channel (Host to Top)
 localparam int WIDTH_TOP_AXI_AW = 50;
 localparam int LOOP_TOP_AXI_AW = (WIDTH_TOP_AXI_AW + 31) / 32; // 2 words
-localparam int ADDR_TOP_AXI_AW_START = 16'h500;
+localparam int ADDR_TOP_AXI_AW_START = 16'h400;
 
 // AXI Write Data Channel (Host to Top)
 localparam int WIDTH_TOP_AXI_W = 145;
 localparam int LOOP_TOP_AXI_W = (WIDTH_TOP_AXI_W + 31) / 32; // 5 words
-localparam int ADDR_TOP_AXI_W_START = 16'h510;
+localparam int ADDR_TOP_AXI_W_START = 16'h410;
 
 // AXI Write Response Channel (Top to Host)
 localparam int WIDTH_TOP_AXI_B = 12;
 localparam int LOOP_TOP_AXI_B = (WIDTH_TOP_AXI_B + 31) / 32; // 1 word
-localparam int ADDR_TOP_AXI_B_START = 16'h530;
+localparam int ADDR_TOP_AXI_B_START = 16'h430;
 
 // AXI Read Address Channel (Host to Top)
 localparam int WIDTH_TOP_AXI_AR = 50;
 localparam int LOOP_TOP_AXI_AR = (WIDTH_TOP_AXI_AR + 31) / 32; // 2 words
-localparam int ADDR_TOP_AXI_AR_START = 16'h540;
+localparam int ADDR_TOP_AXI_AR_START = 16'h440;
 
 // AXI Read Data Channel (Top to Host)
 localparam int WIDTH_TOP_AXI_R = 141;
 localparam int LOOP_TOP_AXI_R = (WIDTH_TOP_AXI_R + 31) / 32; // 5 words
-localparam int ADDR_TOP_AXI_R_START = 16'h550;
+localparam int ADDR_TOP_AXI_R_START = 16'h450;
 
 // Interrupt (Top to Host)
 localparam int ADDR_TOP_INTERRUPT = 16'h570; // Read

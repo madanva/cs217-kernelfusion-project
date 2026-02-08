@@ -31,7 +31,7 @@ import tb_type_defines_pkg::*;
         if (i == LOOP_TOP_AXI_AW - 1) begin
           temp_addr = {18'd0, addr[49:32]};
         end
-        ocl_rd32(ADDR_TOP_AXI_AW_START + i*4, temp_addr);
+        ocl_wr32(ADDR_TOP_AXI_AW_START + i*4, temp_addr);
 
     end
         
@@ -56,7 +56,7 @@ import tb_type_defines_pkg::*;
         if (i == LOOP_TOP_AXI_AR - 1) begin
           temp_addr = {18'd0, addr[49:32]};
         end
-        ocl_rd32(ADDR_TOP_AXI_AR_START + i*4, temp_addr);
+        ocl_wr32(ADDR_TOP_AXI_AR_START + i*4, temp_addr);
     end
 
     // Read data from R channel
@@ -86,15 +86,15 @@ import tb_type_defines_pkg::*;
 
     #500ns;
     write_command.addr = 0;
-    write_command.data = 128'b0000000000000000;
+    write_command.data = 145'b0000000000000000;
     read_command.addr = 0;
-    read_command.data = 128'b0000000000000000;
+    read_command.data = 145'b0000000000000000;
 
 
-    write_command.addr = 32'h33500000;
-    write_command.data = 128'hD4C04352A0A882BF584169B29EE3E635;
+    write_command.addr = 50'h33500000;
+    write_command.data = 145'hD4C04352A0A882BF584169B29EE3E635;
 
-    read_command.addr = 32'h33500000;
+    read_command.addr = 50'h33500000;
 
     top_write(write_command.addr, write_command.data);
     top_read(read_command.addr, read_command.data, write_command.data);
