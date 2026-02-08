@@ -66,26 +66,46 @@ import tb_type_defines_pkg::*;
 
   task automatic top_write(input logic [49:0] addr, input logic [144:0] data);
     // Write address to AW channel
-    ocl_wr32(ADDR_TOP_AXI_AW_START, addr[31:0]);
-    ocl_wr32(ADDR_TOP_AXI_AW_START + 4, addr[49:32]);
+    for (int i = 0; i < LOOP_TOP_AXI_AW; i++) begin
+        logic [31:0] temp_addr;
+        temp_addr = addr[i*32 +: 32];
+        if (i == LOOP_TOP_AXI_AW - 1) begin
+          temp_addr = {18'd0, addr[49:32]};
+        end
+        ocl_rd32(ADDR_TOP_AXI_AW_START + i*4, temp_addr);
 
-    // Write data to W channel
+    end
+        
+   // Write data to W channel
     for (int i = 0; i < LOOP_TOP_AXI_W; i++) begin
-        ocl_wr32(ADDR_TOP_AXI_W_START + i*4, data[i*32 +: 32]);
+        logic [31:0] temp_data;
+        temp_data = data[i*32 +: 32];
+        if (i == LOOP_TOP_AXI_W - 1) begin
+          temp_data = {17'd0, data[144:128]};
+        end
+        ocl_wr32(ADDR_TOP_AXI_W_START + i*4, temp_data);
     end
   endtask
 
   task automatic top_read(input logic [49:0] addr, output logic [140:0] data);
     // Write address to AR channel
-    ocl_wr32(ADDR_TOP_AXI_AR_START, addr[31:0]);
-    ocl_wr32(ADDR_TOP_AXI_AR_START + 4, addr[49:32]);
+  for (int i = 0; i < LOOP_TOP_AXI_AR; i++) begin
+        logic [31:0] temp_addr;
+        temp_addr = addr[i*32 +: 32];
+        if (i == LOOP_TOP_AXI_AR - 1) begin
+          temp_addr = {18'd0, addr[49:32]};
+        end
+        ocl_rd32(ADDR_TOP_AXI_AR_START + i*4, temp_addr);
+    end
 
     // Read data from R channel
+    logic [159:0] read_data;
     for (int i = 0; i < LOOP_TOP_AXI_R; i++) begin
         logic [31:0] temp_data;
         ocl_rd32(ADDR_TOP_AXI_R_START + i*4, temp_data);
-        data[i*32 +: 32] = temp_data;
+        read_data[i*32 +: 32] = temp_data;
     end
+    data = read_data[140:0];
   endtask
 
   // =========================================================================
