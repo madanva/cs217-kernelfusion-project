@@ -80,7 +80,7 @@ int top_write(int bar_handle, const AxiWriteCommand* write_command) {
         }
     }
 
-    usleep(1); // Small delay
+    usleep(10); // Small delay
 
     // Write data to W channel
     uint32_t transfer_data[LOOP_TOP_AXI_W] = {0};
@@ -113,12 +113,13 @@ int top_read(int bar_handle, AxiReadCommand* read_command) {
 
     // Write address to AR channel
     for (int i = 0; i < LOOP_TOP_AXI_AR; i++) {
+      //data sent
         if (ocl_wr32(bar_handle, ADDR_TOP_AXI_AR_START + i * 4, transfer_addr[i])) {
             return 1;
         }
     }
 
-    usleep(1); // Small delay
+    usleep(10); // Small delay
 
     // Read data from R channel
     uint32_t transfer_data[LOOP_TOP_AXI_R] = {0};
@@ -129,24 +130,21 @@ int top_read(int bar_handle, AxiReadCommand* read_command) {
     }
 
     // Unpack data (141 bits total, data is in bits 137:10)
-    uint64_t temp_data_0 = ((uint64_t)transfer_data[1] << 32) | transfer_data[0];
-    uint64_t temp_data_1 = ((uint64_t)transfer_data[3] << 32) | transfer_data[2];
-    
-    read_command->data[0] = (temp_data_0 >> 10) & 0xFFFFFFFF;
-    read_command->data[1] = ((temp_data_0 >> 42) | (temp_data_1 << 22)) & 0xFFFFFFFF;
-    read_command->data[2] = (temp_data_1 >> 10) & 0xFFFFFFFF;
-    read_command->data[3] = (temp_data_1 >> 42) & 0xFFFFFFFF;
+    read_command->data[0] = (transfer_data[0] >> 10) | ((transfer_data[1] & 0x3FF) << 22);
+    read_command->data[1] = (transfer_data[1] >> 10) | ((transfer_data[2] & 0x3FF) << 22);
+    read_command->data[2] = (transfer_data[2] >> 10) | ((transfer_data[3] & 0x3FF) << 22);
+    read_command->data[3] = (transfer_data[3] >> 10) | ((transfer_data[4] & 0x3FF) << 22);
 
 
     // Verify data
     if (memcmp(read_command->data, read_command->expected_read_data, sizeof(read_command->data)) != 0) {
         fprintf(stderr, "Read data vs expected data mismatch!\n");
-        fprintf(stderr, "  Address: 0x%hX\n", read_command->addr);
+        fprintf(stderr, "  Address: 0x%X\n", read_command->addr);
         fprintf(stderr, "  Read:      0x%08X_%08X_%08X_%08X\n", read_command->data[3], read_command->data[2], read_command->data[1], read_command->data[0]);
         fprintf(stderr, "  Expected:  0x%08X_%08X_%08X_%08X\n", read_command->expected_read_data[3], read_command->expected_read_data[2], read_command->expected_read_data[1], read_command->expected_read_data[0]);
         return 1; // Mismatch
     } else {
-        printf("Read value matches the expected at 0x%hX\n", read_command->addr);
+        printf("Read value matches the expected at 0x%X\n", read_command->addr);
     }
 
     return 0; // Success
@@ -195,14 +193,12 @@ int main(int argc, char** argv) {
       .expected_read_data = {0x9EE3E635, 0x584169B2, 0xA0A882BF, 0xD4C04352}};
 
   // Perform Write
-  printf("Writing data to 0x%hX...\n", write_cmd.addr);
   if (top_write(bar_handle, &write_cmd)) {
       rc = 1;
       goto cleanup;
   }
 
   // Perform Read and Verify
-  printf("Reading data from 0x%hX...\n", read_cmd.addr);
   if (top_read(bar_handle, &read_cmd)) {
       rc = 1;
       goto cleanup;

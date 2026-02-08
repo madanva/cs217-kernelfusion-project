@@ -1,5 +1,6 @@
 ---- System Initialization (bar_handle: 0) ----
 
 ---- Running AXI Write/Read Test ----
-Writing data to 0x0...
-Reading data from 0x0...
+Read value matches the expected at 0x33500000
+
+---- TEST PASSED ----
