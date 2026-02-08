@@ -144,7 +144,7 @@ int top_read(int bar_handle, AxiReadCommand* read_command) {
         fprintf(stderr, "  Expected:  0x%08X_%08X_%08X_%08X\n", read_command->expected_read_data[3], read_command->expected_read_data[2], read_command->expected_read_data[1], read_command->expected_read_data[0]);
         return 1; // Mismatch
     } else {
-        printf("Read value matches the expected at 0x%X\n", read_command->addr);
+        printf("Read value matches the expected = 0x%08X_%08X_%08X_%08X at 0x%X\n", read_command->data[3], read_command->data[2], read_command->data[1], read_command->data[0], read_command->addr);
     }
 
     return 0; // Success
