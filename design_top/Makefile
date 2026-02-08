@@ -1,4 +1,4 @@
-DESIGN_NAME ?= GBModule
+DESIGN_NAME ?= Top
 CL_DIR 			?= $(CL_DIR)
 CL_DESIGN_NAME 	?= $(CL_DESIGN_NAME)
 LOGS_DIR 		?= $(CL_DIR)/../reports/aws/
