@@ -32,7 +32,7 @@ systemc_sim:
 	cd $(SRC_HOME)/$(DESIGN_NAME)/GBPartition/GBModule/GBControl && make run | tee $(REPORT_HOME)/hls/systemc_gbcontrol.log.txt
 	cd $(SRC_HOME)/$(DESIGN_NAME)/GBPartition/GBModule/ && make run | tee $(REPORT_HOME)/hls/systemc_gbmodule.log.txt
 	cd $(SRC_HOME)/$(DESIGN_NAME)/GBPartition/ && make run | tee $(REPORT_HOME)/hls/systemc_gbpartition.log.txt
-	cd T$(SRC_HOME)/$(DESIGN_NAME)/ && make run | tee $(REPORT_HOME)/hls/systemc_top.log.txt
+	cd $(SRC_HOME)/$(DESIGN_NAME)/ && make run | tee $(REPORT_HOME)/hls/systemc_top.log.txt
 
 # Run HLS and copy RTL
 hls: hls_sim copy_rtl
