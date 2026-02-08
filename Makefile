@@ -22,7 +22,17 @@ copy_rtl:
 
 # Run SystemC simulation
 systemc_sim:
-	cd $(SRC_HOME)/$(DESIGN_NAME) && make sim_test && make run
+	mkdir -p $(REPORT_HOME)/hls
+	cd $(SRC_HOME)/$(DESIGN_NAME)/PEPartition/PEModule/PECore/ && make run | tee $(REPORT_HOME)/hls/systemc_pecore.log.txt
+	cd $(SRC_HOME)/$(DESIGN_NAME)/PEPartition/PEModule/ActUnit/  && make run | tee $(REPORT_HOME)/hls/systemc_actunit.log.txt
+	cd $(SRC_HOME)/$(DESIGN_NAME)/PEPartition/PEModule/ && make run | tee $(REPORT_HOME)/hls/systemc_pemodule.log.txt
+	cd $(SRC_HOME)/$(DESIGN_NAME)/PEPartition/ && make run | tee $(REPORT_HOME)/hls/systemc_pepartition.log.txt
+	cd $(SRC_HOME)/$(DESIGN_NAME)/GBPartition/GBModule/NMP/ && make run | tee $(REPORT_HOME)/hls/systemc_nmp.log.txt
+	cd $(SRC_HOME)/$(DESIGN_NAME)/GBPartition/GBModule/GBCore/  && make run | tee $(REPORT_HOME)/hls/systemc_gbcore.log.txt
+	cd $(SRC_HOME)/$(DESIGN_NAME)/GBPartition/GBModule/GBControl && make run | tee $(REPORT_HOME)/hls/systemc_gbcontrol.log.txt
+	cd $(SRC_HOME)/$(DESIGN_NAME)/GBPartition/GBModule/ && make run | tee $(REPORT_HOME)/hls/systemc_gbmodule.log.txt
+	cd $(SRC_HOME)/$(DESIGN_NAME)/GBPartition/ && make run | tee $(REPORT_HOME)/hls/systemc_gbpartition.log.txt
+	cd T$(SRC_HOME)/$(DESIGN_NAME)/ && make run | tee $(REPORT_HOME)/hls/systemc_top.log.txt
 
 # Run HLS and copy RTL
 hls: hls_sim copy_rtl
