@@ -385,7 +385,7 @@ SC_MODULE(Source) {
     rva_cmd.data = 0;
     rva_cmd.addr = set_bytes<3>("00_00_10"); // nmp_start
     rva_in.Push(rva_cmd);
-    cout << "    START NMP " << std::hex << rva_cmd.data << " @ " << rva_cmd.addr << endl;
+    cout << "    START GBControl " << std::hex << rva_cmd.data << " @ " << rva_cmd.addr << endl;
     wait(100);
     
 

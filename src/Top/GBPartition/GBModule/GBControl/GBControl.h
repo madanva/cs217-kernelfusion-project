@@ -202,6 +202,7 @@ class GBControl : public match::Module {
         large_req_reg.vector_index = vector_index;
         large_req_reg.timestep_index = timestep_index;
         //cout << "large_req_reg.vector_index: " << large_req_reg.vector_index << "\t large_req_reg.timestep_index: " << large_req_reg.timestep_index << endl;
+        large_req.Push(large_req_reg);
         break;
       }
       case SEND2: {
@@ -232,6 +233,8 @@ class GBControl : public match::Module {
           large_req_reg.vector_index = data_in_reg.logical_addr;
           large_req_reg.timestep_index = timestep_index;
           large_req_reg.write_data = data_in_reg.data;
+          large_req.Push(large_req_reg);
+
           CDCOUT(sc_time_stamp() << name() << " CASE RECV " << endl, kDebugLevel);
         }
         break;
@@ -248,6 +251,7 @@ class GBControl : public match::Module {
         large_req_reg.memory_index = memory_index;
         large_req_reg.vector_index = vector_index;
         large_req_reg.timestep_index = timestep_index;
+        large_req.Push(large_req_reg);
         break;
       }
       case SENDBACK2: {
@@ -294,7 +298,6 @@ class GBControl : public match::Module {
         break;
       }
       case SEND: {
-        large_req.Push(large_req_reg);
         next_state = SEND2;
         break;
       }
@@ -319,7 +322,6 @@ class GBControl : public match::Module {
       case RECV: {
         // wait for Done while recieving data from PE and forward it to GB
         bool pe_done_reg;
-        large_req.Push(large_req_reg);
         if (pe_done.PopNB(pe_done_reg)) {
           if (gbcontrol_config.is_rnn) {
             next_state = SENDBACK;
@@ -334,8 +336,6 @@ class GBControl : public match::Module {
         break;
       }
       case SENDBACK: {
-        large_req.Push(large_req_reg);
-
         next_state = SENDBACK2;
         break;
       }
@@ -379,7 +379,7 @@ class GBControl : public match::Module {
   void GBControlRun() {
   
     Reset();  
-    #pragma hls_pipeline_init_interval 4
+    #pragma hls_pipeline_init_interval 3
     while(1){
       Initialize();
       RunFSM();

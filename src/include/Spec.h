@@ -37,7 +37,7 @@ namespace spec {
   const int kAccumScale = 167;
   const int kAccumShift = 11;
 
-  const int kNumPE = 4;
+  const int kNumPE = 1;
   
   const int kActNumFrac = 12;
 
