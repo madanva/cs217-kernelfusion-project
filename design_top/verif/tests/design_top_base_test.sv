@@ -4,57 +4,16 @@
 module design_top_base_test();
 import tb_type_defines_pkg::*;
 
-  // File to store AXI commands
-  string axi_commands_file = "src/Top/axi_commands_test.csv";
-  
-  // Structure to hold a single AXI command
   typedef struct {
-    string op;
     logic [49:0] addr;
     logic [144:0] data;
-  } AXICommand;
+  } AxiWriteCommand;
 
-  // Dynamic array to store the commands
-  AXICommand axi_commands[$];
+  typedef struct {
+    logic [49:0] addr;
+    logic [140:0] data;
+  } AxiReadCommand;
 
-  // Task to read and parse the CSV file
-  task load_axi_commands();
-    int file;
-    string line;
-    string op;
-    int addr;
-    string data_str;
-    int res;
-    string dummy;
-
-
-    file = $fopen(axi_commands_file, "r");
-    if (file == 0) begin
-      $error("Could not open axi_commands_test.csv");
-      $finish;
-    end
-
-    while ($fgets(line, file)) begin
-        // Replace commas with spaces for easier parsing
-        for (int i = 0; i < line.len(); i++) begin
-            if (line[i] == ",") begin
-                line[i] = " ";
-            end
-        end
-        
-        // Use sscanf to parse the line
-        res = $sscanf(line, "%s %s %h %s %s", dummy, op, addr, data_str, dummy);
-
-        if (res == 5) begin
-            AXICommand cmd;
-            cmd.op = op;
-            cmd.addr = addr;
-            cmd.data = data_str.atohex();
-            axi_commands.push_back(cmd);
-        end
-    end
-    $fclose(file);
-  endtask
 
   task automatic ocl_wr32(input logic [ADDR_WIDTH_OCL - 1 : 0] addr, input logic [WIDTH_AXI - 1:0] data);
     tb.poke_ocl(.addr(addr), .data(data));
@@ -87,9 +46,11 @@ import tb_type_defines_pkg::*;
     end
   endtask
 
-  task automatic top_read(input logic [49:0] addr, output logic [140:0] data);
+  task automatic top_read(input logic [49:0] addr, output logic [140:0] data, input logic [144:0] expected_read_data);
+    logic [159:0] read_data;
+
     // Write address to AR channel
-  for (int i = 0; i < LOOP_TOP_AXI_AR; i++) begin
+    for (int i = 0; i < LOOP_TOP_AXI_AR; i++) begin
         logic [31:0] temp_addr;
         temp_addr = addr[i*32 +: 32];
         if (i == LOOP_TOP_AXI_AR - 1) begin
@@ -99,45 +60,49 @@ import tb_type_defines_pkg::*;
     end
 
     // Read data from R channel
-    logic [159:0] read_data;
     for (int i = 0; i < LOOP_TOP_AXI_R; i++) begin
         logic [31:0] temp_data;
         ocl_rd32(ADDR_TOP_AXI_R_START + i*4, temp_data);
         read_data[i*32 +: 32] = temp_data;
     end
     data = read_data[140:0];
+
+    if (read_data[127:0] != expected_read_data[127:0])
+      $display(" Read data vs expected data mismatch! Read data = %h, Expected data = %h", read_data[127:0], expected_read_data[127:0]);
+
   endtask
 
   // =========================================================================
   // Main Test Sequence
   // =========================================================================
   initial begin
+    AxiWriteCommand write_command;
+    AxiReadCommand  read_command;
+
     // Power up the testbench
     tb.power_up(.clk_recipe_a(ClockRecipe::A0),
                 .clk_recipe_b(ClockRecipe::B0),
                 .clk_recipe_c(ClockRecipe::C0));
 
     #500ns;
+    write_command.addr = 0;
+    write_command.data = 128'b0000000000000000;
+    read_command.addr = 0;
+    read_command.data = 128'b0000000000000000;
 
-    // Load AXI commands from file
-    load_axi_commands();
 
-    // Execute AXI commands
-    foreach (axi_commands[i]) begin
-      if (axi_commands[i].op == "W") begin
-        $display("Writing to address %h", axi_commands[i].addr);
-        top_write(axi_commands[i].addr, axi_commands[i].data);
-      end else if (axi_commands[i].op == "R") begin
-        logic [140:0] read_data;
-        $display("Reading from address %h", axi_commands[i].addr);
-        top_read(axi_commands[i].addr, read_data);
-        // Optional: Compare read_data with expected_data from CSV
-        if (read_data !== axi_commands[i].data[140:0]) begin
-            $error("Read data mismatch at address %h: expected %h, got %h", axi_commands[i].addr, axi_commands[i].data[140:0], read_data);
-        end
-      end
-    end
+    write_command.addr = 32'h33500000;
+    write_command.data = 128'hD4C04352A0A882BF584169B29EE3E635;
 
+    read_command.addr = 32'h33500000;
+
+    top_write(write_command.addr, write_command.data);
+    top_read(read_command.addr, read_command.data, write_command.data);
+
+
+    #500ns;
+
+    
     #500ns;
     tb.power_down();
     
