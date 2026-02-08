@@ -5,13 +5,14 @@ module design_top_base_test();
 import tb_type_defines_pkg::*;
 
   typedef struct {
-    logic [49:0] addr;
-    logic [144:0] data;
+    logic [31:0] addr;
+    logic [127:0] data;
   } AxiWriteCommand;
 
   typedef struct {
-    logic [49:0] addr;
-    logic [140:0] data;
+    logic [31:0] addr;
+    logic [127:0] data;
+    logic [127:0] expected_read_data;
   } AxiReadCommand;
 
 
@@ -23,52 +24,64 @@ import tb_type_defines_pkg::*;
     tb.peek_ocl(.addr(addr), .data(data));
   endtask
 
-  task automatic top_write(input logic [49:0] addr, input logic [144:0] data);
+  task automatic top_write(input AxiWriteCommand write_command);
     // Write address to AW channel
+    // Strobe = 1ffff
+    logic [49:0] transfer_addr = {8'b0, write_command.addr, 10'b0};
+    logic [144:0] transfer_data = {17'h1ffff, write_command.data};
+
     for (int i = 0; i < LOOP_TOP_AXI_AW; i++) begin
         logic [31:0] temp_addr;
-        temp_addr = addr[i*32 +: 32];
+        temp_addr = transfer_addr[i*32 +: 32];
         if (i == LOOP_TOP_AXI_AW - 1) begin
-          temp_addr = {18'd0, addr[49:32]};
+          temp_addr = {14'b0, transfer_addr[49:32]};
         end
         ocl_wr32(ADDR_TOP_AXI_AW_START + i*4, temp_addr);
-
+        #10ns;
     end
+
+    #100ns;
         
    // Write data to W channel
     for (int i = 0; i < LOOP_TOP_AXI_W; i++) begin
         logic [31:0] temp_data;
-        temp_data = data[i*32 +: 32];
+        temp_data = transfer_data[i*32 +: 32];
         if (i == LOOP_TOP_AXI_W - 1) begin
-          temp_data = {17'd0, data[144:128]};
+          temp_data = {17'd0, transfer_data[144:128]};
         end
         ocl_wr32(ADDR_TOP_AXI_W_START + i*4, temp_data);
+        #10ns;
     end
   endtask
 
-  task automatic top_read(input logic [49:0] addr, output logic [140:0] data, input logic [144:0] expected_read_data);
-    logic [159:0] read_data;
+  task automatic top_read(AxiReadCommand read_command);
+    logic [49:0] transfer_addr = {8'b0, read_command.addr, 10'b0};
+    logic [159:0] transfer_data;
 
     // Write address to AR channel
     for (int i = 0; i < LOOP_TOP_AXI_AR; i++) begin
         logic [31:0] temp_addr;
-        temp_addr = addr[i*32 +: 32];
+        temp_addr = transfer_addr[i*32 +: 32];
         if (i == LOOP_TOP_AXI_AR - 1) begin
-          temp_addr = {18'd0, addr[49:32]};
+          temp_addr = {18'd0, transfer_addr[49:32]};
         end
         ocl_wr32(ADDR_TOP_AXI_AR_START + i*4, temp_addr);
+        #10ns;
     end
+
+    #100ns;
 
     // Read data from R channel
     for (int i = 0; i < LOOP_TOP_AXI_R; i++) begin
         logic [31:0] temp_data;
         ocl_rd32(ADDR_TOP_AXI_R_START + i*4, temp_data);
-        read_data[i*32 +: 32] = temp_data;
+        #10ns;
+        transfer_data[i*32 +: 32] = temp_data;
     end
-    data = read_data[140:0];
+    read_command.data = transfer_data[137:10];
 
-    if (read_data[127:0] != expected_read_data[127:0])
-      $display(" Read data vs expected data mismatch! Read data = %h, Expected data = %h", read_data[127:0], expected_read_data[127:0]);
+    if (read_command.data != read_command.expected_read_data)
+      $display(" Read data vs expected data mismatch! Read data = %h, Expected data = %h", read_command.data[127:0], read_command.expected_read_data[127:0]);
 
   endtask
 
@@ -86,21 +99,20 @@ import tb_type_defines_pkg::*;
 
     #500ns;
     write_command.addr = 0;
-    write_command.data = 145'b0000000000000000;
+    write_command.data = 'b0000000000000000;
     read_command.addr = 0;
-    read_command.data = 145'b0000000000000000;
+    read_command.data = 'b0000000000000000;
 
 
-    write_command.addr = 50'h33500000;
-    write_command.data = 145'hD4C04352A0A882BF584169B29EE3E635;
+    write_command.addr = 32'h33500000;
+    write_command.data = 127'hD4C04352A0A882BF584169B29EE3E635;
 
-    read_command.addr = 50'h33500000;
-
-    top_write(write_command.addr, write_command.data);
-    top_read(read_command.addr, read_command.data, write_command.data);
+    read_command.addr = 32'h33500000;
+    read_command.expected_read_data = write_command.data;
 
 
-    #500ns;
+    top_write(write_command);
+    top_read(read_command);
 
     
     #500ns;

@@ -86,12 +86,16 @@ module design_top
   );
 
   always_ff @(posedge clk_main_a0 or negedge rst_main_n) begin
-    $display("if_axi_rd_ar_vld = %b, if_axi_rd_ar_rdy = %b, if_axi_rd_ar_dat = %h", if_axi_rd_ar_vld, if_axi_rd_ar_rdy, if_axi_rd_ar_dat);
-    $display("if_axi_rd_r_vld = %b, if_axi_rd_r_rdy = %b, if_axi_rd_r_dat = %h", if_axi_rd_r_vld, if_axi_rd_r_rdy, if_axi_rd_r_dat);
-    $display("if_axi_wr_aw_vld = %b, if_axi_wr_aw_rdy = %b, if_axi_wr_aw_dat = %h", if_axi_wr_aw_vld, if_axi_wr_aw_rdy, if_axi_wr_aw_dat);
-    $display("if_axi_wr_w_vld = %b, if_axi_wr_w_rdy = %b, if_axi_wr_w_dat = %h", if_axi_wr_w_vld, if_axi_wr_w_rdy, if_axi_wr_w_dat);
-    $display("if_axi_wr_b_vld = %b, if_axi_wr_b_rdy = %b, if_axi_wr_b_dat = %h", if_axi_wr_b_vld, if_axi_wr_b_rdy, if_axi_wr_b_dat);
-
+    if (if_axi_rd_ar_vld & if_axi_rd_ar_rdy)
+      $display("if_axi_rd_ar_vld = %b, if_axi_rd_ar_rdy = %b, if_axi_rd_ar_dat = %h", if_axi_rd_ar_vld, if_axi_rd_ar_rdy, if_axi_rd_ar_dat);
+    if (if_axi_rd_r_vld & if_axi_rd_r_rdy)
+      $display("if_axi_rd_r_vld = %b, if_axi_rd_r_rdy = %b, if_axi_rd_r_dat = %h", if_axi_rd_r_vld, if_axi_rd_r_rdy, if_axi_rd_r_dat);
+    if (if_axi_wr_aw_vld & if_axi_wr_aw_rdy)
+      $display("if_axi_wr_aw_vld = %b, if_axi_wr_aw_rdy = %b, if_axi_wr_aw_dat = %h", if_axi_wr_aw_vld, if_axi_wr_aw_rdy, if_axi_wr_aw_dat);
+    if (if_axi_wr_w_vld & if_axi_wr_w_rdy)
+      $display("if_axi_wr_w_vld = %b, if_axi_wr_w_rdy = %b, if_axi_wr_w_dat = %h", if_axi_wr_w_vld, if_axi_wr_w_rdy, if_axi_wr_w_dat);
+    if (if_axi_wr_b_vld & if_axi_wr_b_rdy)
+      $display("if_axi_wr_b_vld = %b, if_axi_wr_b_rdy = %b, if_axi_wr_b_dat = %h", if_axi_wr_b_vld, if_axi_wr_b_rdy, if_axi_wr_b_dat);
   end
 
   //=============================================================================
@@ -244,13 +248,12 @@ module design_top
         for (int i = 0; i < LOOP_TOP_AXI_AW; i++) begin 
             if (wr_addr_q == (ADDR_TOP_AXI_AW_START + i*4)) begin
               if (i == LOOP_TOP_AXI_AW - 1) begin
-                if_axi_wr_aw_dat[49:32] <= {wr_data_q[17:0], if_axi_wr_aw_dat[31:0]};
+                if_axi_wr_aw_dat[49:32] <= wr_data_q[17:0];
                 if_axi_wr_aw_vld <= 1'b0;
                 axi_ready <= 1'b1;
               end
               else
                 if_axi_wr_aw_dat[(i+1)*32-1 -: 32] <= wr_data_q;
-              $display("if_axi_wr_aw_dat = %h", wr_data_q);
             end
         end
 
@@ -258,15 +261,13 @@ module design_top
         for (int i = 0; i < LOOP_TOP_AXI_W; i++) begin 
             if (wr_addr_q == (ADDR_TOP_AXI_W_START + i*4)) begin
               if (i == LOOP_TOP_AXI_W - 1) begin
-                if_axi_wr_w_dat[144:128] <= {wr_data_q[16:0], if_axi_wr_w_dat[127:0]};
+                if_axi_wr_w_dat[144:128] <= wr_data_q[16:0];
                 if_axi_wr_w_vld <= 1'b1;
                 if_axi_wr_aw_vld <= 1'b1;
                 axi_ready <= 1'b0;
               end
               else
                 if_axi_wr_w_dat[(i+1)*32-1 -: 32] <= wr_data_q;
-
-              $display("if_axi_wr_w_dat = %h", wr_data_q);
             end
         end
 
@@ -274,13 +275,12 @@ module design_top
         for (int i = 0; i < LOOP_TOP_AXI_AR; i++) begin 
             if (wr_addr_q == (ADDR_TOP_AXI_AR_START + i*4)) begin
               if (i == LOOP_TOP_AXI_AR - 1) begin
-                if_axi_rd_ar_dat[49:32] <= {wr_data_q[17:0], if_axi_rd_ar_dat[31:0]};
+                if_axi_rd_ar_dat[49:32] <= wr_data_q[17:0];
                 if_axi_rd_ar_vld <= 1'b1;
                 axi_ready <= 1'b0;
               end
               else
                 if_axi_rd_ar_dat[(i+1)*32-1 -: 32] <= wr_data_q;
-              $display("if_axi_rd_ar_dat = %h", wr_data_q);
             end
         end
 
@@ -302,8 +302,6 @@ module design_top
         if_axi_wr_b_rdy <= 1'b0;
         axi_ready <= 1'b1;
         if_axi_wr_b_dat_sig <= if_axi_wr_b_dat;
-        // display if_axi_wr_b_dat
-        $display("if_axi_wr_b_dat = %h", if_axi_wr_b_dat);
       end else begin
         if_axi_wr_b_rdy <= 1'b1;
       end
