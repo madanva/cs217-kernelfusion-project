@@ -50,20 +50,20 @@ hls_sim_debug:
 # Clean all generated files
 clean:
 	cd $(SRC_HOME)/PEPartition && make clean
-	cd $(SRC_HOME)/PEPartition/PEModule/ActUnit && make clean
-	cd $(SRC_HOME)/PEPartition/PEModule/PECore && make clean
-	cd $(SRC_HOME)/PEPartition/PEModule/PECore/Datapath && make clean
-	cd $(SRC_HOME)/PEPartition/PEModule && make clean
-	cd $(SRC_HOME)/PEPartition/PEModule/SRAM && make clean
-	cd $(SRC_HOME)/DataBus && make clean
-	cd $(SRC_HOME)/GBPartition && make clean
-	cd $(SRC_HOME)/GBPartition/GBModule/Attention && make clean
-	cd $(SRC_HOME)/GBPartition/GBModule/LayerNorm && make clean
-	cd $(SRC_HOME)/GBPartition/GBModule/ZeroPadding && make clean
-	cd $(SRC_HOME)/GBPartition/GBModule/GBCore && make clean
-	cd $(SRC_HOME)/GBPartition/GBModule/LayerReduce && make clean
-	cd $(SRC_HOME)/GBPartition/GBModule && make clean
-	cd $(SRC_HOME)/GBPartition/GBModule/GBControl && make clean
+	cd $(SRC_HOME)/Top/PEPartition/PEModule/ActUnit && make clean
+	cd $(SRC_HOME)/Top/PEPartition/PEModule/PECore && make clean
+	cd $(SRC_HOME)/Top/PEPartition/PEModule/PECore/Datapath && make clean
+	cd $(SRC_HOME)/Top/PEPartition/PEModule && make clean
+	cd $(SRC_HOME)/Top/PEPartition/PEModule/SRAM && make clean
+	cd $(SRC_HOME)/Top/DataBus && make clean
+	cd $(SRC_HOME)/Top/GBPartition && make clean
+	cd $(SRC_HOME)/Top/GBPartition/GBModule/Attention && make clean
+	cd $(SRC_HOME)/Top/GBPartition/GBModule/LayerNorm && make clean
+	cd $(SRC_HOME)/Top/GBPartition/GBModule/ZeroPadding && make clean
+	cd $(SRC_HOME)/Top/GBPartition/GBModule/GBCore && make clean
+	cd $(SRC_HOME)/Top/GBPartition/GBModule/LayerReduce && make clean
+	cd $(SRC_HOME)/Top/GBPartition/GBModule && make clean
+	cd $(SRC_HOME)/Top/GBPartition/GBModule/GBControl && make clean
 	cd $(SRC_HOME)/Top && make clean
 	rm -rf design_top/build/checkpoints/
 	rm -rf design_top/build/constraints/generated_cl_clocks_aws.xdc
