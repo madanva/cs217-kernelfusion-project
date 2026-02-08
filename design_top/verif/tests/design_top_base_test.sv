@@ -1,6 +1,8 @@
 `include "common_base_test.svh"
 `include "design_top_defines.vh"
 
+bit test_failed = 0;
+
 module design_top_base_test();
 import tb_type_defines_pkg::*;
 
@@ -80,8 +82,14 @@ import tb_type_defines_pkg::*;
     end
     read_command.data = transfer_data[137:10];
 
-    if (read_command.data != read_command.expected_read_data)
-      $display(" Read data vs expected data mismatch! Read data = %h, Expected data = %h", read_command.data[127:0], read_command.expected_read_data[127:0]);
+    if (read_command.data != read_command.expected_read_data) begin
+      $error(" Read data vs expected data mismatch! Read data = 0x%h, Expected data = 0x%h", read_command.data, read_command.expected_read_data);
+      test_failed = 1'b1;
+    end
+    else begin
+      $display("Read value matches the expected = 0x%h at 0x%h", read_command.data, read_command.addr);
+    end
+    
 
   endtask
 
@@ -98,9 +106,6 @@ import tb_type_defines_pkg::*;
                 .clk_recipe_c(ClockRecipe::C0));
 
     #500ns;
-    write_command.addr = 0;
-    write_command.data = 'b0000000000000000;
-    read_command.addr = 0;
     read_command.data = 'b0000000000000000;
 
 
@@ -118,8 +123,11 @@ import tb_type_defines_pkg::*;
     #500ns;
     tb.power_down();
     
-    $display("---- TEST FINISHED SUCCESSFULLY ----");
-    
+    if (!test_failed)
+      $display("---- TEST FINISHED SUCCESSFULLY ----");
+    else
+      $display("---- TEST FAILED ----");
+      
     $finish;
   end
 endmodule

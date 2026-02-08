@@ -85,7 +85,7 @@ module design_top
       .if_axi_wr_b_dat(if_axi_wr_b_dat)
   );
 
-  always_ff @(posedge clk_main_a0 or negedge rst_main_n) begin
+  /*always_ff @(posedge clk_main_a0 or negedge rst_main_n) begin
     if (if_axi_rd_ar_vld & if_axi_rd_ar_rdy)
       $display("if_axi_rd_ar_vld = %b, if_axi_rd_ar_rdy = %b, if_axi_rd_ar_dat = %h", if_axi_rd_ar_vld, if_axi_rd_ar_rdy, if_axi_rd_ar_dat);
     if (if_axi_rd_r_vld & if_axi_rd_r_rdy)
@@ -96,7 +96,7 @@ module design_top
       $display("if_axi_wr_w_vld = %b, if_axi_wr_w_rdy = %b, if_axi_wr_w_dat = %h", if_axi_wr_w_vld, if_axi_wr_w_rdy, if_axi_wr_w_dat);
     if (if_axi_wr_b_vld & if_axi_wr_b_rdy)
       $display("if_axi_wr_b_vld = %b, if_axi_wr_b_rdy = %b, if_axi_wr_b_dat = %h", if_axi_wr_b_vld, if_axi_wr_b_rdy, if_axi_wr_b_dat);
-  end
+  end*/
 
   //=============================================================================
   // GLOBALS

@@ -849,7 +849,7 @@ INFO: [VRFC 10-311] analyzing module hbm_apb_arbiter
 INFO: [VRFC 10-311] analyzing module hbm_data_fetch
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module design_top_base_test
-WARNING: [VRFC 10-8497] literal value 'hD4C04352A0A882BF584169B29EE3E635 truncated to fit in 127 bits [/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv:108]
+WARNING: [VRFC 10-8497] literal value 'hD4C04352A0A882BF584169B29EE3E635 truncated to fit in 127 bits [/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv:113]
 cd /home/ubuntu/solution-lab-4/design_top/verif/sim/xsim/design_top_base_test_sv && xelab -m64   --define plusarg_save  --define timeout=1ms  --define AWS_SIM --define USE_64GB_DDR_DIMM=1 --timescale 1ps/1ps --debug typical --relax --mt 8  -L unisims_ver -L unisim -L unifast_ver -L unifast -L unimacro_ver -L unimacro -L secureip -L xpm -L xil_defaultlib -L axi_dwidth_converter_v2_1_31 -L axi_protocol_converter_v2_1_31 -L axi_protocol_checker_v2_0_17 -L hbm2e_pl_v1_0_1 -L noc_hbm_v1_0_0 -L hbm_v1_0_16 -L axi_register_slice_v2_1_31 -L axi_infrastructure_v1_1_0 -L axi_crossbar_v2_1_32 -L axi_clock_converter_v2_1_30 -L fifo_generator_v13_2_10 -L axi_data_fifo_v2_1_30 -L generic_baseblocks_v2_1_2 -L lut_buffer_v2_0_1 -L xsdbm_v3_0_2 -L xdma_v4_1_29 -L xlconstant_v1_1_9 -L smartconnect_v1_0 -sv_lib dpi --snapshot tb xil_defaultlib.tb xil_defaultlib.glbl xil_defaultlib.design_top_base_test
 Vivado Simulator v2024.1
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
@@ -1737,7 +1737,7 @@ cd /home/ubuntu/solution-lab-4/design_top/verif/sim/xsim/design_top_base_test_sv
   **** SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
   **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
   **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
-  **** Start of session at: Sun Feb  8 07:12:54 2026
+  **** Start of session at: Sun Feb  8 07:22:04 2026
     ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
     ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 source xsim.dir/tb/xsim_script.tcl
@@ -2190,13 +2190,9 @@ Loading timesets for 'tb.card.u_ddr4_rdimm.rcd_enabled.NOT_LRDIMM.u_ddr4_dimm.ra
 	Loaded timeset:TS_625
 Model based on DDR4 DDS version 0.999 6/06/2014 (build data 5/06/2016)
 tb.card.u_ddr4_rdimm.rcd_enabled.NOT_LRDIMM.u_ddr4_dimm.rank_instances[1].mc_ca_mirroring_odd_rank.u_ddr4_rank.Micron_model.instance_of_sdram_devices[17].micron_mem_model.u_ddr4_model:Configured as x4 16G stack:1
-if_axi_wr_aw_vld = 1, if_axi_wr_aw_rdy = 1, if_axi_wr_aw_dat = 000cd40000000
-if_axi_wr_w_vld = 1, if_axi_wr_w_rdy = 1, if_axi_wr_w_dat = 1ffff54c04352a0a882bf584169b29ee3e635
-if_axi_wr_b_vld = 1, if_axi_wr_b_rdy = 1, if_axi_wr_b_dat = 000
-if_axi_rd_ar_vld = 1, if_axi_rd_ar_rdy = 1, if_axi_rd_ar_dat = 000cd40000000
-if_axi_rd_r_vld = 1, if_axi_rd_r_rdy = 1, if_axi_rd_r_dat = 1153010d4a82a20afd6105a6ca7b8f98d400
+Read value matches the expected = 54c04352a0a882bf584169b29ee3e635 at 33500000
 ---- TEST FINISHED SUCCESSFULLY ----
-$finish called at time : 8360 ns : File "/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv" Line 123
+$finish called at time : 8360 ns : File "/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv" Line 131
 ## quit
-INFO: [Common 17-206] Exiting xsim at Sun Feb  8 07:12:58 2026...
+INFO: [Common 17-206] Exiting xsim at Sun Feb  8 07:22:08 2026...
 make[1]: Leaving directory '/home/ubuntu/solution-lab-4/design_top/verif/scripts'
