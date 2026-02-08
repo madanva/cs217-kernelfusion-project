@@ -58,3 +58,7 @@ localparam int ADDR_TOP_AXI_R_START = 16'h550;
 // Interrupt (Top to Host)
 localparam int ADDR_TOP_INTERRUPT = 16'h570; // Read
 
+// FPGA OCL 
+localparam int WIDTH_AXI = 32;
+localparam int ADDR_WIDTH_OCL = 16;
+

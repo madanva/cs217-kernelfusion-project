@@ -49,9 +49,6 @@ module design_top
   logic         axil_rvalid_m, axil_rready_m;
 
   // ---------- Top module AXI-like interface signals ----------
-  logic rst_main;
-  assign rst_main = ~rst_main_n;
-
   logic interrupt;
   logic if_axi_rd_ar_vld, if_axi_rd_ar_rdy;
   logic [49:0] if_axi_rd_ar_dat;
@@ -69,7 +66,7 @@ module design_top
   //==============================
   Top u_top (
       .clk(clk_main_a0),
-      .rst(rst_main),
+      .rst(rst_main_n),
       .interrupt(interrupt),
       .if_axi_rd_ar_vld(if_axi_rd_ar_vld),
       .if_axi_rd_ar_rdy(if_axi_rd_ar_rdy),
