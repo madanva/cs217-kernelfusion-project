@@ -138,7 +138,7 @@ int top_read(int bar_handle, AxiReadCommand* read_command) {
 
     // Verify data
     if (memcmp(read_command->data, read_command->expected_read_data, sizeof(read_command->data)) != 0) {
-        fprintf(stderr, "Read data vs expected data mismatch!\n");
+        fprintf(stderr, "\nRead data vs expected data mismatch!\n");
         fprintf(stderr, "  Address: 0x%X\n", read_command->addr);
         fprintf(stderr, "  Read:      0x%08X_%08X_%08X_%08X\n", read_command->data[3], read_command->data[2], read_command->data[1], read_command->data[0]);
         fprintf(stderr, "  Expected:  0x%08X_%08X_%08X_%08X\n", read_command->expected_read_data[3], read_command->expected_read_data[2], read_command->expected_read_data[1], read_command->expected_read_data[0]);
@@ -227,15 +227,14 @@ int main(int argc, char** argv) {
 
   AxiReadCommand read_commands[] = {
       {0x33500010, {0}, {0x8000003, 0x1000000, 0x1, 0x0}},
-      {0x34600000, {0}, {0x9EE3E635, 0x584169B2, 0xA0A882BF, 0xD4C04352}},
       {0x33500000, {0}, {0x10101010, 0x10101010, 0x10101010, 0x10101010}},
-  };
+      {0x34600000, {0}, {0x9EE3E635, 0x584169B2, 0xA0A882BF, 0xD4C04352}},
+   };
 
   int num_write_commands = sizeof(write_commands) / sizeof(AxiWriteCommand);
   for (int i = 0; i < num_write_commands; i++) {
       if (top_write(bar_handle, &write_commands[i])) {
           rc = 1;
-          goto cleanup;
       }
       usleep(10);
   }
@@ -244,7 +243,6 @@ int main(int argc, char** argv) {
   for (int i = 0; i < num_read_commands; i++) {
       if (top_read(bar_handle, &read_commands[i])) {
           rc = 1;
-          goto cleanup;
       }
       usleep(10);
   }
@@ -254,7 +252,6 @@ int main(int argc, char** argv) {
   // ========================================================================= 
   printf("\n---- TEST %s ----\n", (rc == 0) ? "PASSED" : "FAILED");
 
-cleanup:
   if (bar_handle != -1) {
     fpga_pci_detach(bar_handle);
   }
