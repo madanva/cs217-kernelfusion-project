@@ -89,7 +89,11 @@ clean:
 # Create submission archive
 submission:
 	zip -r $(SUBMISSION_NAME).zip \
-		src/$(DESIGN_NAME)/GBCore/GBCore.h \
-		src/$(DESIGN_NAME)/NMP/NMP.h \
+		src/$(DESIGN_NAME)/PEPartition/PEModule/PEModule.h \
+		src/$(DESIGN_NAME)/PEPartition/PEPartition.h \
+		src/$(DESIGN_NAME)/GBPartition/GBModule/GBModule.h \
+		src/$(DESIGN_NAME)/GBPartition/GBModule.h \
+		src/$(DESIGN_NAME)/Top.h \
 		design_top/design/concat_$(DESIGN_NAME).v \
+		design_top/design/design_top.sv \
 		$(REPORT_HOME) \
