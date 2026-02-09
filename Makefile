@@ -22,24 +22,14 @@ copy_rtl:
 
 # Run SystemC simulation
 systemc_sim:
-	mkdir -p $(REPORT_HOME)/hls
-	cd $(SRC_HOME)/$(DESIGN_NAME)/PEPartition/PEModule/PECore/ && make run | tee $(REPORT_HOME)/hls/systemc_pecore.log.txt
-	cd $(SRC_HOME)/$(DESIGN_NAME)/PEPartition/PEModule/ActUnit/  && make run | tee $(REPORT_HOME)/hls/systemc_actunit.log.txt
-	cd $(SRC_HOME)/$(DESIGN_NAME)/PEPartition/PEModule/ && make run | tee $(REPORT_HOME)/hls/systemc_pemodule.log.txt
-	cd $(SRC_HOME)/$(DESIGN_NAME)/PEPartition/ && make run | tee $(REPORT_HOME)/hls/systemc_pepartition.log.txt
-	cd $(SRC_HOME)/$(DESIGN_NAME)/GBPartition/GBModule/NMP/ && make run | tee $(REPORT_HOME)/hls/systemc_nmp.log.txt
-	cd $(SRC_HOME)/$(DESIGN_NAME)/GBPartition/GBModule/GBCore/  && make run | tee $(REPORT_HOME)/hls/systemc_gbcore.log.txt
-	cd $(SRC_HOME)/$(DESIGN_NAME)/GBPartition/GBModule/GBControl && make run | tee $(REPORT_HOME)/hls/systemc_gbcontrol.log.txt
-	cd $(SRC_HOME)/$(DESIGN_NAME)/GBPartition/GBModule/ && make run | tee $(REPORT_HOME)/hls/systemc_gbmodule.log.txt
-	cd $(SRC_HOME)/$(DESIGN_NAME)/GBPartition/ && make run | tee $(REPORT_HOME)/hls/systemc_gbpartition.log.txt
-	cd $(SRC_HOME)/$(DESIGN_NAME)/ && make run | tee $(REPORT_HOME)/hls/systemc_top.log.txt
+	cd $(SRC_HOME)/$(DESIGN_NAME) && make
 
 # Run HLS and copy RTL
 hls: hls_sim copy_rtl
 
 # Run HLS simulation
 hls_sim:
-	cd $(HLS_HOME)/$(DESIGN_NAME) && make
+	cd $(HLS_HOME)/$(DESIGN_NAME) && make hls
 
 # Run HLS simulation with debug
 hls_sim_debug:
@@ -54,17 +44,23 @@ clean:
 	cd $(SRC_HOME)/Top/PEPartition/PEModule/PECore && make clean
 	cd $(SRC_HOME)/Top/PEPartition/PEModule/PECore/Datapath && make clean
 	cd $(SRC_HOME)/Top/PEPartition/PEModule && make clean
-	cd $(SRC_HOME)/Top/PEPartition/PEModule/SRAM && make clean
-	cd $(SRC_HOME)/Top/DataBus && make clean
 	cd $(SRC_HOME)/Top/GBPartition && make clean
-	cd $(SRC_HOME)/Top/GBPartition/GBModule/Attention && make clean
-	cd $(SRC_HOME)/Top/GBPartition/GBModule/LayerNorm && make clean
-	cd $(SRC_HOME)/Top/GBPartition/GBModule/ZeroPadding && make clean
 	cd $(SRC_HOME)/Top/GBPartition/GBModule/GBCore && make clean
-	cd $(SRC_HOME)/Top/GBPartition/GBModule/LayerReduce && make clean
+	cd $(SRC_HOME)/Top/GBPartition/GBModule/NMP && make clean
 	cd $(SRC_HOME)/Top/GBPartition/GBModule && make clean
 	cd $(SRC_HOME)/Top/GBPartition/GBModule/GBControl && make clean
 	cd $(SRC_HOME)/Top && make clean
+	cd $(HLS_HOME)/Top/PEPartition && make clean
+	cd $(HLS_HOME)/Top/PEPartition/PEModule/ActUnit && make clean
+	cd $(HLS_HOME)/Top/PEPartition/PEModule/PECore && make clean
+	cd $(HLS_HOME)/Top/PEPartition/PEModule/PECore/Datapath && make clean
+	cd $(HLS_HOME)/Top/PEPartition/PEModule && make clean
+	cd $(HLS_HOME)/Top/GBPartition && make clean
+	cd $(HLS_HOME)/Top/GBPartition/GBModule/GBCore && make clean
+	cd $(HLS_HOME)/Top/GBPartition/GBModule/NMP && make clean
+	cd $(HLS_HOME)/Top/GBPartition/GBModule && make clean
+	cd $(HLS_HOME)/Top/GBPartition/GBModule/GBControl && make clean
+	cd $(HLS_HOME)/Top && make clean
 	rm -rf design_top/build/checkpoints/
 	rm -rf design_top/build/constraints/generated_cl_clocks_aws.xdc
 	rm -rf design_top/build/reports/
