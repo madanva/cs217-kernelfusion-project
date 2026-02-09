@@ -865,14 +865,14 @@ Starting static elaboration
 Pass Through NonSizing Optimizer
 WARNING: [VRFC 10-9543] actual bit length 2 differs from formal bit length 1 for port 'ddr4_ck_t' [/home/ubuntu/aws-fpga/hdk/common/verif/models/fpga/fpga_ddr.svh:117]
 WARNING: [VRFC 10-9543] actual bit length 2 differs from formal bit length 1 for port 'ddr4_ck_c' [/home/ubuntu/aws-fpga/hdk/common/verif/models/fpga/fpga_ddr.svh:118]
-WARNING: [VRFC 10-9543] actual bit length 16 differs from formal bit length 32 for port 'm_axi_awaddr' [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:180]
-WARNING: [VRFC 10-9543] actual bit length 16 differs from formal bit length 32 for port 'm_axi_araddr' [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:192]
+WARNING: [VRFC 10-9543] actual bit length 16 differs from formal bit length 32 for port 'm_axi_awaddr' [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:186]
+WARNING: [VRFC 10-9543] actual bit length 16 differs from formal bit length 32 for port 'm_axi_araddr' [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:198]
 WARNING: [VRFC 10-9543] actual bit length 32 differs from formal bit length 3 for port 's_axi_awsize' [/home/ubuntu/aws-fpga/hdk/common/ip/cl_ip/cl_ip.gen/sources_1/ip/axi_register_slice_light/sim/axi_register_slice_light.v:227]
 WARNING: [VRFC 10-9543] actual bit length 32 differs from formal bit length 3 for port 's_axi_arsize' [/home/ubuntu/aws-fpga/hdk/common/ip/cl_ip/cl_ip.gen/sources_1/ip/axi_register_slice_light/sim/axi_register_slice_light.v:252]
 WARNING: [VRFC 10-8967] first argument of $fatal is invalid; expected 0, 1 or 2 [/home/ubuntu/aws-fpga/hdk/common/verif/models/sh_bfm/sh_bfm.sv:1888]
 WARNING: [VRFC 10-8967] first argument of $fatal is invalid; expected 0, 1 or 2 [/home/ubuntu/aws-fpga/hdk/common/verif/models/sh_bfm/sh_bfm.sv:2046]
-WARNING: [VRFC 10-5021] port 's_axi_arprot' is not connected on this instance [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:155]
-WARNING: [VRFC 10-3823] variable 'axil_awprot_m' might have multiple concurrent drivers [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:213]
+WARNING: [VRFC 10-5021] port 's_axi_arprot' is not connected on this instance [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:161]
+WARNING: [VRFC 10-3823] variable 'axil_awprot_m' might have multiple concurrent drivers [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:219]
 WARNING: [VRFC 10-3705] select index 7 into 'dq_temp' is out of bounds [/home/ubuntu/aws-fpga/hdk/common/verif/models/ddr4_model/ddr4_model.sv:1615]
 WARNING: [VRFC 10-3705] select index 7 into 'dq_temp' is out of bounds [/home/ubuntu/aws-fpga/hdk/common/verif/models/ddr4_model/ddr4_model.sv:1617]
 Completed static elaboration
@@ -1743,7 +1743,7 @@ cd /home/ubuntu/solution-lab-4/design_top/verif/sim/xsim/design_top_base_test_sv
   **** SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
   **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
   **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
-  **** Start of session at: Sun Feb  8 21:12:26 2026
+  **** Start of session at: Mon Feb  9 03:23:48 2026
     ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
     ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 source xsim.dir/tb/xsim_script.tcl
@@ -2204,5 +2204,5 @@ Interrupt cycles =         20
 ---- TEST PASSED ----
 $finish called at time : 36470 ns : File "/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv" Line 183
 ## quit
-INFO: [Common 17-206] Exiting xsim at Sun Feb  8 21:12:32 2026...
+INFO: [Common 17-206] Exiting xsim at Mon Feb  9 03:23:55 2026...
 make[1]: Leaving directory '/home/ubuntu/solution-lab-4/design_top/verif/scripts'
