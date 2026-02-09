@@ -222,6 +222,12 @@ public:
         } else if (tmp == 0x7) {
           gbcontrol_rva_in.Push(rva_in_reg);
         } else if (tmp == 0x0){
+            // TODO #1:
+            // 1. Decode the `local_index` from the AXI address to identify the target sub-module.
+            // 2. Send a start signal to the corresponding module's start channel.
+            //    - 0x1: GBControl (PE <-> GB communication)
+            //    - 0x2: NMP
+          /////////////// YOUR CODE STARTS HERE ///////////////
           switch (local_index) {
               case 0x1: 
                 gbcontrol_start.Push(1);
@@ -232,6 +238,8 @@ public:
               default:
                 break;
             }
+          /////////////// YOUR CODE ENDS HERE ///////////////
+
         }
       }
       wait();

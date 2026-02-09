@@ -306,30 +306,18 @@ public:
             spec::GB::Large::kNumBanks;
     if (large_req_reg.is_write) {
 
-      // TODO #1 ==============================================================
-      // Set up write address, data, and valid signal for SRAM
-      // Only a single write port is supported, so the address would always
-      // be base_addr
-      // CODE STARTS HERE =====================================================
       large_write_addrs[0]     = base_addr;
       large_write_req_valid[0] = 1;
       large_write_data[0]      = write_data;
-      // CODE ENDS HERE =======================================================
 
     } else {
 
-      // TODO #2 ==============================================================
-      // Set up read addresses and valid signals for SRAM
-      // N read ports are supported, so you need to loop over the N ports
-      // requested and set each read address to base_addr accordingly
-      // CODE STARTS HERE =====================================================
 #pragma hls_unroll yes
       for (unsigned i = 0; i < N; i++) {
         large_read_addrs[i]     = base_addr + i;
         large_read_req_valid[i] = 1;
         large_read_ready[i]     = 1;
       }
-      // CODE ENDS HERE =======================================================
     }
   } // SetLargeBuffer
 
@@ -419,11 +407,6 @@ public:
         PollNMPPort();
 
 
-      // TODO #3 ==============================================================
-      // Call the run() function of the SRAM with the prepared signals
-      // Refer to the ArbitratedScratchpadDP class definition for details on the
-      // arguments.
-      // CODE STARTS HERE =====================================================
       large_mem.run(
           large_read_addrs,
           large_read_req_valid,
@@ -435,7 +418,6 @@ public:
           large_read_ready,
           large_port_read_out,
           large_port_read_out_valid);
-      // CODE ENDS HERE =======================================================
 
       // Push outputs based on response mode
       PushOutputs();

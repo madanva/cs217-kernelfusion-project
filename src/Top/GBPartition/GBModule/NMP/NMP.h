@@ -241,36 +241,22 @@ public:
     }
   } // ConvertOutputToInt
 
-  // ===========================================================================
-  // Core Computation Functions
-  // Complete the TODO items below to implement RMSNorm and Softmax
-  // ===========================================================================
 
   /** RMSNorm Step 1 */
   void ComputeRMSSumSq() {
 
-    // TODO #1 =================================================================
-    // Compute sum of squares across input_fixed vector
-    // Store result in sum_sq member variable
-    // CODE STARTS HERE ========================================================
     sum_sq = 0;
 #pragma hls_unroll yes
     for (int i = 0; i < spec::kVectorSize; i++) {
       spec::NMP::AccumType sq = input_fixed[i] * input_fixed[i];
       sum_sq += sq;
     }
-    // CODE ENDS HERE ==========================================================
 
   } // ComputeRMSSumSq
 
   /** RMSNorm Step 2 */
   void ComputeRMSSqrtRecip() {
 
-    // TODO #2 =================================================================
-    // Compute rms_reciprocal = 1 / sqrt(mean of squares + epsilon)
-    // where mean of squares = sum_sq * kInvVectorSize
-    // Store result in rms_reciprocal member variable
-    // CODE STARTS HERE ========================================================
     // mean = sum_sq / kVectorSize
     spec::NMP::UnsignedAccumType rms_sqrt;
     spec::NMP::UnsignedAccumType mean =
@@ -279,22 +265,16 @@ public:
 
     // reciprocal: 1 / sqrt(mean + epsilon)
     ac_math::ac_reciprocal_pwl(rms_sqrt, rms_reciprocal);
-    // CODE ENDS HERE ==========================================================
 
   } // ComputeRMSSqrtRecip
 
   /** RMSNorm Step 3 */
   void ComputeRMSNormalize() {
 
-    // TODO #3 =================================================================
-    // Normalize each element: input_fixed[i] * rms_reciprocal
-    // Store result in output_fixed member variable
-    // CODE STARTS HERE ========================================================
 #pragma hls_unroll yes
     for (int i = 0; i < spec::kVectorSize; i++) {
       output_fixed[i] = input_fixed[i] * rms_reciprocal;
     }
-    // CODE ENDS HERE ==========================================================
 
   } // ComputeRMSNormalize
 
@@ -302,17 +282,12 @@ public:
   void ComputeSoftmaxMax() {
     max_value = spec::kAttentionWordMin;
 
-    // TODO #4 =================================================================
-    // Find maximum value in input_fixed vector through an unrolled loop
-    // Store result in max_value member variable
-    // CODE STARTS HERE ========================================================
 #pragma hls_unroll yes
     for (int i = 0; i < spec::kVectorSize; i++) {
       if (input_fixed[i] > max_value) {
         max_value = input_fixed[i];
       }
     }
-    // CODE ENDS HERE ==========================================================
 
   } // ComputeSoftmaxMax
 
@@ -322,10 +297,6 @@ public:
     // Shifted input for numerical stability
     spec::NMP::FixedType shifted[spec::kVectorSize];
 
-    // TODO #5 =================================================================
-    // Compute exp(x - max) for each element
-    // Store exponential results in exp_values member variable
-    // CODE STARTS HERE ========================================================
 // Subtract max for numerical stability
 #pragma hls_unroll yes
     for (int i = 0; i < spec::kVectorSize; i++) {
@@ -347,35 +318,22 @@ public:
     // Initialize sum of exponentials
     sum_exp = 0;
 
-    // TODO #6 =================================================================
-    // Compute sum of exponentials across exp_values vector
-    // Store result in sum_exp member variable
-    // Also compute reciprocal of sum and store in sum_exp_reciprocal member
-    // variable
-    // CODE STARTS HERE ========================================================
     // Accumulate sum of exponential
 #pragma hls_unroll yes
     for (int i = 0; i < spec::kVectorSize; i++) {
       sum_exp += exp_values[i];
     }
     ac_math::ac_reciprocal_pwl(sum_exp, sum_exp_reciprocal);
-    // CODE ENDS HERE ==========================================================
 
   } // ComputeSoftmaxSum
 
   /** Softmax Step 4 */
   void ComputeSoftmaxNormalize() {
 
-    // TODO #7 =================================================================
-    // Normalize each element: exp(x - max) / sum_exp
-    // Store result in output_fixed member variable
-    // CODE STARTS HERE ========================================================
-// Normalize each element: exp(x - max) / sum(exp)
 #pragma hls_unroll yes
     for (int i = 0; i < spec::kVectorSize; i++) {
       output_fixed[i] = exp_values[i] * sum_exp_reciprocal;
     }
-    // CODE ENDS HERE ==========================================================
 
   } // ComputeSoftmaxNormalize
 
