@@ -89,7 +89,7 @@ This section outlines the workflow for generating RTL from your SystemC design a
 
 ### 4.1. High-Level Synthesis (HLS)
 
-To manage complexity and avoid the high runtime of a flat, top-level synthesis, we will follow a hierarchical, bottom-up approach to generate the RTL. If you are confident in your design, you can directyl trigger all modules rtl generation with `python3 test.py --action hls_sim` (this should take about 2.5 hours).
+To manage complexity and avoid the high runtime of a flat, top-level synthesis, we will follow a hierarchical, bottom-up approach to generate the RTL. If you are confident in your design, you can directyl trigger all modules rtl generation with `python3 test.py --action hls_sim` (this should take about 2 hours).
 
 1.  **Synthesize `PEModule` and `GBModule`:** These can be synthesized in parallel.
     ```bash
