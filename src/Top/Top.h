@@ -207,7 +207,7 @@ SC_MODULE(Top){
     /////////////// YOUR CODE ENDS HERE ///////////////
 
     // TODO #2: Instantiate and connect PEPartition modules
-    // 1. Loop through the number of PEs (spec::kNumPE).
+    // 1. Loop through the number of PEs (spec::kNumPE). While in the spec kNumPE is defined as 1, we want you to think about scaling the design and write accordingly
     // 2. Dynamically create each PEPartition instance.
     // 3. Connect clk, rst.
     // 4. Connect AXI subordinate channels (read/write), starting from index 1 of the channel arrays.
