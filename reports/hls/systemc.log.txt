@@ -1,0 +1,6 @@
+--- Error for src/Top/PEPartition/PEModule/ActUnit ---
+Command 'make' returned non-zero exit status 2.
+--- Error for src/Top/PEPartition/PEModule/PECore ---
+Command 'make' returned non-zero exit status 2.
+--- Error for src/Top/PEPartition/PEModule ---
+Command 'make' returned non-zero exit status 2.
