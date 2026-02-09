@@ -5,11 +5,6 @@ import argparse
 import shutil
 import sys
         
-if "SRC_HOME" not in os.environ:
-    os.environ["SRC_HOME"] = "/home/users/psmriti/cs217/solution-lab-4/src"
-if "REPO_TOP" not in os.environ:
-    os.environ["REPO_TOP"] = "/home/users/psmriti/cs217/solution-lab-4"
-        
 UNIT_NAME = "Top"
 SRC_PATH = os.getenv("SRC_HOME")
 SRC_UNIT_PATH = os.path.join(SRC_PATH, UNIT_NAME)
