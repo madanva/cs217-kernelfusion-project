@@ -1,6 +1,6 @@
 DESIGN_NAME ?= Top
 AWS_DESIGN_NAME ?= design_top
-SUBMISSION_NAME ?= lab3-submission
+SUBMISSION_NAME ?= lab4-submission
 
 REPO_TOP := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 SRC_HOME := $(REPO_TOP)/src
@@ -92,7 +92,7 @@ submission:
 		src/$(DESIGN_NAME)/PEPartition/PEModule/PEModule.h \
 		src/$(DESIGN_NAME)/PEPartition/PEPartition.h \
 		src/$(DESIGN_NAME)/GBPartition/GBModule/GBModule.h \
-		src/$(DESIGN_NAME)/GBPartition/GBModule.h \
+		src/$(DESIGN_NAME)/GBPartition/GBPartition.h \
 		src/$(DESIGN_NAME)/Top.h \
 		design_top/design/concat_$(DESIGN_NAME).v \
 		design_top/design/design_top.sv \
