@@ -117,7 +117,7 @@ def rtl_sim():
         try:
             # Run the make command
             result = subprocess.run(
-                "make hls",
+                ["make", "hls"],
                 cwd=directory,
                 capture_output=True,
                 text=True,

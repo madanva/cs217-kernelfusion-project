@@ -53,7 +53,6 @@ clean:
 	cd $(HLS_HOME)/Top/PEPartition && make clean
 	cd $(HLS_HOME)/Top/PEPartition/PEModule/ActUnit && make clean
 	cd $(HLS_HOME)/Top/PEPartition/PEModule/PECore && make clean
-	cd $(HLS_HOME)/Top/PEPartition/PEModule/PECore/Datapath && make clean
 	cd $(HLS_HOME)/Top/PEPartition/PEModule && make clean
 	cd $(HLS_HOME)/Top/GBPartition && make clean
 	cd $(HLS_HOME)/Top/GBPartition/GBModule/GBCore && make clean

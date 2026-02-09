@@ -65,6 +65,10 @@ module design_top
   //==============================
   // Top module instance
   //==============================
+  // TODO #1:
+  //    1. Instantiate the Top module (u_top) and connect its ports
+  /////////////// YOUR CODE ENDS HERE ///////////////
+
   Top u_top (
       .clk(clk_main_a0),
       .rst(rst_main_n),
@@ -85,6 +89,8 @@ module design_top
       .if_axi_wr_b_rdy(if_axi_wr_b_rdy),
       .if_axi_wr_b_dat(if_axi_wr_b_dat)
   );
+  /////////////// YOUR CODE STARTS HERE ///////////////
+
 
   /*always_ff @(posedge clk_main_a0 or negedge rst_main_n) begin
     if (if_axi_rd_ar_vld & if_axi_rd_ar_rdy)
@@ -217,9 +223,6 @@ module design_top
   assign axil_awready_m = ~wr_aw_captured && axi_ready;
   assign axil_wready_m  = ~wr_w_captured && axi_ready;
 
-  // BRESP/valid generation - Write path for Top module
-  logic [WIDTH_TOP_AXI_AR-1:0] top_ar_dat_sig;
-
   always_ff @(posedge clk_main_a0 or negedge rst_main_n) begin
     if (!rst_main_n) begin
       wr_aw_captured <= 1'b0;
@@ -257,6 +260,12 @@ module design_top
       if (wr_aw_captured && wr_w_captured && !axil_bvalid_m) begin
         
         // AXI Write Address Channel
+        // TODO 2:
+        //    1. Loop through the AXI Write address registers.
+        //    2. Check if the write address matches the current register address.
+        //    3. If it's the last register, assert if_axi_wr_b_rdy and axi_ready, but don't make it valid.
+        //    4. Making if_axi_wr_aw_vld valid is the responsibility of the AXI Write data loop.
+        /////////////// YOUR CODE STARTS HERE ///////////////
         for (int i = 0; i < LOOP_TOP_AXI_AW; i++) begin 
             if (wr_addr_q == (ADDR_TOP_AXI_AW_START + i*4)) begin
               if (i == LOOP_TOP_AXI_AW - 1) begin
@@ -268,8 +277,16 @@ module design_top
                 if_axi_wr_aw_dat[(i+1)*32-1 -: 32] <= wr_data_q;
             end
         end
+        /////////////// YOUR CODE ENDS HERE ///////////////
 
         // AXI Write Data Channel
+        // TODO 3:
+        //    1. Loop through the AXI Write data registers
+        //    2. Check if the write address matches the current register address
+        //    3. If it's the last register, assign the remaining data, and assert the valid signals
+        //    4. De-assert axi_ready to wait for the handshake to complete
+        //    5. Assign the data to the corresponding register
+        /////////////// YOUR CODE STARTS HERE ///////////////
         for (int i = 0; i < LOOP_TOP_AXI_W; i++) begin 
             if (wr_addr_q == (ADDR_TOP_AXI_W_START + i*4)) begin
               if (i == LOOP_TOP_AXI_W - 1) begin
@@ -282,6 +299,7 @@ module design_top
                 if_axi_wr_w_dat[(i+1)*32-1 -: 32] <= wr_data_q;
             end
         end
+        /////////////// YOUR CODE ENDS HERE ///////////////
 
         // AXI Read Address Channel
         for (int i = 0; i < LOOP_TOP_AXI_AR; i++) begin 
@@ -364,6 +382,12 @@ module design_top
         axil_rresp_m  <= 2'b00;
 
         if (top_r_valid_q) begin
+        // TODO 4:
+        //    1. Loop through the AXI Read data registers
+        //    2. Check if the read address matches the current register address
+        //    3. If it's the last register, de-assert top_r_valid_q and assert if_axi_rd_r_rdy
+        //    4. Assign the corresponding data to axil_rdata_m
+        /////////////// YOUR CODE STARTS HERE ///////////////
           for (int i = 0; i < LOOP_TOP_AXI_R; i++) begin
               if (axil_araddr_m == (ADDR_TOP_AXI_R_START + i*4)) begin
                   if (i == (LOOP_TOP_AXI_R - 1)) begin
@@ -375,6 +399,8 @@ module design_top
                     axil_rdata_m <= top_r_dat_q[(i+1)*32-1 -: 32];
               end
           end
+        /////////////// YOUR CODE ENDS HERE ///////////////
+
         end
         else begin
           if (axil_araddr_m == ADDR_TOP_INTERRUPT) begin
