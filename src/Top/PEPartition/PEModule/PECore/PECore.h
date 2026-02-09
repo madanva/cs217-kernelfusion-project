@@ -38,7 +38,6 @@
 
 // PECore module definition
 // Please read all comments carefully for implementation details
-// and complete the TODO sections.
 class PECore : public match::Module {
   static const int kDebugLevel = 4;
   SC_HAS_PROCESS(PECore);
@@ -501,15 +500,6 @@ public:
       NVUINT8 scale = spec::kAccumScale;
       NVUINT8 right_shift = spec::kAccumShift;
       spec::AccumVectorType accum_vector_out;
-
-      // TODO 5:
-      // 1. Implement the scaling operation on accum_vector using scale and right_shift
-      // 2. Store the result in act_port_reg after checking for overflow and cutting to the activation unit range
-      // 3. You can use pragmas to optimize the loop used for scaling and storing the result
-      // 4. If overflow occurs, set the value to kActWordMax or kActWordMin accordingly (these can be found in Spec.h)
-
-
-      /////// YOUR CODE STARTS HERE ////////
 #pragma hls_unroll yes
       for (int i = 0; i < spec::kNumVectorLanes; i++)
       {
@@ -523,7 +513,6 @@ public:
         
         act_port_reg[i] = accum_vector_out[i];
       }
-      /////// YOUR CODE ENDS HERE ////////
 
     }
   }
@@ -611,11 +600,6 @@ public:
 
     case OUT:
     {
-      // TODO 4:
-      // 1. Call pe_config.UpdateManagerCounter() to update output counter
-      // 2. If all outputs are done, move to IDLE state
-      // 3. Else, move to PRE state for next computation
-      //////// YOUR CODE STARTS HERE ////////
       bool is_output_end = 0;
       pe_config.UpdateManagerCounter(is_output_end);
       if (is_output_end)
@@ -628,7 +612,6 @@ public:
         next_state = PRE;
         CDCOUT(sc_time_stamp() << " PECore: " << name() << "next state = " << next_state << endl, kDebugLevel);
       }
-      /////// YOUR CODE ENDS HERE ////////
       break;
     }
     default:
