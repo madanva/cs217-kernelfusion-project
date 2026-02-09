@@ -469,14 +469,7 @@ public:
       spec::VectorType dp_in0[spec::kNumVectorLanes]; // weight lanes
       spec::VectorType dp_in1; // input vector
       spec::AccumVectorType dp_out; // Datapath output
-
-      // TODO 3: 
-      // 1. Implement the operation that gets the weight vector lanes and input vector from the SRAM read outputs
-      // 2. Call the Datapath function to compute the product sum between the weight vector lanes and input vector
-      // 3. Store the result in accum_vector
-      // 4. You can use pragmas to optimize the loop used for getting the weight vector lanes and to store the result in accum_vector
-
-      //////// YOUR CODE STARTS HERE ////////
+      
 #pragma hls_unroll yes
         for (int i = 0; i < spec::kNumVectorLanes; i++)
         {
@@ -495,7 +488,7 @@ public:
         accum_vector[i] = dp_out[i];
         //cout << "PECore: " << name() << " MAC accum_vector[" << i << "] = " << accum_vector[i] << endl;
       }
-      //////// YOUR CODE ENDS HERE ////////
+
     }
       
   }
