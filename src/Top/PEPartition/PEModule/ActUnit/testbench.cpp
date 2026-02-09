@@ -128,7 +128,7 @@ SC_MODULE(Source) {
 
     //Axi Config 0x01
     rva_in_src.rw = 1;
-    rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_01_01_0A_04_00_01"); //is_valid=1, is_zero_first=0, adpfloat_bias=4, num_inst=10, num_output=1, addr_base=0
+    rva_in_src.data = set_bytes<16>("00_00_00_00_00_00_00_00_00_00_01_01_0A_04_00_01"); 
     rva_in_src.addr = set_bytes<3>("80_00_10");  // last 4 bits never used 
     rva_in.Push(rva_in_src);
     wait(); 

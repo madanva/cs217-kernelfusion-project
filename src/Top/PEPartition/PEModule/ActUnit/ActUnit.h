@@ -310,7 +310,6 @@ class ActUnit : public match::Module {
       if (act_config_in.is_zero_first == 1) {
         act_regs[a2] = 0;
       }
-      // or convert from Adpfloat to fixed point and load to reg
       else {
         for (int i = 0; i < spec::kNumVectorLanes; i++) {
           act_regs[a2][i] = act_port_read_out[0][i];

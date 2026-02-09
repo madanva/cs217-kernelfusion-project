@@ -21,7 +21,6 @@
 #ifndef __DATAPATH__
 #define __DATAPATH__
 
-//  Datapath that does computation on adpfloat 
 #include <nvhls_int.h>
 #include <nvhls_types.h>
 #include "Spec.h"
