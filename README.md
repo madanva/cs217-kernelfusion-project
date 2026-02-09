@@ -77,7 +77,7 @@ This section details the `TODO` items that need to be completed. The tasks invol
     2.  Instantiate and connect the `PEPartition` modules (`TODO #2`).
     3.  Connect the `AxiSplitter` instance (`TODO #3`).
     4.  Connect the databus and interrupt handling modules (`TODO #4`).
-    5.  **Note:** The top-level simulation is driven by AXI commands from `src/Top/axi_commands_test.csv`. A test is provided. In your write-up, describe the test's functionality, including how the PE receives inputs and weights, how the GB stores the PE output, and how an NMP operation is performed (if applicable).
+    5.  **Note:** The top-level simulation is driven by AXI commands from `src/Top/axi_commands_test.csv`. A test is provided. In your write-up, describe the test's functionality, including how the PE receives inputs and weights, how the GB stores the PE output, and how an NMP operation is performed (if applicable). Also note that whenever 0xDEADBEEF is written to an address location, consider it as a NOP instruction.
     6.  Test the final integration with `cd src/Top; make`
 
 ### Task 4: SystemC Sanity Testing
