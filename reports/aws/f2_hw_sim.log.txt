@@ -1,7 +1,7 @@
-make[1]: Entering directory '/home/ubuntu/solution-lab-4/design_top/verif/scripts'
+make[1]: Entering directory '/home/ubuntu/solution-lab-4-project-base/design_top/verif/scripts'
 VIVADO_TOOL_VERSION = 2024.1
-CL_DIR = /home/ubuntu/solution-lab-4/design_top
-Running from /home/ubuntu/solution-lab-4/design_top/verif/scripts
+CL_DIR = /home/ubuntu/solution-lab-4-project-base/design_top
+Running from /home/ubuntu/solution-lab-4-project-base/design_top/verif/scripts
 #
 #- CREATE SIM_ROOT ----------
 #
@@ -11,27 +11,27 @@ mkdir -p /home/ubuntu/aws-fpga/hdk/common/verif/ip_simulation_libraries/xsim_com
 " WARNING: XSIM does not require simulation library compilation "
 rm -f /home/ubuntu/aws-fpga/hdk/common/verif/ip_simulation_libraries/xsim_complib_dir_in_progress
 make copy_xsim_ini
-make[2]: Entering directory '/home/ubuntu/solution-lab-4/design_top/verif/scripts'
+make[2]: Entering directory '/home/ubuntu/solution-lab-4-project-base/design_top/verif/scripts'
 VIVADO_TOOL_VERSION = 2024.1
-CL_DIR = /home/ubuntu/solution-lab-4/design_top
-Running from /home/ubuntu/solution-lab-4/design_top/verif/scripts
+CL_DIR = /home/ubuntu/solution-lab-4-project-base/design_top
+Running from /home/ubuntu/solution-lab-4-project-base/design_top/verif/scripts
 make[2]: Nothing to be done for 'copy_xsim_ini'.
-make[2]: Leaving directory '/home/ubuntu/solution-lab-4/design_top/verif/scripts'
+make[2]: Leaving directory '/home/ubuntu/solution-lab-4-project-base/design_top/verif/scripts'
 rm -f /home/ubuntu/aws-fpga/hdk/common/verif/ip_simulation_libraries/xsim_compile_cl_ips_dir_in_progress
-cd /home/ubuntu/solution-lab-4/design_top/verif/sim/xsim/design_top_base_test_sv && ln -s -f /home/ubuntu/aws-fpga/hdk/common/verif/ip_simulation_libraries/xsim_complib/xsim.ini
-cd /home/ubuntu/solution-lab-4/design_top/verif/sim/xsim/design_top_base_test_sv && xsc /home/ubuntu/aws-fpga/sdk/userspace/utils/sh_dpi_tasks.c /home/ubuntu/aws-fpga/hdk/common/software/src/fpga_pci_sv.c --gcc_compile_options "-I/home/ubuntu/aws-fpga/sdk/userspace/include" --gcc_compile_options "-I/home/ubuntu/aws-fpga/sdk/userspace/utils" --gcc_compile_options "-I/home/ubuntu/aws-fpga/hdk/common/software/include" --gcc_compile_options "-I/home/ubuntu/aws-fpga/hdk/common/software/src" --gcc_compile_options "-I/home/ubuntu/solution-lab-4/design_top/software/runtime" --gcc_compile_options "-I/home/ubuntu/solution-lab-4/design_top/software/include" --gcc_compile_options "-DVIVADO_SIM" --gcc_compile_options "-DSV_TEST" --gcc_compile_options "-DDMA_TEST"
+cd /home/ubuntu/solution-lab-4-project-base/design_top/verif/sim/xsim/design_top_base_test_sv && ln -s -f /home/ubuntu/aws-fpga/hdk/common/verif/ip_simulation_libraries/xsim_complib/xsim.ini
+cd /home/ubuntu/solution-lab-4-project-base/design_top/verif/sim/xsim/design_top_base_test_sv && xsc /home/ubuntu/aws-fpga/sdk/userspace/utils/sh_dpi_tasks.c /home/ubuntu/aws-fpga/hdk/common/software/src/fpga_pci_sv.c --gcc_compile_options "-I/home/ubuntu/aws-fpga/sdk/userspace/include" --gcc_compile_options "-I/home/ubuntu/aws-fpga/sdk/userspace/utils" --gcc_compile_options "-I/home/ubuntu/aws-fpga/hdk/common/software/include" --gcc_compile_options "-I/home/ubuntu/aws-fpga/hdk/common/software/src" --gcc_compile_options "-I/home/ubuntu/solution-lab-4-project-base/design_top/software/runtime" --gcc_compile_options "-I/home/ubuntu/solution-lab-4-project-base/design_top/software/include" --gcc_compile_options "-DVIVADO_SIM" --gcc_compile_options "-DSV_TEST" --gcc_compile_options "-DDMA_TEST"
 Multi-threading is on. Using 22 slave threads.
-Running compilation flow/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/gcc  -fPIC -c -Wa,-W -fPIC -m64 -B/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../../binutils-2.37/bin/ -I/home/ubuntu/aws-fpga/sdk/userspace/include -I/home/ubuntu/aws-fpga/sdk/userspace/utils -I/home/ubuntu/aws-fpga/hdk/common/software/include -I/home/ubuntu/aws-fpga/hdk/common/software/src -I/home/ubuntu/solution-lab-4/design_top/software/runtime -I/home/ubuntu/solution-lab-4/design_top/software/include -DVIVADO_SIM -DSV_TEST -DDMA_TEST    -I"/opt/Xilinx/Vivado/2024.1/data/xsim/include" -I"/opt/Xilinx/Vivado/2024.1/data/xsim/systemc" "/home/ubuntu/aws-fpga/hdk/common/software/src/fpga_pci_sv.c" -o "xsim.dir/work/xsc/fpga_pci_sv.lnx64.o" -DXILINX_SIMULATOR -Wno-deprecated-declarations 
-/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/gcc  -fPIC -c -Wa,-W -fPIC -m64 -B/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../../binutils-2.37/bin/ -I/home/ubuntu/aws-fpga/sdk/userspace/include -I/home/ubuntu/aws-fpga/sdk/userspace/utils -I/home/ubuntu/aws-fpga/hdk/common/software/include -I/home/ubuntu/aws-fpga/hdk/common/software/src -I/home/ubuntu/solution-lab-4/design_top/software/runtime -I/home/ubuntu/solution-lab-4/design_top/software/include -DVIVADO_SIM -DSV_TEST -DDMA_TEST    -I"/opt/Xilinx/Vivado/2024.1/data/xsim/include" -I"/opt/Xilinx/Vivado/2024.1/data/xsim/systemc" "/home/ubuntu/aws-fpga/sdk/userspace/utils/sh_dpi_tasks.c" -o "xsim.dir/work/xsc/sh_dpi_tasks.lnx64.o" -DXILINX_SIMULATOR -Wno-deprecated-declarations 
+Running compilation flow/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/gcc  -fPIC -c -Wa,-W -fPIC -m64 -B/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../../binutils-2.37/bin/ -I/home/ubuntu/aws-fpga/sdk/userspace/include -I/home/ubuntu/aws-fpga/sdk/userspace/utils -I/home/ubuntu/aws-fpga/hdk/common/software/include -I/home/ubuntu/aws-fpga/hdk/common/software/src -I/home/ubuntu/solution-lab-4-project-base/design_top/software/runtime -I/home/ubuntu/solution-lab-4-project-base/design_top/software/include -DVIVADO_SIM -DSV_TEST -DDMA_TEST    -I"/opt/Xilinx/Vivado/2024.1/data/xsim/include" -I"/opt/Xilinx/Vivado/2024.1/data/xsim/systemc" "/home/ubuntu/aws-fpga/hdk/common/software/src/fpga_pci_sv.c" -o "xsim.dir/work/xsc/fpga_pci_sv.lnx64.o" -DXILINX_SIMULATOR -Wno-deprecated-declarations 
+/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/gcc  -fPIC -c -Wa,-W -fPIC -m64 -B/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../../binutils-2.37/bin/ -I/home/ubuntu/aws-fpga/sdk/userspace/include -I/home/ubuntu/aws-fpga/sdk/userspace/utils -I/home/ubuntu/aws-fpga/hdk/common/software/include -I/home/ubuntu/aws-fpga/hdk/common/software/src -I/home/ubuntu/solution-lab-4-project-base/design_top/software/runtime -I/home/ubuntu/solution-lab-4-project-base/design_top/software/include -DVIVADO_SIM -DSV_TEST -DDMA_TEST    -I"/opt/Xilinx/Vivado/2024.1/data/xsim/include" -I"/opt/Xilinx/Vivado/2024.1/data/xsim/systemc" "/home/ubuntu/aws-fpga/sdk/userspace/utils/sh_dpi_tasks.c" -o "xsim.dir/work/xsc/sh_dpi_tasks.lnx64.o" -DXILINX_SIMULATOR -Wno-deprecated-declarations 
 Done compilation
 Linking with command:
-/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/g++ -Wa,-W  -O -fPIC  -m64  -shared  -o "xsim.dir/work/xsc/dpi.so" "xsim.dir/work/xsc/fpga_pci_sv.lnx64.o" "xsim.dir/work/xsc/sh_dpi_tasks.lnx64.o"   -I/home/ubuntu/aws-fpga/sdk/userspace/include -I/home/ubuntu/aws-fpga/sdk/userspace/utils -I/home/ubuntu/aws-fpga/hdk/common/software/include -I/home/ubuntu/aws-fpga/hdk/common/software/src -I/home/ubuntu/solution-lab-4/design_top/software/runtime -I/home/ubuntu/solution-lab-4/design_top/software/include -DVIVADO_SIM -DSV_TEST -DDMA_TEST   -L/opt/Xilinx/Vivado/2024.1/lib/lnx64.o -lrdi_simulator_kernel  -L/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../lib64 -Wl,--disable-new-dtags -Wl,-rpath=/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../lib64 -lrdi_xsim_systemc -std=c++11 -L/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/Default  -B/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../../binutils-2.37/bin/ 
+/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/g++ -Wa,-W  -O -fPIC  -m64  -shared  -o "xsim.dir/work/xsc/dpi.so" "xsim.dir/work/xsc/fpga_pci_sv.lnx64.o" "xsim.dir/work/xsc/sh_dpi_tasks.lnx64.o"   -I/home/ubuntu/aws-fpga/sdk/userspace/include -I/home/ubuntu/aws-fpga/sdk/userspace/utils -I/home/ubuntu/aws-fpga/hdk/common/software/include -I/home/ubuntu/aws-fpga/hdk/common/software/src -I/home/ubuntu/solution-lab-4-project-base/design_top/software/runtime -I/home/ubuntu/solution-lab-4-project-base/design_top/software/include -DVIVADO_SIM -DSV_TEST -DDMA_TEST   -L/opt/Xilinx/Vivado/2024.1/lib/lnx64.o -lrdi_simulator_kernel  -L/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../lib64 -Wl,--disable-new-dtags -Wl,-rpath=/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../lib64 -lrdi_xsim_systemc -std=c++11 -L/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/Default  -B/opt/Xilinx/Vivado/2024.1/lib/lnx64.o/../../tps/lnx64/gcc-9.3.0/bin/../../binutils-2.37/bin/ 
 
 Done linking: "xsim.dir/work/xsc/dpi.so"
-cd /home/ubuntu/solution-lab-4/design_top/verif/sim/xsim/design_top_base_test_sv && xvlog --sv -m64 --define DMA_TEST   --define plusarg_save  --define timeout=1ms  --define AWS_SIM --define USE_64GB_DDR_DIMM=1 --work xil_defaultlib --incr --relax -f /home/ubuntu/solution-lab-4/design_top/verif/scripts/top.xsim.f
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/ubuntu/solution-lab-4/design_top/design/counter.v" into library xil_defaultlib
+cd /home/ubuntu/solution-lab-4-project-base/design_top/verif/sim/xsim/design_top_base_test_sv && xvlog --sv -m64 --define DMA_TEST   --define plusarg_save  --define timeout=1ms  --define AWS_SIM --define USE_64GB_DDR_DIMM=1 --work xil_defaultlib --incr --relax -f /home/ubuntu/solution-lab-4-project-base/design_top/verif/scripts/top.xsim.f
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/ubuntu/solution-lab-4-project-base/design_top/design/counter.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module counter
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/ubuntu/solution-lab-4/design_top/design/design_top.sv" into library xil_defaultlib
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/ubuntu/solution-lab-4-project-base/design_top/design/design_top.sv" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module Top_PEPartition_PEModule_ActUnit_Connections_InBlockingless_RVSinkless_spec_Axi_rvaCfggreater_Writecomma_Connections_SYN_PORTgreater_PopNB_mgc_out_dreg_v2
 INFO: [VRFC 10-311] analyzing module Top_PEPartition_PEModule_ActUnit_Connections_InBlockingless_RVSinkless_spec_Axi_rvaCfggreater_Writecomma_Connections_SYN_PORTgreater_PopNB_ccs_in_v1
 INFO: [VRFC 10-311] analyzing module Top_PEPartition_PEModule_ActUnit_Connections_InBlockingless_RVSinkless_spec_Axi_rvaCfggreater_Writecomma_Connections_SYN_PORTgreater_PopNB_Connections_InBlocking_RVSink_spec_Axi_rvaCfg_Write_Connections_SYN_PORT_PopNB_core
@@ -725,9 +725,9 @@ INFO: [VRFC 10-311] analyzing module Top_GBRecv
 INFO: [VRFC 10-311] analyzing module Top_Interrupt
 INFO: [VRFC 10-311] analyzing module Top
 INFO: [VRFC 10-311] analyzing module counter
-WARNING: [VRFC 10-3609] overwriting previous definition of module 'counter' [/home/ubuntu/solution-lab-4/design_top/design/./counter.v:1]
+WARNING: [VRFC 10-3609] overwriting previous definition of module 'counter' [/home/ubuntu/solution-lab-4-project-base/design_top/design/./counter.v:1]
 INFO: [VRFC 10-311] analyzing module design_top
-WARNING: [VRFC 10-3381] ignoring re-definition of command line macro 'CL_NAME' [/home/ubuntu/solution-lab-4/design_top/design/design_top_defines.vh:21]
+WARNING: [VRFC 10-3381] ignoring re-definition of command line macro 'CL_NAME' [/home/ubuntu/solution-lab-4-project-base/design_top/design/design_top_defines.vh:21]
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/opt/Xilinx/Vivado/2024.1/data/verilog/src/glbl.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module glbl
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/ubuntu/aws-fpga/hdk/common/lib/aws_clk_gen.sv" into library xil_defaultlib
@@ -849,13 +849,13 @@ INFO: [VRFC 10-311] analyzing module hbm_apb_mst
 INFO: [VRFC 10-311] analyzing module hbm_temp_rd
 INFO: [VRFC 10-311] analyzing module hbm_apb_arbiter
 INFO: [VRFC 10-311] analyzing module hbm_data_fetch
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv" into library xil_defaultlib
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/ubuntu/solution-lab-4-project-base/design_top/verif/tests/design_top_base_test.sv" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module design_top_base_test
-WARNING: [VRFC 10-543] converting concatenation to assignment pattern [/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv:102]
-WARNING: [VRFC 10-543] converting concatenation to assignment pattern [/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv:143]
-WARNING: [VRFC 10-3824] variable 'write_commands' must explicitly be declared as automatic or static [/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv:102]
-WARNING: [VRFC 10-3824] variable 'read_commands' must explicitly be declared as automatic or static [/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv:143]
-cd /home/ubuntu/solution-lab-4/design_top/verif/sim/xsim/design_top_base_test_sv && xelab -m64   --define plusarg_save  --define timeout=1ms  --define AWS_SIM --define USE_64GB_DDR_DIMM=1 --timescale 1ps/1ps --debug typical --relax --mt 8  -L unisims_ver -L unisim -L unifast_ver -L unifast -L unimacro_ver -L unimacro -L secureip -L xpm -L xil_defaultlib -L axi_dwidth_converter_v2_1_31 -L axi_protocol_converter_v2_1_31 -L axi_protocol_checker_v2_0_17 -L hbm2e_pl_v1_0_1 -L noc_hbm_v1_0_0 -L hbm_v1_0_16 -L axi_register_slice_v2_1_31 -L axi_infrastructure_v1_1_0 -L axi_crossbar_v2_1_32 -L axi_clock_converter_v2_1_30 -L fifo_generator_v13_2_10 -L axi_data_fifo_v2_1_30 -L generic_baseblocks_v2_1_2 -L lut_buffer_v2_0_1 -L xsdbm_v3_0_2 -L xdma_v4_1_29 -L xlconstant_v1_1_9 -L smartconnect_v1_0 -sv_lib dpi --snapshot tb xil_defaultlib.tb xil_defaultlib.glbl xil_defaultlib.design_top_base_test
+WARNING: [VRFC 10-543] converting concatenation to assignment pattern [/home/ubuntu/solution-lab-4-project-base/design_top/verif/tests/design_top_base_test.sv:102]
+WARNING: [VRFC 10-543] converting concatenation to assignment pattern [/home/ubuntu/solution-lab-4-project-base/design_top/verif/tests/design_top_base_test.sv:143]
+WARNING: [VRFC 10-3824] variable 'write_commands' must explicitly be declared as automatic or static [/home/ubuntu/solution-lab-4-project-base/design_top/verif/tests/design_top_base_test.sv:102]
+WARNING: [VRFC 10-3824] variable 'read_commands' must explicitly be declared as automatic or static [/home/ubuntu/solution-lab-4-project-base/design_top/verif/tests/design_top_base_test.sv:143]
+cd /home/ubuntu/solution-lab-4-project-base/design_top/verif/sim/xsim/design_top_base_test_sv && xelab -m64   --define plusarg_save  --define timeout=1ms  --define AWS_SIM --define USE_64GB_DDR_DIMM=1 --timescale 1ps/1ps --debug typical --relax --mt 8  -L unisims_ver -L unisim -L unifast_ver -L unifast -L unimacro_ver -L unimacro -L secureip -L xpm -L xil_defaultlib -L axi_dwidth_converter_v2_1_31 -L axi_protocol_converter_v2_1_31 -L axi_protocol_checker_v2_0_17 -L hbm2e_pl_v1_0_1 -L noc_hbm_v1_0_0 -L hbm_v1_0_16 -L axi_register_slice_v2_1_31 -L axi_infrastructure_v1_1_0 -L axi_crossbar_v2_1_32 -L axi_clock_converter_v2_1_30 -L fifo_generator_v13_2_10 -L axi_data_fifo_v2_1_30 -L generic_baseblocks_v2_1_2 -L lut_buffer_v2_0_1 -L xsdbm_v3_0_2 -L xdma_v4_1_29 -L xlconstant_v1_1_9 -L smartconnect_v1_0 -sv_lib dpi --snapshot tb xil_defaultlib.tb xil_defaultlib.glbl xil_defaultlib.design_top_base_test
 Vivado Simulator v2024.1
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
@@ -865,14 +865,10 @@ Starting static elaboration
 Pass Through NonSizing Optimizer
 WARNING: [VRFC 10-9543] actual bit length 2 differs from formal bit length 1 for port 'ddr4_ck_t' [/home/ubuntu/aws-fpga/hdk/common/verif/models/fpga/fpga_ddr.svh:117]
 WARNING: [VRFC 10-9543] actual bit length 2 differs from formal bit length 1 for port 'ddr4_ck_c' [/home/ubuntu/aws-fpga/hdk/common/verif/models/fpga/fpga_ddr.svh:118]
-WARNING: [VRFC 10-9543] actual bit length 16 differs from formal bit length 32 for port 'm_axi_awaddr' [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:186]
-WARNING: [VRFC 10-9543] actual bit length 16 differs from formal bit length 32 for port 'm_axi_araddr' [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:198]
-WARNING: [VRFC 10-9543] actual bit length 32 differs from formal bit length 3 for port 's_axi_awsize' [/home/ubuntu/aws-fpga/hdk/common/ip/cl_ip/cl_ip.gen/sources_1/ip/axi_register_slice_light/sim/axi_register_slice_light.v:227]
-WARNING: [VRFC 10-9543] actual bit length 32 differs from formal bit length 3 for port 's_axi_arsize' [/home/ubuntu/aws-fpga/hdk/common/ip/cl_ip/cl_ip.gen/sources_1/ip/axi_register_slice_light/sim/axi_register_slice_light.v:252]
+WARNING: [VRFC 10-9543] actual bit length 48 differs from formal bit length 32 for port 's_axi_awaddr' [/home/ubuntu/solution-lab-4-project-base/design_top/design/design_top.sv:173]
+WARNING: [VRFC 10-9543] actual bit length 48 differs from formal bit length 32 for port 's_axi_araddr' [/home/ubuntu/solution-lab-4-project-base/design_top/design/design_top.sv:184]
 WARNING: [VRFC 10-8967] first argument of $fatal is invalid; expected 0, 1 or 2 [/home/ubuntu/aws-fpga/hdk/common/verif/models/sh_bfm/sh_bfm.sv:1888]
 WARNING: [VRFC 10-8967] first argument of $fatal is invalid; expected 0, 1 or 2 [/home/ubuntu/aws-fpga/hdk/common/verif/models/sh_bfm/sh_bfm.sv:2046]
-WARNING: [VRFC 10-5021] port 's_axi_arprot' is not connected on this instance [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:161]
-WARNING: [VRFC 10-3823] variable 'axil_awprot_m' might have multiple concurrent drivers [/home/ubuntu/solution-lab-4/design_top/design/design_top.sv:219]
 WARNING: [VRFC 10-3705] select index 7 into 'dq_temp' is out of bounds [/home/ubuntu/aws-fpga/hdk/common/verif/models/ddr4_model/ddr4_model.sv:1615]
 WARNING: [VRFC 10-3705] select index 7 into 'dq_temp' is out of bounds [/home/ubuntu/aws-fpga/hdk/common/verif/models/ddr4_model/ddr4_model.sv:1617]
 Completed static elaboration
@@ -912,6 +908,8 @@ Compiling module xil_defaultlib.axi_protocol_checker_v1_1_12_cor...
 Compiling module xil_defaultlib.axi_protocol_checker_v1_1_12_top...
 Compiling module xil_defaultlib.axil_bfm
 Compiling module xil_defaultlib.sh_bfm
+Compiling module unisims_ver.BUFG
+Compiling module xpm.xpm_cdc_async_rst_default
 Compiling module xil_defaultlib.BLOCK_1R1W_RBW(addr_width=32'sb0...
 Compiling module xil_defaultlib.Top_GBPartition_GBModule_GBCore_...
 Compiling module xil_defaultlib.Top_GBPartition_GBModule_GBCore_...
@@ -1719,13 +1717,18 @@ Compiling module xil_defaultlib.Top_PEPartition
 Compiling module xil_defaultlib.Top
 Compiling module xil_defaultlib.counter
 Compiling module axi_infrastructure_v1_1_0.axi_infrastructure_v1_1_0_axi2ve...
+Compiling module xpm.xpm_cdc_single(DEST_SYNC_FF=2,SR...
+Compiling module xpm.xpm_cdc_handshake(DEST_SYNC_FF=2...
+Compiling module axi_clock_converter_v2_1_30.axi_clock_converter_v2_1_30_lite...
+Compiling module xpm.xpm_cdc_handshake(DEST_SYNC_FF=2...
+Compiling module axi_clock_converter_v2_1_30.axi_clock_converter_v2_1_30_lite...
+Compiling module xpm.xpm_cdc_handshake(DEST_SYNC_FF=2...
+Compiling module axi_clock_converter_v2_1_30.axi_clock_converter_v2_1_30_lite...
+Compiling module xpm.xpm_cdc_handshake(DEST_SYNC_FF=2...
+Compiling module axi_clock_converter_v2_1_30.axi_clock_converter_v2_1_30_lite...
 Compiling module axi_infrastructure_v1_1_0.axi_infrastructure_v1_1_0_vector...
-Compiling module axi_register_slice_v2_1_31.axi_register_slice_v2_1_31_axic_...
-Compiling module axi_register_slice_v2_1_31.axi_register_slice_v2_1_31_axic_...
-Compiling module axi_register_slice_v2_1_31.axi_register_slice_v2_1_31_axic_...
-Compiling module axi_register_slice_v2_1_31.axi_register_slice_v2_1_31_axic_...
-Compiling module axi_register_slice_v2_1_31.axi_register_slice_v2_1_31_axi_r...
-Compiling module xil_defaultlib.axi_register_slice_light
+Compiling module axi_clock_converter_v2_1_30.axi_clock_converter_v2_1_30_axi_...
+Compiling module xil_defaultlib.cl_axi_clock_converter_light
 Compiling module xil_defaultlib.lib_pipe(WIDTH=1,STAGES=4)
 Compiling module unisims_ver.IBUFDS
 Compiling module unisims_ver.OBUF
@@ -1738,18 +1741,18 @@ Compiling module xil_defaultlib.tb
 Compiling module xil_defaultlib.glbl
 Compiling module xil_defaultlib.design_top_base_test
 Built simulation snapshot tb
-cd /home/ubuntu/solution-lab-4/design_top/verif/sim/xsim/design_top_base_test_sv && xsim -log design_top_base_test.log -tclbatch /home/ubuntu/solution-lab-4/design_top/verif/scripts/waves.tcl tb | grep -v "\*\*\*Meta" | sed '/^$/d'
+cd /home/ubuntu/solution-lab-4-project-base/design_top/verif/sim/xsim/design_top_base_test_sv && xsim -log design_top_base_test.log -tclbatch /home/ubuntu/solution-lab-4-project-base/design_top/verif/scripts/waves.tcl tb | grep -v "\*\*\*Meta" | sed '/^$/d'
 ****** xsim v2024.1 (64-bit)
   **** SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
   **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
   **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
-  **** Start of session at: Mon Feb  9 03:23:48 2026
+  **** Start of session at: Sun Feb 22 06:28:59 2026
     ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
     ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 source xsim.dir/tb/xsim_script.tcl
-# xsim {tb} -autoloadwcfg -tclbatch {/home/ubuntu/solution-lab-4/design_top/verif/scripts/waves.tcl}
+# xsim {tb} -autoloadwcfg -tclbatch {/home/ubuntu/solution-lab-4-project-base/design_top/verif/scripts/waves.tcl}
 Time resolution is 1 ps
-source /home/ubuntu/solution-lab-4/design_top/verif/scripts/waves.tcl
+source /home/ubuntu/solution-lab-4-project-base/design_top/verif/scripts/waves.tcl
 ## set curr_wave [current_wave_config]
 ## if { [string length $curr_wave] == 0 } {
 ##   if { [llength [get_objects]] > 0} {
@@ -2202,7 +2205,7 @@ Read value matches the expected = 0xd4c04352a0a882bf584169b29ee3e635 at 0x346000
 Read value matches the expected = 0x10101010101010101010101010101010 at 0x33500000
 Interrupt cycles =         20
 ---- TEST PASSED ----
-$finish called at time : 36470 ns : File "/home/ubuntu/solution-lab-4/design_top/verif/tests/design_top_base_test.sv" Line 183
+$finish called at time : 72450 ns : File "/home/ubuntu/solution-lab-4-project-base/design_top/verif/tests/design_top_base_test.sv" Line 183
 ## quit
-INFO: [Common 17-206] Exiting xsim at Mon Feb  9 03:23:55 2026...
-make[1]: Leaving directory '/home/ubuntu/solution-lab-4/design_top/verif/scripts'
+INFO: [Common 17-206] Exiting xsim at Sun Feb 22 06:29:06 2026...
+make[1]: Leaving directory '/home/ubuntu/solution-lab-4-project-base/design_top/verif/scripts'

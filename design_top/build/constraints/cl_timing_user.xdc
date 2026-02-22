@@ -16,4 +16,11 @@
 # =============================================================================
 
 
+
 # Add timing constraints here
+
+create_generated_clock -name clk_slow \
+  -divide_by 2 \
+  -source [get_pins clk_div2_reg/C] \
+  [get_pins u_bufg_clk_slow/O]
+
