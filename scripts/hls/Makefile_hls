@@ -36,7 +36,7 @@ INCLUDE ?= $(REPO_TOP)/src/include
 
 export ROOT           		?= $(TOT)
 export TOP_NAME       		?= $(shell basename `pwd`)
-export CLK_PERIOD     		:= 8.0
+export CLK_PERIOD     		:= 4.0
 export SRC_PATH       		?= $(ROOT)/cmod/mac
 export SEARCH_PATH    		?= $(MATCHLIB_HOME)/include $(CONNECTIONS_HOME)/include $(RAPIDJSON_HOME)/include $(BOOST_HOME) ${INCLUDE} $(REPO_TOP)/src/
 export HLS_CATAPULT   		?= 1
