@@ -182,4 +182,11 @@ import tb_type_defines_pkg::*;
       
     $finish;
   end
+
+  initial begin
+    #100000ns; // Timeout after 1ms
+    $error("Test timed out!");
+    $finish;
+  end
+  
 endmodule

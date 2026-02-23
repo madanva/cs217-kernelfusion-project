@@ -865,8 +865,8 @@ Starting static elaboration
 Pass Through NonSizing Optimizer
 WARNING: [VRFC 10-9543] actual bit length 2 differs from formal bit length 1 for port 'ddr4_ck_t' [/home/ubuntu/aws-fpga/hdk/common/verif/models/fpga/fpga_ddr.svh:117]
 WARNING: [VRFC 10-9543] actual bit length 2 differs from formal bit length 1 for port 'ddr4_ck_c' [/home/ubuntu/aws-fpga/hdk/common/verif/models/fpga/fpga_ddr.svh:118]
-WARNING: [VRFC 10-9543] actual bit length 48 differs from formal bit length 32 for port 's_axi_awaddr' [/home/ubuntu/solution-lab-4-project-base/design_top/design/design_top.sv:173]
-WARNING: [VRFC 10-9543] actual bit length 48 differs from formal bit length 32 for port 's_axi_araddr' [/home/ubuntu/solution-lab-4-project-base/design_top/design/design_top.sv:184]
+WARNING: [VRFC 10-9543] actual bit length 48 differs from formal bit length 32 for port 's_axi_awaddr' [/home/ubuntu/solution-lab-4-project-base/design_top/design/design_top.sv:196]
+WARNING: [VRFC 10-9543] actual bit length 48 differs from formal bit length 32 for port 's_axi_araddr' [/home/ubuntu/solution-lab-4-project-base/design_top/design/design_top.sv:207]
 WARNING: [VRFC 10-8967] first argument of $fatal is invalid; expected 0, 1 or 2 [/home/ubuntu/aws-fpga/hdk/common/verif/models/sh_bfm/sh_bfm.sv:1888]
 WARNING: [VRFC 10-8967] first argument of $fatal is invalid; expected 0, 1 or 2 [/home/ubuntu/aws-fpga/hdk/common/verif/models/sh_bfm/sh_bfm.sv:2046]
 WARNING: [VRFC 10-3705] select index 7 into 'dq_temp' is out of bounds [/home/ubuntu/aws-fpga/hdk/common/verif/models/ddr4_model/ddr4_model.sv:1615]
@@ -1746,7 +1746,7 @@ cd /home/ubuntu/solution-lab-4-project-base/design_top/verif/sim/xsim/design_top
   **** SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
   **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
   **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
-  **** Start of session at: Sun Feb 22 06:28:59 2026
+  **** Start of session at: Sun Feb 22 07:59:13 2026
     ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
     ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 source xsim.dir/tb/xsim_script.tcl
@@ -2207,5 +2207,5 @@ Interrupt cycles =         20
 ---- TEST PASSED ----
 $finish called at time : 72450 ns : File "/home/ubuntu/solution-lab-4-project-base/design_top/verif/tests/design_top_base_test.sv" Line 183
 ## quit
-INFO: [Common 17-206] Exiting xsim at Sun Feb 22 06:29:06 2026...
+INFO: [Common 17-206] Exiting xsim at Sun Feb 22 07:59:19 2026...
 make[1]: Leaving directory '/home/ubuntu/solution-lab-4-project-base/design_top/verif/scripts'

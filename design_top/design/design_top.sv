@@ -33,34 +33,9 @@ module design_top
 
 `include "design_top_defines.vh"
 `include "cl_id_defines.vh"
-
-  //here is 125 mhz clock generation
-  logic clk_div2_reg;
-  always_ff @(posedge clk_main_a0 or negedge rst_main_n) begin
-    if (!rst_main_n)
-      clk_div2_reg <= 1'b0;
-    else
-      clk_div2_reg <= ~clk_div2_reg;
-  end
-
-  logic clk_slow;
-  BUFG u_bufg_clk_slow (.I(clk_div2_reg), .O(clk_slow));
-
-  logic rst_slow_n;
-  xpm_cdc_async_rst #(
-    .DEST_SYNC_FF    (4),
-    .INIT_SYNC_FF    (0),
-    .RST_ACTIVE_HIGH (0)
-  ) CDC_ASYNC_RST_SLOW (
-    .src_arst  (rst_main_n),
-    .dest_clk  (clk_slow),
-    .dest_arst (rst_slow_n)
-  );
-
-  //clock converter
-  logic [31:0]  axil_awaddr_m_32;
+  
+  // ---------- AXI-Lite (master side of the reg-slice) to our bridge ----------
   logic [15:0]  axil_awaddr_m;
-  assign axil_awaddr_m = axil_awaddr_m_32[15:0];
   logic         axil_awvalid_m, axil_awready_m;
   logic [31:0]  axil_wdata_m;
   logic [3:0]   axil_wstrb_m;
@@ -68,9 +43,7 @@ module design_top
   logic [1:0]   axil_bresp_m;
   logic         axil_bvalid_m, axil_bready_m;
 
-  logic [31:0]  axil_araddr_m_32;
   logic [15:0]  axil_araddr_m;
-  assign axil_araddr_m = axil_araddr_m_32[15:0];
   logic         axil_arvalid_m, axil_arready_m;
   logic [31:0]  axil_rdata_m;
   logic [1:0]   axil_rresp_m;
@@ -89,6 +62,29 @@ module design_top
   logic if_axi_wr_b_vld, if_axi_wr_b_rdy;
   logic [11:0] if_axi_wr_b_dat;
 
+  // 125MHz Clock Div
+  logic clk_div2_reg;
+  always_ff @(posedge clk_main_a0 or negedge rst_main_n) begin
+    if (!rst_main_n)
+      clk_div2_reg <= 1'b0;
+    else
+      clk_div2_reg <= ~clk_div2_reg;
+  end
+
+  logic clk_125mhz;
+  BUFG u_bufg_clk_125mhz (.I(clk_div2_reg), .O(clk_125mhz));
+
+  logic rst_125mhz_n;
+  xpm_cdc_async_rst #(
+    .DEST_SYNC_FF    (4),
+    .INIT_SYNC_FF    (0),
+    .RST_ACTIVE_HIGH (0)
+  ) CDC_ASYNC_RST_SLOW (
+    .src_arst  (rst_main_n),
+    .dest_clk  (clk_125mhz),
+    .dest_arst (rst_125mhz_n)
+  );
+
   //==============================
   // Top module instance
   //==============================
@@ -96,13 +92,30 @@ module design_top
   //    1. Instantiate the Top module (u_top) and connect its ports
   /////////////// YOUR CODE ENDS HERE ///////////////
 
-
-  Top u_top (.clk(clk_slow), .rst(rst_slow_n), .interrupt(interrupt), .if_axi_rd_ar_vld(if_axi_rd_ar_vld), .if_axi_rd_ar_rdy(if_axi_rd_ar_rdy), .if_axi_rd_ar_dat(if_axi_rd_ar_dat), .if_axi_rd_r_vld(if_axi_rd_r_vld), .if_axi_rd_r_rdy(if_axi_rd_r_rdy), .if_axi_rd_r_dat(if_axi_rd_r_dat), .if_axi_wr_aw_vld(if_axi_wr_aw_vld), .if_axi_wr_aw_rdy(if_axi_wr_aw_rdy), .if_axi_wr_aw_dat(if_axi_wr_aw_dat), .if_axi_wr_w_vld(if_axi_wr_w_vld), .if_axi_wr_w_rdy(if_axi_wr_w_rdy), .if_axi_wr_w_dat(if_axi_wr_w_dat), .if_axi_wr_b_vld(if_axi_wr_b_vld), .if_axi_wr_b_rdy(if_axi_wr_b_rdy), .if_axi_wr_b_dat(if_axi_wr_b_dat) );
-
+  Top u_top (
+      .clk(clk_125mhz),
+      .rst(rst_125mhz_n),
+      .interrupt(interrupt),
+      .if_axi_rd_ar_vld(if_axi_rd_ar_vld),
+      .if_axi_rd_ar_rdy(if_axi_rd_ar_rdy),
+      .if_axi_rd_ar_dat(if_axi_rd_ar_dat),
+      .if_axi_rd_r_vld(if_axi_rd_r_vld),
+      .if_axi_rd_r_rdy(if_axi_rd_r_rdy),
+      .if_axi_rd_r_dat(if_axi_rd_r_dat),
+      .if_axi_wr_aw_vld(if_axi_wr_aw_vld),
+      .if_axi_wr_aw_rdy(if_axi_wr_aw_rdy),
+      .if_axi_wr_aw_dat(if_axi_wr_aw_dat),
+      .if_axi_wr_w_vld(if_axi_wr_w_vld),
+      .if_axi_wr_w_rdy(if_axi_wr_w_rdy),
+      .if_axi_wr_w_dat(if_axi_wr_w_dat),
+      .if_axi_wr_b_vld(if_axi_wr_b_vld),
+      .if_axi_wr_b_rdy(if_axi_wr_b_rdy),
+      .if_axi_wr_b_dat(if_axi_wr_b_dat)
+  );
   /////////////// YOUR CODE STARTS HERE ///////////////
 
 
-  /*always_ff @(posedge clk_main_a0 or negedge rst_main_n) begin
+  /*always_ff @(posedge clk_125mhz or negedge rst_125mhz_n) begin
     if (if_axi_rd_ar_vld & if_axi_rd_ar_rdy)
       $display("if_axi_rd_ar_vld = %b, if_axi_rd_ar_rdy = %b, if_axi_rd_ar_dat = %h", if_axi_rd_ar_vld, if_axi_rd_ar_rdy, if_axi_rd_ar_dat);
     if (if_axi_rd_r_vld & if_axi_rd_r_rdy)
@@ -119,8 +132,8 @@ module design_top
 
   logic [31:0] interrupt_cycles;
   counter #(.WIDTH(32)) u_interrupt_cycles_counter (
-            .clk (clk_slow),
-            .rst_n (rst_slow_n),
+            .clk (clk_125mhz),
+            .rst_n (rst_125mhz_n),
             .en (interrupt),
             .q (interrupt_cycles)
           );
@@ -165,6 +178,16 @@ module design_top
   logic        ocl_rvalid;
   logic        ocl_rready;
 
+  // Internal master-side signals from reg-slice to our simple AXI-Lite slave
+  logic [2:0]   axil_awprot_m;
+
+  logic [31:0]  axil_awaddr_m_32;
+  assign axil_awaddr_m = axil_awaddr_m_32[15:0];
+
+  logic [31:0]  axil_araddr_m_32;
+  assign axil_araddr_m = axil_araddr_m_32[15:0];
+
+
   cl_axi_clock_converter_light AXIL_OCL_CLK_CNV (
                              //here isslave side,shell clock domain
                              .s_axi_aclk    (clk_main_a0),
@@ -191,8 +214,8 @@ module design_top
                              .s_axi_rready  (ocl_cl_rready),
 
                              //master side, slow clock domain
-                             .m_axi_aclk    (clk_slow),
-                             .m_axi_aresetn (rst_slow_n),
+                             .m_axi_aclk    (clk_125mhz),
+                             .m_axi_aresetn (rst_125mhz_n),
 
                              .m_axi_awaddr  (axil_awaddr_m_32),
                              .m_axi_awprot  (),
@@ -227,13 +250,16 @@ module design_top
 
   logic [11:0] if_axi_wr_b_dat_sig;
 
+  // Default AXI responses
+  assign axil_awprot_m = 3'b000;
+
   // Ready when not holding captured info
   logic axi_ready;
   assign axil_awready_m = ~wr_aw_captured && axi_ready;
   assign axil_wready_m  = ~wr_w_captured && axi_ready;
 
-  always_ff @(posedge clk_slow or negedge rst_slow_n) begin
-    if (!rst_slow_n) begin
+  always_ff @(posedge clk_125mhz or negedge rst_125mhz_n) begin
+    if (!rst_125mhz_n) begin
       wr_aw_captured <= 1'b0;
       wr_w_captured  <= 1'b0;
       wr_addr_q      <= '0;
@@ -275,19 +301,17 @@ module design_top
         //    3. If it's the last register, assert if_axi_wr_b_rdy and axi_ready, but don't make it valid.
         //    4. Making if_axi_wr_aw_vld valid is the responsibility of the AXI Write data loop.
         /////////////// YOUR CODE STARTS HERE ///////////////
-
-        for (int i = 0; i <LOOP_TOP_AXI_AW; i++) begin
+        for (int i = 0; i < LOOP_TOP_AXI_AW; i++) begin 
             if (wr_addr_q == (ADDR_TOP_AXI_AW_START + i*4)) begin
               if (i == LOOP_TOP_AXI_AW - 1) begin
                 if_axi_wr_aw_dat[49:32] <= wr_data_q[17:0];
-                if_axi_wr_b_rdy <= 1'b1;
+                if_axi_wr_aw_vld <= 1'b0;
                 axi_ready <= 1'b1;
               end
               else
                 if_axi_wr_aw_dat[(i+1)*32-1 -: 32] <= wr_data_q;
             end
         end
-
         /////////////// YOUR CODE ENDS HERE ///////////////
 
         // AXI Write Data Channel
@@ -298,21 +322,18 @@ module design_top
         //    4. De-assert axi_ready to wait for the handshake to complete
         //    5. Assign the data to the corresponding register
         /////////////// YOUR CODE STARTS HERE ///////////////
-
-
-        for (int i = 0; i< LOOP_TOP_AXI_W; i++) begin
+        for (int i = 0; i < LOOP_TOP_AXI_W; i++) begin 
             if (wr_addr_q == (ADDR_TOP_AXI_W_START + i*4)) begin
               if (i == LOOP_TOP_AXI_W - 1) begin
                 if_axi_wr_w_dat[144:128] <= wr_data_q[16:0];
-                if_axi_wr_aw_vld <= 1'b1;
                 if_axi_wr_w_vld <= 1'b1;
+                if_axi_wr_aw_vld <= 1'b1;
                 axi_ready <= 1'b0;
               end
               else
                 if_axi_wr_w_dat[(i+1)*32-1 -: 32] <= wr_data_q;
             end
         end
-
         /////////////// YOUR CODE ENDS HERE ///////////////
 
         // AXI Read Address Channel
@@ -369,8 +390,8 @@ module design_top
   logic [15:0] rd_wait_addr;
 
   // AXI-Lite read handshake: respond in-place
-  always_ff @(posedge clk_slow or negedge rst_slow_n) begin
-    if (!rst_slow_n) begin
+  always_ff @(posedge clk_125mhz or negedge rst_125mhz_n) begin
+    if (!rst_125mhz_n) begin
       axil_arready_m <= 1'b1;
       axil_rvalid_m  <= 1'b0;
       axil_rdata_m   <= 32'h0;
