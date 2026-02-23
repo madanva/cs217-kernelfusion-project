@@ -92,17 +92,13 @@ make run_fpga_test
 
 Credits to @jadbitar for the timing-fixed solution code.
 
-1. HLS closed at 125MHz.
+1. HLS closed at 250MHz to prevent long buffer paths in RTL when closed at 125MHz
 2. The AWS clock `clk_main_a0` is put through a clock divider to supply 125MHz to all the components. Appropriate synchronization primitives were used.
 
-**Disclaimer:** If you see any functional failures while timing is clean, close HLS at 250MHz instead and keep the AWS side as is.
-
-Files changed:
+Files changed from Lab 4 release repo
 1. `design_top/design/design_top.sv`
 2. `design_top/build/constraints/cl_timing_user.xdc`
 3. `design_top/build/scripts/synth_design_top.tcl`
-4. `design_top/software/src/design_top.c`
-5. `scripts/hls/Makefile_hls`
 
 ## 6. Documentation
 

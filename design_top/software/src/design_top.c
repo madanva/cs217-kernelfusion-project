@@ -112,22 +112,20 @@ int top_read(int bar_handle, AxiReadCommand* read_command) {
     transfer_addr[0] = transfer_addr_full & 0xFFFFFFFF;
     transfer_addr[1] = (transfer_addr_full >> 32) & 0x3FFFF; // 18 bits
 
-    for (int loop = 0; loop < 2; loop++) {
-        // Write address to AR channel
-        for (int i = 0; i < LOOP_TOP_AXI_AR; i++) {
-            if (ocl_wr32(bar_handle, ADDR_TOP_AXI_AR_START + i * 4, transfer_addr[i])) {
-                return 1;
-            }
+    // Write address to AR channel
+    for (int i = 0; i < LOOP_TOP_AXI_AR; i++) {
+        if (ocl_wr32(bar_handle, ADDR_TOP_AXI_AR_START + i * 4, transfer_addr[i])) {
+            return 1;
         }
+    }
 
-        usleep(10); // Small delay
+    usleep(10); // Small delay
 
-        // Read data from R channel
-        for (int i = 0; i < LOOP_TOP_AXI_R; i++) {
-            transfer_data[i] = 0;
-            if (ocl_rd32(bar_handle, ADDR_TOP_AXI_R_START + i * 4, &transfer_data[i])) {
-                return 1;
-            }
+    // Read data from R channel
+    for (int i = 0; i < LOOP_TOP_AXI_R; i++) {
+        transfer_data[i] = 0;
+        if (ocl_rd32(bar_handle, ADDR_TOP_AXI_R_START + i * 4, &transfer_data[i])) {
+            return 1;
         }
     }
 
