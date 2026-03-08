@@ -27,6 +27,16 @@ Built on the Stanford CS 217 lab infrastructure (GBCore SRAM, NMP, MatchLib Conn
 | LUTs | 8,667 | 16,650 | 17,817 |
 | Total Area Score | 72,699 | 80,015 | 141,879 |
 
+### RTL Scverify (N=16)
+
+|  | Unfused | Partial Fused | Fully Fused |
+|--|---------|---------------|-------------|
+| Sim Clocks | 5,672 | 8,565 | 4,392 |
+| GB Reads | 560 | 544 | 528 |
+| GB Writes | 48 | 32 | 16 |
+| Write Reduction | 1x | 1.5x | 3x |
+| Speedup | 1x | 0.66x | 1.29x |
+
 ### RTL Scverify (N=64)
 
 |  | Unfused | Partial Fused | Fully Fused |
@@ -38,6 +48,8 @@ Built on the Stanford CS 217 lab infrastructure (GBCore SRAM, NMP, MatchLib Conn
 | Speedup | 1x | 0.64x | 1.27x |
 
 All 3 variants: TESTBENCH PASS (SystemC + HLS RTL scverify).
+
+Sim clocks measured from scverify simulation timestamps (DONE - start, tb.clk=1ns).
 
 ## File Structure
 
