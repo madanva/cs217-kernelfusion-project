@@ -170,6 +170,9 @@ namespace eval nvhls {
         solution options set ComponentLibs/SearchPath [exec readlink -f ./GBPartition/GBModule/GBControl/Catapult] -append
         solution library add "\[Block\] GBControl.v1"
 
+        solution options set ComponentLibs/SearchPath [exec readlink -f ./GBPartition/GBModule/AttnFullyFused/Catapult] -append
+        solution library add "\[Block\] AttnFullyFused.v1"
+
         solution options set ComponentLibs/SearchPath [exec readlink -f ./GBPartition/GBModule/Catapult] -append
         solution library add "\[Block\] GBModule.v1"
 

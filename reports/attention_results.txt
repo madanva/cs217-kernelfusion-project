@@ -1,0 +1,113 @@
+CS217 Project: Attention Accelerator Results
+=============================================
+Generated: 2026-03-07
+CLK_PERIOD: 4.0ns (HLS constraint), FPGA clock: 8ns (125MHz)
+N=16, d=16, tile_size=16
+
+=== HLS Synthesis Results (CLK_PERIOD=4.0ns) ===
+
+All 3 variants: TESTBENCH PASS (HLS + RTL scverify)
+
+                        Unfused     Partial Fused   Fully Fused
+Threads                 1           1               2 (MemCtrl+Compute)
+Throughput (II)         3           3               MemCtrl=1, Compute=3
+Real Operations         1,660       1,964           310+746=1,056
+Latency                 1           11              MemCtrl=1, Compute=2
+DSPs                    96          95              186
+LUTs                    8,667       16,650          17,817
+MUX_CARRYs              665         1,299           1,227
+Total Area Score        72,699      80,015          141,879
+
+=== Scverify Results (N=16) ===
+
+                        Unfused     Partial Fused   Fully Fused
+Sim Clocks (from ts)    5,672       8,565           4,392
+GB Reads                560         544             528
+GB Writes               48          32              16
+Total Vectors           608         576             544
+Total Bytes (x16B)      9,728       9,216           8,704
+Speedup vs Unfused      1x          0.66x           1.29x
+
+=== Scverify Results (N=64) ===
+
+                        Unfused     Partial Fused   Fully Fused
+Sim Clocks (from ts)    84,296      130,793         66,454
+GB Reads                8,768       8,512           8,256
+GB Writes               576         320             64
+Total Vectors           9,344       8,832           8,320
+Total Bytes (x16B)      149,504     141,312         133,120
+Write Reduction vs UF   1x          1.8x            9x
+Speedup vs Unfused      1x          0.64x           1.27x
+Improved Partial        -           130,793 ns      -
+
+Sim clocks measured from scverify simulation timestamps (DONE - start).
+Scverify sim clock = 1ns (tb.clk). All variants use same testbench clock.
+
+=== Key Architectural Differences ===
+
+Unfused:
+  - 3 separate phases: QK^T -> Softmax (via NMP) -> V multiply
+  - All intermediates (raw scores + attention weights) written to SRAM
+  - Simplest FSM, lowest area
+
+Partial Fused:
+  - 2 phases: Fused QK^T+Softmax -> V multiply
+  - Online softmax (running max/sum) keeps raw scores in registers
+  - Attention weights still written to SRAM for V multiply phase
+  - Required addtree pragma fix for SCHD-3 (running_sum feedback path)
+
+Fully Fused:
+  - 1 phase: Fused QK^T+Softmax+V multiply (FlashAttention-style)
+  - Online softmax with correction factors applied to V accumulator
+  - All intermediates in registers, only final output written to SRAM
+  - 2-thread dataflow split (MemCtrlRun + ComputeRun) needed for HLS
+  - Required addtree pragma fix for SCHD-3
+  - 2x area cost for full fusion
+
+=== HLS Pragmas Used ===
+
+Unfused + Partial Fused:
+  #pragma hls_pipeline_init_interval 3    (main while loop, II=3)
+
+Fully Fused:
+  MemCtrlRun:  #pragma hls_pipeline_init_interval 1  (II=1)
+  ComputeRun:  #pragma hls_pipeline_init_interval 3  (II=3)
+
+All variants:
+  #pragma hls_unroll yes                  (vector loops, 16 iterations)
+
+Partial + Fully Fused:
+  #pragma cluster addtree                 (running_sum accumulation)
+  #pragma cluster_type both               (addtree for both signed/unsigned)
+
+Fully Fused only:
+  ac_channel<> for MemCtrl<->Compute      (2-thread dataflow)
+  Connections::Combinational<> channels   (inter-thread communication)
+
+=== Notes ===
+
+- SCHD-3 "Feedback path too long" was the main HLS challenge
+  - Caused by 16-deep sequential addition chain on running_sum through large FSM MUX
+  - Fix: local tile_sum variable with addtree pragma reduces depth to O(log2(16))=4
+  - Affected both Partial Fused and Fully Fused variants
+- Fully Fused additionally required 2-thread dataflow split to separate
+  memory control from compute logic
+- N=16 differences are modest because intermediate matrices are small (16x16)
+- N=64 is where fusion truly matters: N^2 intermediates dominate traffic
+- All variants use same fixed-point types: int8 I/O, 32-bit intermediates, 40-bit accumulators
+- Cycle counter bug fix: original counter incremented during IDLE state (counting
+  wait loops). Fixed: if (state != IDLE) attn_config.cycle_count++
+- IMPORTANT: Internal cycle_count is NOT a reliable cross-variant metric.
+  cycle_count counts FSM iterations (one per wait()), NOT real clock cycles.
+  Variants have different IIs and blocking channel stalls add hidden cycles.
+  Following solution-lab-4's approach: use scverify simulation timestamps
+  (sc_time_stamp() at DONE - start) as the ground truth for sim clocks.
+  Solution-lab-4's NMP/PECore have NO internal cycle counters — only sc_time_stamp().
+- Sim clocks (from scverify timestamps, tb.clk = 1ns):
+  Unfused: 84,296 | Partial Fused: 131,541 | Fully Fused: 66,454
+  Speedup: Fully Fused is 1.27x faster than Unfused for N=64
+- Partial Fused is slowest due to RTL PopNB stalls — write/read interleaving
+  on the same GBCore memory channel adds ~2 stall cycles per memory read
+- Key metric is GB writes (proxy for off-chip traffic), not cycles:
+  Unfused=576, Partial=320, Fused=64 — fusion eliminates intermediate materialization
+- Fusion tradeoff: Fully Fused wins on latency AND data movement, but costs 2x area

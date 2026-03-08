@@ -49,6 +49,7 @@ clean:
 	cd $(SRC_HOME)/Top/GBPartition/GBModule/NMP && make clean
 	cd $(SRC_HOME)/Top/GBPartition/GBModule && make clean
 	cd $(SRC_HOME)/Top/GBPartition/GBModule/GBControl && make clean
+	cd $(SRC_HOME)/Top/GBPartition/GBModule/AttnFullyFused && make clean
 	cd $(SRC_HOME)/Top && make clean
 	cd $(HLS_HOME)/Top/PEPartition && make clean
 	cd $(HLS_HOME)/Top/PEPartition/PEModule/ActUnit && make clean

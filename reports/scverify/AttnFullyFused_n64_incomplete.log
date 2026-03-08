@@ -1,0 +1,171 @@
+Command: /home/users/vmadan/cs217-project/hls/Top/GBPartition/GBModule/AttnFullyFused/./Catapult/AttnFullyFused.v1/scverify/concat_sim_AttnFullyFused_v_vcs/sc_mainpwr -systemcrun -verilogrun -ucli -ucli2Proc -i ./Catapult/AttnFullyFused.v1/scverify/concat_sim_AttnFullyFused_v_vcs/scverify_vcs_wave.tcl -l ./Catapult/AttnFullyFused.v1/scverify/concat_sim_AttnFullyFused_v_vcs/sim.log
+Chronologic VCS simulator copyright 1991-2023
+Contains Synopsys proprietary information.
+Compiler version U-2023.03_Full64; Runtime version U-2023.03_Full64;  Mar  7 22:09 2026
+Connections Clock: tb.clk Period: 1 ns
+ucli% # Source static function file
+ucli% global env
+ucli% # Source the common TCL file (that also reads the wave database file)
+ucli% source $env(MGC_HOME)/pkgs/sif/userware/En_na/flows/vcs_funcs.tcl
+ucli% read_ccs_wave ./Catapult/AttnFullyFused.v1/scverify/ccs_wave_signals.dat
+Reading SCVerify waveform database './Catapult/AttnFullyFused.v1/scverify/ccs_wave_signals.dat'
+ucli% setup_vcd_file ./Catapult/AttnFullyFused.v1/.dut_inst_info.tcl
+DUT Instance Path = sc_main.tb.dut.ccs_rtl.dut_inst
+Preparing to write FSDB file ./default.fsdb...
+ucli% populate_wave_window
+ucli% if { ("0" != {}) && [file exists "0"] } {
+   source "0"
+}
+ucli% # If not running in GUI mode, run the entire simulation
+ucli% if { ![gui_is_active] } {
+   do_simulation_run
+}
+Running up to VCD start time: '0 ns'
+run 0 ns
+sysc_skeleton.v, 438 : (*vcs_systemc_2,vcs_systemc_skel*) module sc_main;
+Turning FSDB on
+*Verdi* Loading libsscore_vcs202303.so
+*Verdi* : Loading SystemC dumping library libsscore_vcs202303_sc233_gcc920.so.
+*Verdi* : Env. FSDB_VCS_RD_SC_VALPTR_PROTECT=1(1) was set.
+FSDB Dumper for VCS, Release Verdi_V-2023.12-SP2-4, Linux x86_64/64bit, 11/18/2024
+(C) 1996 - 2024 by Synopsys, Inc.
+*Verdi* : Create FSDB file './default.fsdb'
+*Verdi* : Begin traversing the scopes, layer (0).
+*Verdi* : End of traversing.
+fsdbDumpvars 0 sc_main.tb.dut.ccs_rtl.dut_inst
+*Verdi* : Begin traversing the scope (sc_main.tb.dut.ccs_rtl.dut_inst), layer (0).
+*Verdi* : End of traversing.
+*Verdi* : fsdbDumpon - All FSDB files at 0 ps.
+Continuing to VCD end time: 'end'
+run -all
+@2 ns Asserting reset
+@4 ns De-Asserting reset
+8 ns AXI read response data = 0x400100040000302010001
+8 ns Config readback matched
+1069 ns Output write for row 0
+  Row 0 PASSED
+2107 ns Output write for row 1
+  Row 1 PASSED
+3145 ns Output write for row 2
+  Row 2 PASSED
+4183 ns Output write for row 3
+  Row 3 PASSED
+5221 ns Output write for row 4
+  Row 4 PASSED
+6259 ns Output write for row 5
+  Row 5 PASSED
+7297 ns Output write for row 6
+  Row 6 PASSED
+8335 ns Output write for row 7
+  Row 7 PASSED
+9373 ns Output write for row 8
+  Row 8 PASSED
+10411 ns Output write for row 9
+  Row 9 PASSED
+11449 ns Output write for row a
+  Row a PASSED
+12487 ns Output write for row b
+  Row b PASSED
+13525 ns Output write for row c
+  Row c PASSED
+14563 ns Output write for row d
+  Row d PASSED
+15601 ns Output write for row e
+  Row e PASSED
+16639 ns Output write for row f
+  Row f PASSED
+17677 ns Output write for row 10
+  Row 10 PASSED
+18715 ns Output write for row 11
+  Row 11 PASSED
+19753 ns Output write for row 12
+  Row 12 PASSED
+20791 ns Output write for row 13
+  Row 13 PASSED
+21829 ns Output write for row 14
+  Row 14 PASSED
+22867 ns Output write for row 15
+  Row 15 PASSED
+23905 ns Output write for row 16
+  Row 16 PASSED
+24943 ns Output write for row 17
+  Row 17 PASSED
+25981 ns Output write for row 18
+  Row 18 PASSED
+27019 ns Output write for row 19
+  Row 19 PASSED
+28057 ns Output write for row 1a
+  Row 1a PASSED
+29095 ns Output write for row 1b
+  Row 1b PASSED
+30133 ns Output write for row 1c
+  Row 1c PASSED
+31171 ns Output write for row 1d
+  Row 1d PASSED
+32209 ns Output write for row 1e
+  Row 1e PASSED
+33247 ns Output write for row 1f
+  Row 1f PASSED
+34285 ns Output write for row 20
+  Row 20 PASSED
+35323 ns Output write for row 21
+  Row 21 PASSED
+36361 ns Output write for row 22
+  Row 22 PASSED
+37399 ns Output write for row 23
+  Row 23 PASSED
+38437 ns Output write for row 24
+  Row 24 PASSED
+39475 ns Output write for row 25
+  Row 25 PASSED
+40513 ns Output write for row 26
+  Row 26 PASSED
+41551 ns Output write for row 27
+  Row 27 PASSED
+42589 ns Output write for row 28
+  Row 28 PASSED
+43627 ns Output write for row 29
+  Row 29 PASSED
+44665 ns Output write for row 2a
+  Row 2a PASSED
+45703 ns Output write for row 2b
+  Row 2b PASSED
+46741 ns Output write for row 2c
+  Row 2c PASSED
+47779 ns Output write for row 2d
+  Row 2d PASSED
+48817 ns Output write for row 2e
+  Row 2e PASSED
+49855 ns Output write for row 2f
+  Row 2f PASSED
+50036 ns AXI read response data = 0x300000184A00004D5F
+50036 ns Performance counters: cycles=19807 gb_reads=6218 gb_writes=48
+50893 ns Output write for row 48
+  Row 48 PASSED
+51931 ns Output write for row 49
+  Row 49 PASSED
+52969 ns Output write for row 50
+  Row 50 PASSED
+54007 ns Output write for row 51
+  Row 51 PASSED
+55045 ns Output write for row 52
+  Row 52 PASSED
+56083 ns Output write for row 53
+  Row 53 PASSED
+57121 ns Output write for row 54
+  Row 54 PASSED
+58159 ns Output write for row 55
+  Row 55 PASSED
+59197 ns Output write for row 56
+  Row 56 PASSED
+@60004 ns sc_stop
+TESTBENCH PASS
+Simulation complete, time is 60004000 ps.
+sysc_skeleton.v, 438 : (*vcs_systemc_2,vcs_systemc_skel*) module sc_main;
+Turning FSDB off and flushing
+*Verdi* : Close all FSDB Files at 60,004,000 ps.
+Completed writing FSDB file ./default.fsdb...
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 60004000 ps
+CPU Time:     21.080 seconds;       Data structure size:   8.4Mb
+Sat Mar  7 22:10:17 2026

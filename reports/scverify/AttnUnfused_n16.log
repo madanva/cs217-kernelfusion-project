@@ -1,0 +1,140 @@
+Command: /home/users/vmadan/cs217-project/hls/Top/GBPartition/GBModule/AttnUnfused/./Catapult/AttnUnfused.v1/scverify/concat_sim_AttnUnfused_v_vcs/sc_mainpwr -systemcrun -verilogrun -ucli -ucli2Proc -i ./Catapult/AttnUnfused.v1/scverify/concat_sim_AttnUnfused_v_vcs/scverify_vcs_wave.tcl -l ./Catapult/AttnUnfused.v1/scverify/concat_sim_AttnUnfused_v_vcs/sim.log
+Chronologic VCS simulator copyright 1991-2023
+Contains Synopsys proprietary information.
+Compiler version U-2023.03_Full64; Runtime version U-2023.03_Full64;  Mar  7 22:41 2026
+Connections Clock: tb.clk Period: 1 ns
+ucli% # Source static function file
+ucli% global env
+ucli% # Source the common TCL file (that also reads the wave database file)
+ucli% source $env(MGC_HOME)/pkgs/sif/userware/En_na/flows/vcs_funcs.tcl
+ucli% read_ccs_wave ./Catapult/AttnUnfused.v1/scverify/ccs_wave_signals.dat
+Reading SCVerify waveform database './Catapult/AttnUnfused.v1/scverify/ccs_wave_signals.dat'
+ucli% setup_vcd_file ./Catapult/AttnUnfused.v1/.dut_inst_info.tcl
+DUT Instance Path = sc_main.tb.dut.ccs_rtl.dut_inst
+Preparing to write FSDB file ./default.fsdb...
+ucli% populate_wave_window
+ucli% if { ("0" != {}) && [file exists "0"] } {
+   source "0"
+}
+ucli% # If not running in GUI mode, run the entire simulation
+ucli% if { ![gui_is_active] } {
+   do_simulation_run
+}
+Running up to VCD start time: '0 ns'
+run 0 ns
+sysc_skeleton.v, 438 : (*vcs_systemc_2,vcs_systemc_skel*) module sc_main;
+Turning FSDB on
+*Verdi* Loading libsscore_vcs202303.so
+*Verdi* : Loading SystemC dumping library libsscore_vcs202303_sc233_gcc920.so.
+*Verdi* : Env. FSDB_VCS_RD_SC_VALPTR_PROTECT=1(1) was set.
+FSDB Dumper for VCS, Release Verdi_V-2023.12-SP2-4, Linux x86_64/64bit, 11/18/2024
+(C) 1996 - 2024 by Synopsys, Inc.
+*Verdi* : Create FSDB file './default.fsdb'
+*Verdi* : Begin traversing the scopes, layer (0).
+*Verdi* : End of traversing.
+fsdbDumpvars 0 sc_main.tb.dut.ccs_rtl.dut_inst
+*Verdi* : Begin traversing the scope (sc_main.tb.dut.ccs_rtl.dut_inst), layer (0).
+*Verdi* : End of traversing.
+*Verdi* : fsdbDumpon - All FSDB files at 0 ps.
+Continuing to VCD end time: 'end'
+run -all
+@2 ns Asserting reset
+@4 ns De-Asserting reset
+12 ns AXI read response data = 0x100100010000302010001
+12 ns Config readback matched
+186 ns Write #1 to mem3 ts=0 vec=0
+348 ns Write #2 to mem3 ts=1 vec=0
+510 ns Write #3 to mem3 ts=2 vec=0
+672 ns Write #4 to mem3 ts=3 vec=0
+834 ns Write #5 to mem3 ts=4 vec=0
+996 ns Write #6 to mem3 ts=5 vec=0
+1158 ns Write #7 to mem3 ts=6 vec=0
+1320 ns Write #8 to mem3 ts=7 vec=0
+1482 ns Write #9 to mem3 ts=8 vec=0
+1644 ns Write #a to mem3 ts=9 vec=0
+1806 ns Write #b to mem3 ts=a vec=0
+1968 ns Write #c to mem3 ts=b vec=0
+2130 ns Write #d to mem3 ts=c vec=0
+2292 ns Write #e to mem3 ts=d vec=0
+2454 ns Write #f to mem3 ts=e vec=0
+2616 ns Write #10 to mem3 ts=f vec=0
+2646 ns Write #11 to mem3 ts=0 vec=0
+2676 ns Write #12 to mem3 ts=1 vec=0
+2706 ns Write #13 to mem3 ts=2 vec=0
+2736 ns Write #14 to mem3 ts=3 vec=0
+2766 ns Write #15 to mem3 ts=4 vec=0
+2796 ns Write #16 to mem3 ts=5 vec=0
+2826 ns Write #17 to mem3 ts=6 vec=0
+2856 ns Write #18 to mem3 ts=7 vec=0
+2886 ns Write #19 to mem3 ts=8 vec=0
+2916 ns Write #1a to mem3 ts=9 vec=0
+2946 ns Write #1b to mem3 ts=a vec=0
+2976 ns Write #1c to mem3 ts=b vec=0
+3006 ns Write #1d to mem3 ts=c vec=0
+3036 ns Write #1e to mem3 ts=d vec=0
+3066 ns Write #1f to mem3 ts=e vec=0
+3096 ns Write #20 to mem3 ts=f vec=0
+3257 ns Write #21 to mem3 ts=0 vec=0
+3257 ns Checking output row 0
+  Row 0 PASSED
+3419 ns Write #22 to mem3 ts=1 vec=0
+3419 ns Checking output row 1
+  Row 1 PASSED
+3581 ns Write #23 to mem3 ts=2 vec=0
+3581 ns Checking output row 2
+  Row 2 PASSED
+3743 ns Write #24 to mem3 ts=3 vec=0
+3743 ns Checking output row 3
+  Row 3 PASSED
+3905 ns Write #25 to mem3 ts=4 vec=0
+3905 ns Checking output row 4
+  Row 4 PASSED
+4067 ns Write #26 to mem3 ts=5 vec=0
+4067 ns Checking output row 5
+  Row 5 PASSED
+4229 ns Write #27 to mem3 ts=6 vec=0
+4229 ns Checking output row 6
+  Row 6 PASSED
+4391 ns Write #28 to mem3 ts=7 vec=0
+4391 ns Checking output row 7
+  Row 7 PASSED
+4553 ns Write #29 to mem3 ts=8 vec=0
+4553 ns Checking output row 8
+  Row 8 PASSED
+4715 ns Write #2a to mem3 ts=9 vec=0
+4715 ns Checking output row 9
+  Row 9 PASSED
+4877 ns Write #2b to mem3 ts=a vec=0
+4877 ns Checking output row a
+  Row a PASSED
+5039 ns Write #2c to mem3 ts=b vec=0
+5039 ns Checking output row b
+  Row b PASSED
+5201 ns Write #2d to mem3 ts=c vec=0
+5201 ns Checking output row c
+  Row c PASSED
+5363 ns Write #2e to mem3 ts=d vec=0
+5363 ns Checking output row d
+  Row d PASSED
+5525 ns Write #2f to mem3 ts=e vec=0
+5525 ns Checking output row e
+  Row e PASSED
+5687 ns Write #30 to mem3 ts=f vec=0
+5687 ns Checking output row f
+  Row f PASSED
+5694 ns Attention DONE signal received!
+Total output rows checked: 16
+Total writes to mem3: 48
+400032 ns AXI read response data = 0x3000000230000208D7
+400032 ns Performance counters: cycles=133335 gb_reads=560 gb_writes=48
+@500004 ns sc_stop
+TESTBENCH PASS
+Simulation complete, time is 500004000 ps.
+sysc_skeleton.v, 438 : (*vcs_systemc_2,vcs_systemc_skel*) module sc_main;
+Turning FSDB off and flushing
+*Verdi* : Close all FSDB Files at 500,004,000 ps.
+Completed writing FSDB file ./default.fsdb...
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 500004000 ps
+CPU Time:    102.650 seconds;       Data structure size:   8.5Mb
+Sat Mar  7 22:42:45 2026

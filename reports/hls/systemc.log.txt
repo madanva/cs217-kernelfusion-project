@@ -1,7 +1,7 @@
 --- Output for src/Top/PEPartition/PEModule/ActUnit ---
 rm -rf *.o sim_* dump.vcd
 rm -rf build.log
-g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11  -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/psmriti/cs217/solution-lab-4/src/include -I/home/users/psmriti/cs217/solution-lab-4/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o  -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp   -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
+g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11 -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/vmadan/cs217-project/src/include -I/home/users/vmadan/cs217-project/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp  -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
 ./sim_test
 ================================
 SETTING RANDOM SEED = 19650218
@@ -50,7 +50,7 @@ TESTBENCH PASS
 --- Output for src/Top/PEPartition/PEModule/PECore ---
 rm -rf *.o sim_* dump.vcd
 rm -rf build.log
-g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11  -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/psmriti/cs217/solution-lab-4/src/include -I/home/users/psmriti/cs217/solution-lab-4/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o  -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp   -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
+g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11 -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/vmadan/cs217-project/src/include -I/home/users/vmadan/cs217-project/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp  -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
 ./sim_test
 ================================
 SETTING RANDOM SEED = 19650218
@@ -86,7 +86,7 @@ TESTBENCH PASS
 --- Output for src/Top/PEPartition/PEModule ---
 rm -rf *.o sim_* dump.vcd
 rm -rf build.log
-g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11  -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/psmriti/cs217/solution-lab-4/src/include -I/home/users/psmriti/cs217/solution-lab-4/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o  -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp   -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
+g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11 -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/vmadan/cs217-project/src/include -I/home/users/vmadan/cs217-project/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp  -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
 ./sim_test
 ================================
 SETTING RANDOM SEED = 19650218
@@ -148,7 +148,7 @@ Info: /OSCI/SystemC: Simulation stopped by user.
 --- Output for src/Top/PEPartition ---
 rm -rf *.o sim_* dump.vcd
 rm -rf build.log
-g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11  -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/psmriti/cs217/solution-lab-4/src/include -I/home/users/psmriti/cs217/solution-lab-4/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o  -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp   -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
+g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11 -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/vmadan/cs217-project/src/include -I/home/users/vmadan/cs217-project/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp  -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
 ./sim_test
 ================================
 SETTING RANDOM SEED = 19650218
@@ -171,7 +171,7 @@ TESTBENCH PASS
 --- Output for src/Top/GBPartition/GBModule/NMP ---
 rm -rf *.o sim_* dump.vcd
 rm -rf build.log
-g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11  -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/psmriti/cs217/solution-lab-4/src/include -I/home/users/psmriti/cs217/solution-lab-4/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o  -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp   -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
+g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11 -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/vmadan/cs217-project/src/include -I/home/users/vmadan/cs217-project/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp  -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
 ./sim_test
 ================================
 SETTING RANDOM SEED = 19650218
@@ -233,12 +233,20 @@ TESTBENCH PASS
 --- Output for src/Top/GBPartition/GBModule/GBCore ---
 rm -rf *.o sim_* dump.vcd
 rm -rf build.log
-g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11  -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/psmriti/cs217/solution-lab-4/src/include -I/home/users/psmriti/cs217/solution-lab-4/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o  -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp   -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
+g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11 -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/vmadan/cs217-project/src/include -I/home/users/vmadan/cs217-project/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp  -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
 ./sim_test
 ================================
 SETTING RANDOM SEED = 19650218
 ================================
 Connections Clock: tb.clk Period: 1 ns
+
+Warning: CONNECTIONS-101: Port or channel tb.sim_out_6 wasn't reset! In thread or process 'check_registration'.
+In file: /cad/mentor/2024.2_1/Mgc_home/shared/include/connections/connections.h:461
+In process: tb.dut.GBCoreRun.check_registration @ 50 ps
+
+Warning: CONNECTIONS-101: Port or channel tb.sim_in_7 wasn't reset! In thread or process 'check_registration'.
+In file: /cad/mentor/2024.2_1/Mgc_home/shared/include/connections/connections.h:461
+In process: tb.dut.GBCoreRun.check_registration @ 50 ps
 @2 ns Asserting reset
 @4 ns De-Asserting reset
 8 ns RVA read data = 0x1
@@ -272,7 +280,7 @@ TESTBENCH PASS
 --- Output for src/Top/GBPartition/GBModule/GBControl ---
 rm -rf *.o sim_* dump.vcd
 rm -rf build.log
-g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11  -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/psmriti/cs217/solution-lab-4/src/include -I/home/users/psmriti/cs217/solution-lab-4/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o  -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp   -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
+g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11 -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/vmadan/cs217-project/src/include -I/home/users/vmadan/cs217-project/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp  -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
 ./sim_test
 ================================
 SETTING RANDOM SEED = 19650218
@@ -313,10 +321,266 @@ TESTBENCH PASS
         Copyright (c) 1996-2018 by all Contributors,
         ALL RIGHTS RESERVED
 
+--- Output for src/Top/GBPartition/GBModule/AttnUnfused ---
+rm -rf *.o sim_* dump.vcd
+rm -rf build.log
+g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11 -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/vmadan/cs217-project/src/include -I/home/users/vmadan/cs217-project/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp  -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
+./sim_test
+================================
+SETTING RANDOM SEED = 19650218
+================================
+Connections Clock: tb.clk Period: 1 ns
+@2 ns Asserting reset
+@4 ns De-Asserting reset
+8 ns AXI read response data = 0x100100010000302010001
+8 ns Config readback matched
+97 ns Write #1 to mem3 ts=0 vec=0
+167 ns Write #2 to mem3 ts=1 vec=0
+237 ns Write #3 to mem3 ts=2 vec=0
+307 ns Write #4 to mem3 ts=3 vec=0
+377 ns Write #5 to mem3 ts=4 vec=0
+447 ns Write #6 to mem3 ts=5 vec=0
+517 ns Write #7 to mem3 ts=6 vec=0
+587 ns Write #8 to mem3 ts=7 vec=0
+657 ns Write #9 to mem3 ts=8 vec=0
+727 ns Write #a to mem3 ts=9 vec=0
+797 ns Write #b to mem3 ts=a vec=0
+867 ns Write #c to mem3 ts=b vec=0
+937 ns Write #d to mem3 ts=c vec=0
+1007 ns Write #e to mem3 ts=d vec=0
+1077 ns Write #f to mem3 ts=e vec=0
+1147 ns Write #10 to mem3 ts=f vec=0
+1156 ns Write #11 to mem3 ts=0 vec=0
+1165 ns Write #12 to mem3 ts=1 vec=0
+1174 ns Write #13 to mem3 ts=2 vec=0
+1183 ns Write #14 to mem3 ts=3 vec=0
+1192 ns Write #15 to mem3 ts=4 vec=0
+1201 ns Write #16 to mem3 ts=5 vec=0
+1210 ns Write #17 to mem3 ts=6 vec=0
+1219 ns Write #18 to mem3 ts=7 vec=0
+1228 ns Write #19 to mem3 ts=8 vec=0
+1237 ns Write #1a to mem3 ts=9 vec=0
+1246 ns Write #1b to mem3 ts=a vec=0
+1255 ns Write #1c to mem3 ts=b vec=0
+1264 ns Write #1d to mem3 ts=c vec=0
+1273 ns Write #1e to mem3 ts=d vec=0
+1282 ns Write #1f to mem3 ts=e vec=0
+1291 ns Write #20 to mem3 ts=f vec=0
+1377 ns Write #21 to mem3 ts=0 vec=0
+1377 ns Checking output row 0
+  Row 0 PASSED
+1463 ns Write #22 to mem3 ts=1 vec=0
+1463 ns Checking output row 1
+  Row 1 PASSED
+1549 ns Write #23 to mem3 ts=2 vec=0
+1549 ns Checking output row 2
+  Row 2 PASSED
+1635 ns Write #24 to mem3 ts=3 vec=0
+1635 ns Checking output row 3
+  Row 3 PASSED
+1721 ns Write #25 to mem3 ts=4 vec=0
+1721 ns Checking output row 4
+  Row 4 PASSED
+1807 ns Write #26 to mem3 ts=5 vec=0
+1807 ns Checking output row 5
+  Row 5 PASSED
+1893 ns Write #27 to mem3 ts=6 vec=0
+1893 ns Checking output row 6
+  Row 6 PASSED
+1979 ns Write #28 to mem3 ts=7 vec=0
+1979 ns Checking output row 7
+  Row 7 PASSED
+2065 ns Write #29 to mem3 ts=8 vec=0
+2065 ns Checking output row 8
+  Row 8 PASSED
+2151 ns Write #2a to mem3 ts=9 vec=0
+2151 ns Checking output row 9
+  Row 9 PASSED
+2237 ns Write #2b to mem3 ts=a vec=0
+2237 ns Checking output row a
+  Row a PASSED
+2323 ns Write #2c to mem3 ts=b vec=0
+2323 ns Checking output row b
+  Row b PASSED
+2409 ns Write #2d to mem3 ts=c vec=0
+2409 ns Checking output row c
+  Row c PASSED
+2495 ns Write #2e to mem3 ts=d vec=0
+2495 ns Checking output row d
+  Row d PASSED
+2581 ns Write #2f to mem3 ts=e vec=0
+2581 ns Checking output row e
+  Row e PASSED
+2667 ns Write #30 to mem3 ts=f vec=0
+2667 ns Checking output row f
+  Row f PASSED
+2669 ns Attention DONE signal received!
+Total output rows checked: 16
+Total writes to mem3: 48
+100030 ns AXI read response data = 0x3000000230000186A2
+100030 ns Performance counters: cycles=100002 gb_reads=560 gb_writes=48
+@110004 ns sc_stop
+
+Info: /OSCI/SystemC: Simulation stopped by user.
+TESTBENCH PASS
+
+        SystemC 2.3.3-Accellera --- Jun  7 2022 13:10:00
+        Copyright (c) 1996-2018 by all Contributors,
+        ALL RIGHTS RESERVED
+
+--- Output for src/Top/GBPartition/GBModule/AttnPartialFused ---
+rm -rf *.o sim_* dump.vcd
+rm -rf build.log
+g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11 -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/vmadan/cs217-project/src/include -I/home/users/vmadan/cs217-project/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp  -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
+./sim_test
+================================
+SETTING RANDOM SEED = 19650218
+================================
+Connections Clock: tb.clk Period: 1 ns
+@2 ns Asserting reset
+@4 ns De-Asserting reset
+8 ns AXI read response data = 0x100100010000302010001
+8 ns Config readback matched
+99 ns Write to mem3: ts=0 vec_idx=0 total_writes=0
+171 ns Write to mem3: ts=1 vec_idx=0 total_writes=1
+243 ns Write to mem3: ts=2 vec_idx=0 total_writes=2
+315 ns Write to mem3: ts=3 vec_idx=0 total_writes=3
+387 ns Write to mem3: ts=4 vec_idx=0 total_writes=4
+459 ns Write to mem3: ts=5 vec_idx=0 total_writes=5
+531 ns Write to mem3: ts=6 vec_idx=0 total_writes=6
+603 ns Write to mem3: ts=7 vec_idx=0 total_writes=7
+675 ns Write to mem3: ts=8 vec_idx=0 total_writes=8
+747 ns Write to mem3: ts=9 vec_idx=0 total_writes=9
+819 ns Write to mem3: ts=a vec_idx=0 total_writes=a
+891 ns Write to mem3: ts=b vec_idx=0 total_writes=b
+963 ns Write to mem3: ts=c vec_idx=0 total_writes=c
+1035 ns Write to mem3: ts=d vec_idx=0 total_writes=d
+1107 ns Write to mem3: ts=e vec_idx=0 total_writes=e
+1179 ns Write to mem3: ts=f vec_idx=0 total_writes=f
+1251 ns Write to mem3: ts=0 vec_idx=0 total_writes=10
+1251 ns Checking output row 0
+  Row 0 PASSED
+1323 ns Write to mem3: ts=1 vec_idx=0 total_writes=11
+1323 ns Checking output row 1
+  Row 1 PASSED
+1395 ns Write to mem3: ts=2 vec_idx=0 total_writes=12
+1395 ns Checking output row 2
+  Row 2 PASSED
+1467 ns Write to mem3: ts=3 vec_idx=0 total_writes=13
+1467 ns Checking output row 3
+  Row 3 PASSED
+1539 ns Write to mem3: ts=4 vec_idx=0 total_writes=14
+1539 ns Checking output row 4
+  Row 4 PASSED
+1611 ns Write to mem3: ts=5 vec_idx=0 total_writes=15
+1611 ns Checking output row 5
+  Row 5 PASSED
+1683 ns Write to mem3: ts=6 vec_idx=0 total_writes=16
+1683 ns Checking output row 6
+  Row 6 PASSED
+1755 ns Write to mem3: ts=7 vec_idx=0 total_writes=17
+1755 ns Checking output row 7
+  Row 7 PASSED
+1827 ns Write to mem3: ts=8 vec_idx=0 total_writes=18
+1827 ns Checking output row 8
+  Row 8 PASSED
+1899 ns Write to mem3: ts=9 vec_idx=0 total_writes=19
+1899 ns Checking output row 9
+  Row 9 PASSED
+1971 ns Write to mem3: ts=a vec_idx=0 total_writes=1a
+1971 ns Checking output row a
+  Row a PASSED
+2043 ns Write to mem3: ts=b vec_idx=0 total_writes=1b
+2043 ns Checking output row b
+  Row b PASSED
+2115 ns Write to mem3: ts=c vec_idx=0 total_writes=1c
+2115 ns Checking output row c
+  Row c PASSED
+2187 ns Write to mem3: ts=d vec_idx=0 total_writes=1d
+2187 ns Checking output row d
+  Row d PASSED
+2259 ns Write to mem3: ts=e vec_idx=0 total_writes=1e
+2259 ns Checking output row e
+  Row e PASSED
+2331 ns Write to mem3: ts=f vec_idx=0 total_writes=1f
+2331 ns Checking output row f
+  Row f PASSED
+2333 ns Attention DONE signal received!
+Total output rows checked: 16
+Total writes to mem3: 32
+100030 ns AXI read response data = 0x2000000220000186A2
+100030 ns Performance counters: cycles=100002 gb_reads=544 gb_writes=32
+@110004 ns sc_stop
+
+Info: /OSCI/SystemC: Simulation stopped by user.
+TESTBENCH PASS
+
+        SystemC 2.3.3-Accellera --- Jun  7 2022 13:10:00
+        Copyright (c) 1996-2018 by all Contributors,
+        ALL RIGHTS RESERVED
+
+--- Output for src/Top/GBPartition/GBModule/AttnFullyFused ---
+rm -rf *.o sim_* dump.vcd
+rm -rf build.log
+g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11 -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/vmadan/cs217-project/src/include -I/home/users/vmadan/cs217-project/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp  -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
+./sim_test
+================================
+SETTING RANDOM SEED = 19650218
+================================
+Connections Clock: tb.clk Period: 1 ns
+@2 ns Asserting reset
+@4 ns De-Asserting reset
+8 ns AXI read response data = 0x100100010000302010001
+8 ns Config readback matched
+171 ns Output write for row 0
+  Row 0 PASSED
+314 ns Output write for row 1
+  Row 1 PASSED
+457 ns Output write for row 2
+  Row 2 PASSED
+600 ns Output write for row 3
+  Row 3 PASSED
+743 ns Output write for row 4
+  Row 4 PASSED
+886 ns Output write for row 5
+  Row 5 PASSED
+1029 ns Output write for row 6
+  Row 6 PASSED
+1172 ns Output write for row 7
+  Row 7 PASSED
+1315 ns Output write for row 8
+  Row 8 PASSED
+1458 ns Output write for row 9
+  Row 9 PASSED
+1601 ns Output write for row a
+  Row a PASSED
+1744 ns Output write for row b
+  Row b PASSED
+1887 ns Output write for row c
+  Row c PASSED
+2030 ns Output write for row d
+  Row d PASSED
+2173 ns Output write for row e
+  Row e PASSED
+2316 ns Output write for row f
+  Row f PASSED
+2318 ns Attention DONE signal received!
+Total output rows checked: 16
+50030 ns AXI read response data = 0x10000002100000C352
+50030 ns Performance counters: cycles=50002 gb_reads=528 gb_writes=16
+@60004 ns sc_stop
+
+Info: /OSCI/SystemC: Simulation stopped by user.
+TESTBENCH PASS
+
+        SystemC 2.3.3-Accellera --- Jun  7 2022 13:10:00
+        Copyright (c) 1996-2018 by all Contributors,
+        ALL RIGHTS RESERVED
+
 --- Output for src/Top/GBPartition/GBModule ---
 rm -rf *.o sim_* dump.vcd
 rm -rf build.log
-g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11  -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/psmriti/cs217/solution-lab-4/src/include -I/home/users/psmriti/cs217/solution-lab-4/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o  -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp   -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
+g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11 -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/vmadan/cs217-project/src/include -I/home/users/vmadan/cs217-project/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp  -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
 ./sim_test
 ================================
 SETTING RANDOM SEED = 19650218
@@ -326,31 +590,31 @@ Connections Clock: tb.clk Period: 1 ns
 @4 ns De-Asserting reset
     WRITE Config: 0x1 @ 0x400010
     WRITE Config: 0x10001000000000101 @ 0x0C00010
-    WRITE softmax: 0x298E1EFC3652115C5D0340C6761D3767 @ 0x500000
+    WRITE softmax: 0x35A8FE20129B08A20DA1BE5912AC3EE7 @ 0x500000
     WRITE Config: 0x10001000000000101 @ 0x0C00010
     START NMP 0x0 @ 0x20
 37 ns Recevied GB Done = 1
 127 ns Comparing NMP output with tolerance...
-Match idx 0: expected=0.1875 actual=0.1875 abs_err=0 pct_err=0%
-Match idx 1: expected=0 actual=0 abs_err=0 pct_err=0%
+Match idx 0: expected=0 actual=0 abs_err=0 pct_err=0%
+Match idx 1: expected=0.125 actual=0.125 abs_err=0 pct_err=0%
 Match idx 2: expected=0 actual=0 abs_err=0 pct_err=0%
-Match idx 3: expected=0.5 actual=0.5 abs_err=0 pct_err=0%
-Match idx 4: expected=0 actual=0 abs_err=0 pct_err=0%
+Match idx 3: expected=0 actual=0 abs_err=0 pct_err=0%
+Match idx 4: expected=0.6875 actual=0.6875 abs_err=0 pct_err=0%
 Match idx 5: expected=0 actual=0 abs_err=0 pct_err=0%
 Match idx 6: expected=0 actual=0 abs_err=0 pct_err=0%
-Match idx 7: expected=0.0625 actual=0.0625 abs_err=0 pct_err=0%
-Match idx 8: expected=0.0625 actual=0.0625 abs_err=0 pct_err=0%
+Match idx 7: expected=0 actual=0 abs_err=0 pct_err=0%
+Match idx 8: expected=0 actual=0 abs_err=0 pct_err=0%
 Match idx 9: expected=0 actual=0 abs_err=0 pct_err=0%
 Match idx a: expected=0 actual=0 abs_err=0 pct_err=0%
 Match idx b: expected=0 actual=0 abs_err=0 pct_err=0%
 Match idx c: expected=0 actual=0 abs_err=0 pct_err=0%
 Match idx d: expected=0 actual=0 abs_err=0 pct_err=0%
 Match idx e: expected=0 actual=0 abs_err=0 pct_err=0%
-Match idx f: expected=0 actual=0 abs_err=0 pct_err=0%
+Match idx f: expected=0.0625 actual=0.0625 abs_err=0 pct_err=0%
 127 ns NMP output matched within tolerance
     WRITE GBControl: 0x10001000000000101 @ 0x700010
     START GBControl 0x0 @ 0x10
-140 ns Data out popped: 0x3 0x0 0x0 0x08 0x0 0x0 0x0 0x1 0x1 0x0 0x0 0x0 0x0 0x0 0x0 0x0 
+140 ns Data out popped: 0x0 0x2 0x0 0x0 0x0B 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x1 
 141 ns Recevied PE Start = 1
 
 Info: /OSCI/SystemC: Simulation stopped by user.
@@ -363,7 +627,7 @@ TESTBENCH PASS
 --- Output for src/Top/GBPartition ---
 rm -rf *.o sim_* dump.vcd
 rm -rf build.log
-g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11  -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/psmriti/cs217/solution-lab-4/src/include -I/home/users/psmriti/cs217/solution-lab-4/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o  -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp   -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
+g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11 -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/vmadan/cs217-project/src/include -I/home/users/vmadan/cs217-project/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp  -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
 ./sim_test
 ================================
 SETTING RANDOM SEED = 19650218
@@ -387,7 +651,7 @@ TESTBENCH PASS
 --- Output for src/Top ---
 rm -rf *.o sim_* dump.vcd
 rm -rf build.log
-g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11  -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/psmriti/cs217/solution-lab-4/src/include -I/home/users/psmriti/cs217/solution-lab-4/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o  -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp   -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
+g++ -o sim_test -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11 -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/vmadan/cs217-project/src/include -I/home/users/vmadan/cs217-project/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES testbench.cpp  -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
 ./sim_test
 ================================
 SETTING RANDOM SEED = 19650218

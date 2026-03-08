@@ -66,7 +66,8 @@ class GBCore : public match::Module {
     RSP_ADDR_CFG = 0x4, // AXI read of address config registers
     RSP_AXI_SRAM = 0x5, // AXI direct SRAM read
     RSP_NMP      = 0x7,  // NMP streaming read response
-    RSP_GBControl = 0x8
+    RSP_GBControl = 0x8,
+    RSP_ATTN     = 0x9   // Attention unit read response
   };
 
   // Number of vectors per timestep for each memory region
@@ -137,6 +138,10 @@ public:
   Connections::In<spec::GB::Large::DataReq> gbcontrol_large_req;
   Connections::Out<spec::GB::Large::DataRsp<1>> gbcontrol_large_rsp;
 
+  // Attention unit interface
+  Connections::In<spec::GB::Large::DataReq> attn_large_req;
+  Connections::Out<spec::GB::Large::DataRsp<1>> attn_large_rsp;
+
   // 32-bit SRAM configuration register
   sc_in<NVUINT32> SC_SRAM_CONFIG;
 
@@ -150,6 +155,9 @@ public:
 
       nmp_large_req("nmp_large_req"),
       nmp_large_rsp("nmp_large_rsp"),
+
+      attn_large_req("attn_large_req"),
+      attn_large_rsp("attn_large_rsp"),
 
       SC_SRAM_CONFIG("SC_SRAM_CONFIG") {
     SC_THREAD(GBCoreRun);
@@ -165,7 +173,8 @@ public:
     nmp_large_rsp.Reset();
     gbcontrol_large_req.Reset();
     gbcontrol_large_rsp.Reset();
-
+    attn_large_req.Reset();
+    attn_large_rsp.Reset();
 
     // Reset address mapping registers
 #pragma hls_unroll yes
@@ -340,6 +349,12 @@ public:
         rsp_mode = RSP_GBControl;
       }
     }
+    else if (attn_large_req.PopNB(large_req_reg)){
+      SetLargeBuffer<1>(large_req_reg);
+      if (!large_req_reg.is_write) {
+        rsp_mode = RSP_ATTN;
+      }
+    }
   }
 
   /**
@@ -371,6 +386,11 @@ public:
       case RSP_GBControl: {
         large_rsp_reg.read_vector[0] = large_port_read_out[0];
         gbcontrol_large_rsp.Push(large_rsp_reg);
+        break;
+      }
+      case RSP_ATTN: {
+        large_rsp_reg.read_vector[0] = large_port_read_out[0];
+        attn_large_rsp.Push(large_rsp_reg);
         break;
       }
       // Default: no response this cycle

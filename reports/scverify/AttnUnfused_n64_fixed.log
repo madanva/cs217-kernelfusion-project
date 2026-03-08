@@ -1,0 +1,764 @@
+Command: /home/users/vmadan/cs217-project/hls/Top/GBPartition/GBModule/AttnUnfused/./Catapult/AttnUnfused.v1/scverify/concat_sim_AttnUnfused_v_vcs/sc_mainpwr -systemcrun -verilogrun -ucli -ucli2Proc -i ./Catapult/AttnUnfused.v1/scverify/concat_sim_AttnUnfused_v_vcs/scverify_vcs_wave.tcl -l ./Catapult/AttnUnfused.v1/scverify/concat_sim_AttnUnfused_v_vcs/sim.log
+Chronologic VCS simulator copyright 1991-2023
+Contains Synopsys proprietary information.
+Compiler version U-2023.03_Full64; Runtime version U-2023.03_Full64;  Mar  7 23:09 2026
+Connections Clock: tb.clk Period: 1 ns
+ucli% # Source static function file
+ucli% global env
+ucli% # Source the common TCL file (that also reads the wave database file)
+ucli% source $env(MGC_HOME)/pkgs/sif/userware/En_na/flows/vcs_funcs.tcl
+ucli% read_ccs_wave ./Catapult/AttnUnfused.v1/scverify/ccs_wave_signals.dat
+Reading SCVerify waveform database './Catapult/AttnUnfused.v1/scverify/ccs_wave_signals.dat'
+ucli% setup_vcd_file ./Catapult/AttnUnfused.v1/.dut_inst_info.tcl
+DUT Instance Path = sc_main.tb.dut.ccs_rtl.dut_inst
+Preparing to write FSDB file ./default.fsdb...
+ucli% populate_wave_window
+ucli% if { ("0" != {}) && [file exists "0"] } {
+   source "0"
+}
+ucli% # If not running in GUI mode, run the entire simulation
+ucli% if { ![gui_is_active] } {
+   do_simulation_run
+}
+Running up to VCD start time: '0 ns'
+run 0 ns
+sysc_skeleton.v, 438 : (*vcs_systemc_2,vcs_systemc_skel*) module sc_main;
+Turning FSDB on
+*Verdi* Loading libsscore_vcs202303.so
+*Verdi* : Loading SystemC dumping library libsscore_vcs202303_sc233_gcc920.so.
+*Verdi* : Env. FSDB_VCS_RD_SC_VALPTR_PROTECT=1(1) was set.
+FSDB Dumper for VCS, Release Verdi_V-2023.12-SP2-4, Linux x86_64/64bit, 11/18/2024
+(C) 1996 - 2024 by Synopsys, Inc.
+*Verdi* : Create FSDB file './default.fsdb'
+*Verdi* : Begin traversing the scopes, layer (0).
+*Verdi* : End of traversing.
+fsdbDumpvars 0 sc_main.tb.dut.ccs_rtl.dut_inst
+*Verdi* : Begin traversing the scope (sc_main.tb.dut.ccs_rtl.dut_inst), layer (0).
+*Verdi* : End of traversing.
+*Verdi* : fsdbDumpon - All FSDB files at 0 ps.
+Continuing to VCD end time: 'end'
+run -all
+@2 ns Asserting reset
+@4 ns De-Asserting reset
+12 ns AXI read response data = 0x400100040000302010001
+12 ns Config readback matched
+618 ns Write #1 to mem3 ts=0 vec=0
+624 ns Write #2 to mem3 ts=0 vec=1
+630 ns Write #3 to mem3 ts=0 vec=2
+636 ns Write #4 to mem3 ts=0 vec=3
+1230 ns Write #5 to mem3 ts=1 vec=0
+1236 ns Write #6 to mem3 ts=1 vec=1
+1242 ns Write #7 to mem3 ts=1 vec=2
+1248 ns Write #8 to mem3 ts=1 vec=3
+1842 ns Write #9 to mem3 ts=2 vec=0
+1848 ns Write #a to mem3 ts=2 vec=1
+1854 ns Write #b to mem3 ts=2 vec=2
+1860 ns Write #c to mem3 ts=2 vec=3
+2454 ns Write #d to mem3 ts=3 vec=0
+2460 ns Write #e to mem3 ts=3 vec=1
+2466 ns Write #f to mem3 ts=3 vec=2
+2472 ns Write #10 to mem3 ts=3 vec=3
+3066 ns Write #11 to mem3 ts=4 vec=0
+3072 ns Write #12 to mem3 ts=4 vec=1
+3078 ns Write #13 to mem3 ts=4 vec=2
+3084 ns Write #14 to mem3 ts=4 vec=3
+3678 ns Write #15 to mem3 ts=5 vec=0
+3684 ns Write #16 to mem3 ts=5 vec=1
+3690 ns Write #17 to mem3 ts=5 vec=2
+3696 ns Write #18 to mem3 ts=5 vec=3
+4290 ns Write #19 to mem3 ts=6 vec=0
+4296 ns Write #1a to mem3 ts=6 vec=1
+4302 ns Write #1b to mem3 ts=6 vec=2
+4308 ns Write #1c to mem3 ts=6 vec=3
+4902 ns Write #1d to mem3 ts=7 vec=0
+4908 ns Write #1e to mem3 ts=7 vec=1
+4914 ns Write #1f to mem3 ts=7 vec=2
+4920 ns Write #20 to mem3 ts=7 vec=3
+5514 ns Write #21 to mem3 ts=8 vec=0
+5520 ns Write #22 to mem3 ts=8 vec=1
+5526 ns Write #23 to mem3 ts=8 vec=2
+5532 ns Write #24 to mem3 ts=8 vec=3
+6126 ns Write #25 to mem3 ts=9 vec=0
+6132 ns Write #26 to mem3 ts=9 vec=1
+6138 ns Write #27 to mem3 ts=9 vec=2
+6144 ns Write #28 to mem3 ts=9 vec=3
+6738 ns Write #29 to mem3 ts=a vec=0
+6744 ns Write #2a to mem3 ts=a vec=1
+6750 ns Write #2b to mem3 ts=a vec=2
+6756 ns Write #2c to mem3 ts=a vec=3
+7350 ns Write #2d to mem3 ts=b vec=0
+7356 ns Write #2e to mem3 ts=b vec=1
+7362 ns Write #2f to mem3 ts=b vec=2
+7368 ns Write #30 to mem3 ts=b vec=3
+7962 ns Write #31 to mem3 ts=c vec=0
+7968 ns Write #32 to mem3 ts=c vec=1
+7974 ns Write #33 to mem3 ts=c vec=2
+7980 ns Write #34 to mem3 ts=c vec=3
+8574 ns Write #35 to mem3 ts=d vec=0
+8580 ns Write #36 to mem3 ts=d vec=1
+8586 ns Write #37 to mem3 ts=d vec=2
+8592 ns Write #38 to mem3 ts=d vec=3
+9186 ns Write #39 to mem3 ts=e vec=0
+9192 ns Write #3a to mem3 ts=e vec=1
+9198 ns Write #3b to mem3 ts=e vec=2
+9204 ns Write #3c to mem3 ts=e vec=3
+9798 ns Write #3d to mem3 ts=f vec=0
+9804 ns Write #3e to mem3 ts=f vec=1
+9810 ns Write #3f to mem3 ts=f vec=2
+9816 ns Write #40 to mem3 ts=f vec=3
+10410 ns Write #41 to mem3 ts=10 vec=0
+10416 ns Write #42 to mem3 ts=10 vec=1
+10422 ns Write #43 to mem3 ts=10 vec=2
+10428 ns Write #44 to mem3 ts=10 vec=3
+11022 ns Write #45 to mem3 ts=11 vec=0
+11028 ns Write #46 to mem3 ts=11 vec=1
+11034 ns Write #47 to mem3 ts=11 vec=2
+11040 ns Write #48 to mem3 ts=11 vec=3
+11634 ns Write #49 to mem3 ts=12 vec=0
+11640 ns Write #4a to mem3 ts=12 vec=1
+11646 ns Write #4b to mem3 ts=12 vec=2
+11652 ns Write #4c to mem3 ts=12 vec=3
+12246 ns Write #4d to mem3 ts=13 vec=0
+12252 ns Write #4e to mem3 ts=13 vec=1
+12258 ns Write #4f to mem3 ts=13 vec=2
+12264 ns Write #50 to mem3 ts=13 vec=3
+12858 ns Write #51 to mem3 ts=14 vec=0
+12864 ns Write #52 to mem3 ts=14 vec=1
+12870 ns Write #53 to mem3 ts=14 vec=2
+12876 ns Write #54 to mem3 ts=14 vec=3
+13470 ns Write #55 to mem3 ts=15 vec=0
+13476 ns Write #56 to mem3 ts=15 vec=1
+13482 ns Write #57 to mem3 ts=15 vec=2
+13488 ns Write #58 to mem3 ts=15 vec=3
+14082 ns Write #59 to mem3 ts=16 vec=0
+14088 ns Write #5a to mem3 ts=16 vec=1
+14094 ns Write #5b to mem3 ts=16 vec=2
+14100 ns Write #5c to mem3 ts=16 vec=3
+14694 ns Write #5d to mem3 ts=17 vec=0
+14700 ns Write #5e to mem3 ts=17 vec=1
+14706 ns Write #5f to mem3 ts=17 vec=2
+14712 ns Write #60 to mem3 ts=17 vec=3
+15306 ns Write #61 to mem3 ts=18 vec=0
+15312 ns Write #62 to mem3 ts=18 vec=1
+15318 ns Write #63 to mem3 ts=18 vec=2
+15324 ns Write #64 to mem3 ts=18 vec=3
+15918 ns Write #65 to mem3 ts=19 vec=0
+15924 ns Write #66 to mem3 ts=19 vec=1
+15930 ns Write #67 to mem3 ts=19 vec=2
+15936 ns Write #68 to mem3 ts=19 vec=3
+16530 ns Write #69 to mem3 ts=1a vec=0
+16536 ns Write #6a to mem3 ts=1a vec=1
+16542 ns Write #6b to mem3 ts=1a vec=2
+16548 ns Write #6c to mem3 ts=1a vec=3
+17142 ns Write #6d to mem3 ts=1b vec=0
+17148 ns Write #6e to mem3 ts=1b vec=1
+17154 ns Write #6f to mem3 ts=1b vec=2
+17160 ns Write #70 to mem3 ts=1b vec=3
+17754 ns Write #71 to mem3 ts=1c vec=0
+17760 ns Write #72 to mem3 ts=1c vec=1
+17766 ns Write #73 to mem3 ts=1c vec=2
+17772 ns Write #74 to mem3 ts=1c vec=3
+18366 ns Write #75 to mem3 ts=1d vec=0
+18372 ns Write #76 to mem3 ts=1d vec=1
+18378 ns Write #77 to mem3 ts=1d vec=2
+18384 ns Write #78 to mem3 ts=1d vec=3
+18978 ns Write #79 to mem3 ts=1e vec=0
+18984 ns Write #7a to mem3 ts=1e vec=1
+18990 ns Write #7b to mem3 ts=1e vec=2
+18996 ns Write #7c to mem3 ts=1e vec=3
+19590 ns Write #7d to mem3 ts=1f vec=0
+19596 ns Write #7e to mem3 ts=1f vec=1
+19602 ns Write #7f to mem3 ts=1f vec=2
+19608 ns Write #80 to mem3 ts=1f vec=3
+20202 ns Write #81 to mem3 ts=20 vec=0
+20208 ns Write #82 to mem3 ts=20 vec=1
+20214 ns Write #83 to mem3 ts=20 vec=2
+20220 ns Write #84 to mem3 ts=20 vec=3
+20814 ns Write #85 to mem3 ts=21 vec=0
+20820 ns Write #86 to mem3 ts=21 vec=1
+20826 ns Write #87 to mem3 ts=21 vec=2
+20832 ns Write #88 to mem3 ts=21 vec=3
+21426 ns Write #89 to mem3 ts=22 vec=0
+21432 ns Write #8a to mem3 ts=22 vec=1
+21438 ns Write #8b to mem3 ts=22 vec=2
+21444 ns Write #8c to mem3 ts=22 vec=3
+22038 ns Write #8d to mem3 ts=23 vec=0
+22044 ns Write #8e to mem3 ts=23 vec=1
+22050 ns Write #8f to mem3 ts=23 vec=2
+22056 ns Write #90 to mem3 ts=23 vec=3
+22650 ns Write #91 to mem3 ts=24 vec=0
+22656 ns Write #92 to mem3 ts=24 vec=1
+22662 ns Write #93 to mem3 ts=24 vec=2
+22668 ns Write #94 to mem3 ts=24 vec=3
+23262 ns Write #95 to mem3 ts=25 vec=0
+23268 ns Write #96 to mem3 ts=25 vec=1
+23274 ns Write #97 to mem3 ts=25 vec=2
+23280 ns Write #98 to mem3 ts=25 vec=3
+23874 ns Write #99 to mem3 ts=26 vec=0
+23880 ns Write #9a to mem3 ts=26 vec=1
+23886 ns Write #9b to mem3 ts=26 vec=2
+23892 ns Write #9c to mem3 ts=26 vec=3
+24486 ns Write #9d to mem3 ts=27 vec=0
+24492 ns Write #9e to mem3 ts=27 vec=1
+24498 ns Write #9f to mem3 ts=27 vec=2
+24504 ns Write #a0 to mem3 ts=27 vec=3
+25098 ns Write #a1 to mem3 ts=28 vec=0
+25104 ns Write #a2 to mem3 ts=28 vec=1
+25110 ns Write #a3 to mem3 ts=28 vec=2
+25116 ns Write #a4 to mem3 ts=28 vec=3
+25710 ns Write #a5 to mem3 ts=29 vec=0
+25716 ns Write #a6 to mem3 ts=29 vec=1
+25722 ns Write #a7 to mem3 ts=29 vec=2
+25728 ns Write #a8 to mem3 ts=29 vec=3
+26322 ns Write #a9 to mem3 ts=2a vec=0
+26328 ns Write #aa to mem3 ts=2a vec=1
+26334 ns Write #ab to mem3 ts=2a vec=2
+26340 ns Write #ac to mem3 ts=2a vec=3
+26934 ns Write #ad to mem3 ts=2b vec=0
+26940 ns Write #ae to mem3 ts=2b vec=1
+26946 ns Write #af to mem3 ts=2b vec=2
+26952 ns Write #b0 to mem3 ts=2b vec=3
+27546 ns Write #b1 to mem3 ts=2c vec=0
+27552 ns Write #b2 to mem3 ts=2c vec=1
+27558 ns Write #b3 to mem3 ts=2c vec=2
+27564 ns Write #b4 to mem3 ts=2c vec=3
+28158 ns Write #b5 to mem3 ts=2d vec=0
+28164 ns Write #b6 to mem3 ts=2d vec=1
+28170 ns Write #b7 to mem3 ts=2d vec=2
+28176 ns Write #b8 to mem3 ts=2d vec=3
+28770 ns Write #b9 to mem3 ts=2e vec=0
+28776 ns Write #ba to mem3 ts=2e vec=1
+28782 ns Write #bb to mem3 ts=2e vec=2
+28788 ns Write #bc to mem3 ts=2e vec=3
+29382 ns Write #bd to mem3 ts=2f vec=0
+29388 ns Write #be to mem3 ts=2f vec=1
+29394 ns Write #bf to mem3 ts=2f vec=2
+29400 ns Write #c0 to mem3 ts=2f vec=3
+29994 ns Write #c1 to mem3 ts=30 vec=0
+30 us Write #c2 to mem3 ts=30 vec=1
+30006 ns Write #c3 to mem3 ts=30 vec=2
+30012 ns Write #c4 to mem3 ts=30 vec=3
+30606 ns Write #c5 to mem3 ts=31 vec=0
+30612 ns Write #c6 to mem3 ts=31 vec=1
+30618 ns Write #c7 to mem3 ts=31 vec=2
+30624 ns Write #c8 to mem3 ts=31 vec=3
+31218 ns Write #c9 to mem3 ts=32 vec=0
+31224 ns Write #ca to mem3 ts=32 vec=1
+31230 ns Write #cb to mem3 ts=32 vec=2
+31236 ns Write #cc to mem3 ts=32 vec=3
+31830 ns Write #cd to mem3 ts=33 vec=0
+31836 ns Write #ce to mem3 ts=33 vec=1
+31842 ns Write #cf to mem3 ts=33 vec=2
+31848 ns Write #d0 to mem3 ts=33 vec=3
+32442 ns Write #d1 to mem3 ts=34 vec=0
+32448 ns Write #d2 to mem3 ts=34 vec=1
+32454 ns Write #d3 to mem3 ts=34 vec=2
+32460 ns Write #d4 to mem3 ts=34 vec=3
+33054 ns Write #d5 to mem3 ts=35 vec=0
+33060 ns Write #d6 to mem3 ts=35 vec=1
+33066 ns Write #d7 to mem3 ts=35 vec=2
+33072 ns Write #d8 to mem3 ts=35 vec=3
+33666 ns Write #d9 to mem3 ts=36 vec=0
+33672 ns Write #da to mem3 ts=36 vec=1
+33678 ns Write #db to mem3 ts=36 vec=2
+33684 ns Write #dc to mem3 ts=36 vec=3
+34278 ns Write #dd to mem3 ts=37 vec=0
+34284 ns Write #de to mem3 ts=37 vec=1
+34290 ns Write #df to mem3 ts=37 vec=2
+34296 ns Write #e0 to mem3 ts=37 vec=3
+34890 ns Write #e1 to mem3 ts=38 vec=0
+34896 ns Write #e2 to mem3 ts=38 vec=1
+34902 ns Write #e3 to mem3 ts=38 vec=2
+34908 ns Write #e4 to mem3 ts=38 vec=3
+35502 ns Write #e5 to mem3 ts=39 vec=0
+35508 ns Write #e6 to mem3 ts=39 vec=1
+35514 ns Write #e7 to mem3 ts=39 vec=2
+35520 ns Write #e8 to mem3 ts=39 vec=3
+36114 ns Write #e9 to mem3 ts=3a vec=0
+36120 ns Write #ea to mem3 ts=3a vec=1
+36126 ns Write #eb to mem3 ts=3a vec=2
+36132 ns Write #ec to mem3 ts=3a vec=3
+36726 ns Write #ed to mem3 ts=3b vec=0
+36732 ns Write #ee to mem3 ts=3b vec=1
+36738 ns Write #ef to mem3 ts=3b vec=2
+36744 ns Write #f0 to mem3 ts=3b vec=3
+37338 ns Write #f1 to mem3 ts=3c vec=0
+37344 ns Write #f2 to mem3 ts=3c vec=1
+37350 ns Write #f3 to mem3 ts=3c vec=2
+37356 ns Write #f4 to mem3 ts=3c vec=3
+37950 ns Write #f5 to mem3 ts=3d vec=0
+37956 ns Write #f6 to mem3 ts=3d vec=1
+37962 ns Write #f7 to mem3 ts=3d vec=2
+37968 ns Write #f8 to mem3 ts=3d vec=3
+38562 ns Write #f9 to mem3 ts=3e vec=0
+38568 ns Write #fa to mem3 ts=3e vec=1
+38574 ns Write #fb to mem3 ts=3e vec=2
+38580 ns Write #fc to mem3 ts=3e vec=3
+39174 ns Write #fd to mem3 ts=3f vec=0
+39180 ns Write #fe to mem3 ts=3f vec=1
+39186 ns Write #ff to mem3 ts=3f vec=2
+39192 ns Write #100 to mem3 ts=3f vec=3
+39258 ns Write #101 to mem3 ts=0 vec=0
+39264 ns Write #102 to mem3 ts=0 vec=1
+39270 ns Write #103 to mem3 ts=0 vec=2
+39276 ns Write #104 to mem3 ts=0 vec=3
+39342 ns Write #105 to mem3 ts=1 vec=0
+39348 ns Write #106 to mem3 ts=1 vec=1
+39354 ns Write #107 to mem3 ts=1 vec=2
+39360 ns Write #108 to mem3 ts=1 vec=3
+39426 ns Write #109 to mem3 ts=2 vec=0
+39432 ns Write #10a to mem3 ts=2 vec=1
+39438 ns Write #10b to mem3 ts=2 vec=2
+39444 ns Write #10c to mem3 ts=2 vec=3
+39510 ns Write #10d to mem3 ts=3 vec=0
+39516 ns Write #10e to mem3 ts=3 vec=1
+39522 ns Write #10f to mem3 ts=3 vec=2
+39528 ns Write #110 to mem3 ts=3 vec=3
+39594 ns Write #111 to mem3 ts=4 vec=0
+39600 ns Write #112 to mem3 ts=4 vec=1
+39606 ns Write #113 to mem3 ts=4 vec=2
+39612 ns Write #114 to mem3 ts=4 vec=3
+39678 ns Write #115 to mem3 ts=5 vec=0
+39684 ns Write #116 to mem3 ts=5 vec=1
+39690 ns Write #117 to mem3 ts=5 vec=2
+39696 ns Write #118 to mem3 ts=5 vec=3
+39762 ns Write #119 to mem3 ts=6 vec=0
+39768 ns Write #11a to mem3 ts=6 vec=1
+39774 ns Write #11b to mem3 ts=6 vec=2
+39780 ns Write #11c to mem3 ts=6 vec=3
+39846 ns Write #11d to mem3 ts=7 vec=0
+39852 ns Write #11e to mem3 ts=7 vec=1
+39858 ns Write #11f to mem3 ts=7 vec=2
+39864 ns Write #120 to mem3 ts=7 vec=3
+39930 ns Write #121 to mem3 ts=8 vec=0
+39936 ns Write #122 to mem3 ts=8 vec=1
+39942 ns Write #123 to mem3 ts=8 vec=2
+39948 ns Write #124 to mem3 ts=8 vec=3
+40014 ns Write #125 to mem3 ts=9 vec=0
+40020 ns Write #126 to mem3 ts=9 vec=1
+40026 ns Write #127 to mem3 ts=9 vec=2
+40032 ns Write #128 to mem3 ts=9 vec=3
+40098 ns Write #129 to mem3 ts=a vec=0
+40104 ns Write #12a to mem3 ts=a vec=1
+40110 ns Write #12b to mem3 ts=a vec=2
+40116 ns Write #12c to mem3 ts=a vec=3
+40182 ns Write #12d to mem3 ts=b vec=0
+40188 ns Write #12e to mem3 ts=b vec=1
+40194 ns Write #12f to mem3 ts=b vec=2
+40200 ns Write #130 to mem3 ts=b vec=3
+40266 ns Write #131 to mem3 ts=c vec=0
+40272 ns Write #132 to mem3 ts=c vec=1
+40278 ns Write #133 to mem3 ts=c vec=2
+40284 ns Write #134 to mem3 ts=c vec=3
+40350 ns Write #135 to mem3 ts=d vec=0
+40356 ns Write #136 to mem3 ts=d vec=1
+40362 ns Write #137 to mem3 ts=d vec=2
+40368 ns Write #138 to mem3 ts=d vec=3
+40434 ns Write #139 to mem3 ts=e vec=0
+40440 ns Write #13a to mem3 ts=e vec=1
+40446 ns Write #13b to mem3 ts=e vec=2
+40452 ns Write #13c to mem3 ts=e vec=3
+40518 ns Write #13d to mem3 ts=f vec=0
+40524 ns Write #13e to mem3 ts=f vec=1
+40530 ns Write #13f to mem3 ts=f vec=2
+40536 ns Write #140 to mem3 ts=f vec=3
+40602 ns Write #141 to mem3 ts=10 vec=0
+40608 ns Write #142 to mem3 ts=10 vec=1
+40614 ns Write #143 to mem3 ts=10 vec=2
+40620 ns Write #144 to mem3 ts=10 vec=3
+40686 ns Write #145 to mem3 ts=11 vec=0
+40692 ns Write #146 to mem3 ts=11 vec=1
+40698 ns Write #147 to mem3 ts=11 vec=2
+40704 ns Write #148 to mem3 ts=11 vec=3
+40770 ns Write #149 to mem3 ts=12 vec=0
+40776 ns Write #14a to mem3 ts=12 vec=1
+40782 ns Write #14b to mem3 ts=12 vec=2
+40788 ns Write #14c to mem3 ts=12 vec=3
+40854 ns Write #14d to mem3 ts=13 vec=0
+40860 ns Write #14e to mem3 ts=13 vec=1
+40866 ns Write #14f to mem3 ts=13 vec=2
+40872 ns Write #150 to mem3 ts=13 vec=3
+40938 ns Write #151 to mem3 ts=14 vec=0
+40944 ns Write #152 to mem3 ts=14 vec=1
+40950 ns Write #153 to mem3 ts=14 vec=2
+40956 ns Write #154 to mem3 ts=14 vec=3
+41022 ns Write #155 to mem3 ts=15 vec=0
+41028 ns Write #156 to mem3 ts=15 vec=1
+41034 ns Write #157 to mem3 ts=15 vec=2
+41040 ns Write #158 to mem3 ts=15 vec=3
+41106 ns Write #159 to mem3 ts=16 vec=0
+41112 ns Write #15a to mem3 ts=16 vec=1
+41118 ns Write #15b to mem3 ts=16 vec=2
+41124 ns Write #15c to mem3 ts=16 vec=3
+41190 ns Write #15d to mem3 ts=17 vec=0
+41196 ns Write #15e to mem3 ts=17 vec=1
+41202 ns Write #15f to mem3 ts=17 vec=2
+41208 ns Write #160 to mem3 ts=17 vec=3
+41274 ns Write #161 to mem3 ts=18 vec=0
+41280 ns Write #162 to mem3 ts=18 vec=1
+41286 ns Write #163 to mem3 ts=18 vec=2
+41292 ns Write #164 to mem3 ts=18 vec=3
+41358 ns Write #165 to mem3 ts=19 vec=0
+41364 ns Write #166 to mem3 ts=19 vec=1
+41370 ns Write #167 to mem3 ts=19 vec=2
+41376 ns Write #168 to mem3 ts=19 vec=3
+41442 ns Write #169 to mem3 ts=1a vec=0
+41448 ns Write #16a to mem3 ts=1a vec=1
+41454 ns Write #16b to mem3 ts=1a vec=2
+41460 ns Write #16c to mem3 ts=1a vec=3
+41526 ns Write #16d to mem3 ts=1b vec=0
+41532 ns Write #16e to mem3 ts=1b vec=1
+41538 ns Write #16f to mem3 ts=1b vec=2
+41544 ns Write #170 to mem3 ts=1b vec=3
+41610 ns Write #171 to mem3 ts=1c vec=0
+41616 ns Write #172 to mem3 ts=1c vec=1
+41622 ns Write #173 to mem3 ts=1c vec=2
+41628 ns Write #174 to mem3 ts=1c vec=3
+41694 ns Write #175 to mem3 ts=1d vec=0
+41700 ns Write #176 to mem3 ts=1d vec=1
+41706 ns Write #177 to mem3 ts=1d vec=2
+41712 ns Write #178 to mem3 ts=1d vec=3
+41778 ns Write #179 to mem3 ts=1e vec=0
+41784 ns Write #17a to mem3 ts=1e vec=1
+41790 ns Write #17b to mem3 ts=1e vec=2
+41796 ns Write #17c to mem3 ts=1e vec=3
+41862 ns Write #17d to mem3 ts=1f vec=0
+41868 ns Write #17e to mem3 ts=1f vec=1
+41874 ns Write #17f to mem3 ts=1f vec=2
+41880 ns Write #180 to mem3 ts=1f vec=3
+41946 ns Write #181 to mem3 ts=20 vec=0
+41952 ns Write #182 to mem3 ts=20 vec=1
+41958 ns Write #183 to mem3 ts=20 vec=2
+41964 ns Write #184 to mem3 ts=20 vec=3
+42030 ns Write #185 to mem3 ts=21 vec=0
+42036 ns Write #186 to mem3 ts=21 vec=1
+42042 ns Write #187 to mem3 ts=21 vec=2
+42048 ns Write #188 to mem3 ts=21 vec=3
+42114 ns Write #189 to mem3 ts=22 vec=0
+42120 ns Write #18a to mem3 ts=22 vec=1
+42126 ns Write #18b to mem3 ts=22 vec=2
+42132 ns Write #18c to mem3 ts=22 vec=3
+42198 ns Write #18d to mem3 ts=23 vec=0
+42204 ns Write #18e to mem3 ts=23 vec=1
+42210 ns Write #18f to mem3 ts=23 vec=2
+42216 ns Write #190 to mem3 ts=23 vec=3
+42282 ns Write #191 to mem3 ts=24 vec=0
+42288 ns Write #192 to mem3 ts=24 vec=1
+42294 ns Write #193 to mem3 ts=24 vec=2
+42300 ns Write #194 to mem3 ts=24 vec=3
+42366 ns Write #195 to mem3 ts=25 vec=0
+42372 ns Write #196 to mem3 ts=25 vec=1
+42378 ns Write #197 to mem3 ts=25 vec=2
+42384 ns Write #198 to mem3 ts=25 vec=3
+42450 ns Write #199 to mem3 ts=26 vec=0
+42456 ns Write #19a to mem3 ts=26 vec=1
+42462 ns Write #19b to mem3 ts=26 vec=2
+42468 ns Write #19c to mem3 ts=26 vec=3
+42534 ns Write #19d to mem3 ts=27 vec=0
+42540 ns Write #19e to mem3 ts=27 vec=1
+42546 ns Write #19f to mem3 ts=27 vec=2
+42552 ns Write #1a0 to mem3 ts=27 vec=3
+42618 ns Write #1a1 to mem3 ts=28 vec=0
+42624 ns Write #1a2 to mem3 ts=28 vec=1
+42630 ns Write #1a3 to mem3 ts=28 vec=2
+42636 ns Write #1a4 to mem3 ts=28 vec=3
+42702 ns Write #1a5 to mem3 ts=29 vec=0
+42708 ns Write #1a6 to mem3 ts=29 vec=1
+42714 ns Write #1a7 to mem3 ts=29 vec=2
+42720 ns Write #1a8 to mem3 ts=29 vec=3
+42786 ns Write #1a9 to mem3 ts=2a vec=0
+42792 ns Write #1aa to mem3 ts=2a vec=1
+42798 ns Write #1ab to mem3 ts=2a vec=2
+42804 ns Write #1ac to mem3 ts=2a vec=3
+42870 ns Write #1ad to mem3 ts=2b vec=0
+42876 ns Write #1ae to mem3 ts=2b vec=1
+42882 ns Write #1af to mem3 ts=2b vec=2
+42888 ns Write #1b0 to mem3 ts=2b vec=3
+42954 ns Write #1b1 to mem3 ts=2c vec=0
+42960 ns Write #1b2 to mem3 ts=2c vec=1
+42966 ns Write #1b3 to mem3 ts=2c vec=2
+42972 ns Write #1b4 to mem3 ts=2c vec=3
+43038 ns Write #1b5 to mem3 ts=2d vec=0
+43044 ns Write #1b6 to mem3 ts=2d vec=1
+43050 ns Write #1b7 to mem3 ts=2d vec=2
+43056 ns Write #1b8 to mem3 ts=2d vec=3
+43122 ns Write #1b9 to mem3 ts=2e vec=0
+43128 ns Write #1ba to mem3 ts=2e vec=1
+43134 ns Write #1bb to mem3 ts=2e vec=2
+43140 ns Write #1bc to mem3 ts=2e vec=3
+43206 ns Write #1bd to mem3 ts=2f vec=0
+43212 ns Write #1be to mem3 ts=2f vec=1
+43218 ns Write #1bf to mem3 ts=2f vec=2
+43224 ns Write #1c0 to mem3 ts=2f vec=3
+43290 ns Write #1c1 to mem3 ts=30 vec=0
+43296 ns Write #1c2 to mem3 ts=30 vec=1
+43302 ns Write #1c3 to mem3 ts=30 vec=2
+43308 ns Write #1c4 to mem3 ts=30 vec=3
+43374 ns Write #1c5 to mem3 ts=31 vec=0
+43380 ns Write #1c6 to mem3 ts=31 vec=1
+43386 ns Write #1c7 to mem3 ts=31 vec=2
+43392 ns Write #1c8 to mem3 ts=31 vec=3
+43458 ns Write #1c9 to mem3 ts=32 vec=0
+43464 ns Write #1ca to mem3 ts=32 vec=1
+43470 ns Write #1cb to mem3 ts=32 vec=2
+43476 ns Write #1cc to mem3 ts=32 vec=3
+43542 ns Write #1cd to mem3 ts=33 vec=0
+43548 ns Write #1ce to mem3 ts=33 vec=1
+43554 ns Write #1cf to mem3 ts=33 vec=2
+43560 ns Write #1d0 to mem3 ts=33 vec=3
+43626 ns Write #1d1 to mem3 ts=34 vec=0
+43632 ns Write #1d2 to mem3 ts=34 vec=1
+43638 ns Write #1d3 to mem3 ts=34 vec=2
+43644 ns Write #1d4 to mem3 ts=34 vec=3
+43710 ns Write #1d5 to mem3 ts=35 vec=0
+43716 ns Write #1d6 to mem3 ts=35 vec=1
+43722 ns Write #1d7 to mem3 ts=35 vec=2
+43728 ns Write #1d8 to mem3 ts=35 vec=3
+43794 ns Write #1d9 to mem3 ts=36 vec=0
+43800 ns Write #1da to mem3 ts=36 vec=1
+43806 ns Write #1db to mem3 ts=36 vec=2
+43812 ns Write #1dc to mem3 ts=36 vec=3
+43878 ns Write #1dd to mem3 ts=37 vec=0
+43884 ns Write #1de to mem3 ts=37 vec=1
+43890 ns Write #1df to mem3 ts=37 vec=2
+43896 ns Write #1e0 to mem3 ts=37 vec=3
+43962 ns Write #1e1 to mem3 ts=38 vec=0
+43968 ns Write #1e2 to mem3 ts=38 vec=1
+43974 ns Write #1e3 to mem3 ts=38 vec=2
+43980 ns Write #1e4 to mem3 ts=38 vec=3
+44046 ns Write #1e5 to mem3 ts=39 vec=0
+44052 ns Write #1e6 to mem3 ts=39 vec=1
+44058 ns Write #1e7 to mem3 ts=39 vec=2
+44064 ns Write #1e8 to mem3 ts=39 vec=3
+44130 ns Write #1e9 to mem3 ts=3a vec=0
+44136 ns Write #1ea to mem3 ts=3a vec=1
+44142 ns Write #1eb to mem3 ts=3a vec=2
+44148 ns Write #1ec to mem3 ts=3a vec=3
+44214 ns Write #1ed to mem3 ts=3b vec=0
+44220 ns Write #1ee to mem3 ts=3b vec=1
+44226 ns Write #1ef to mem3 ts=3b vec=2
+44232 ns Write #1f0 to mem3 ts=3b vec=3
+44298 ns Write #1f1 to mem3 ts=3c vec=0
+44304 ns Write #1f2 to mem3 ts=3c vec=1
+44310 ns Write #1f3 to mem3 ts=3c vec=2
+44316 ns Write #1f4 to mem3 ts=3c vec=3
+44382 ns Write #1f5 to mem3 ts=3d vec=0
+44388 ns Write #1f6 to mem3 ts=3d vec=1
+44394 ns Write #1f7 to mem3 ts=3d vec=2
+44400 ns Write #1f8 to mem3 ts=3d vec=3
+44466 ns Write #1f9 to mem3 ts=3e vec=0
+44472 ns Write #1fa to mem3 ts=3e vec=1
+44478 ns Write #1fb to mem3 ts=3e vec=2
+44484 ns Write #1fc to mem3 ts=3e vec=3
+44550 ns Write #1fd to mem3 ts=3f vec=0
+44556 ns Write #1fe to mem3 ts=3f vec=1
+44562 ns Write #1ff to mem3 ts=3f vec=2
+44568 ns Write #200 to mem3 ts=3f vec=3
+45188 ns Write #201 to mem3 ts=0 vec=0
+45188 ns Checking output row 0
+  Row 0 PASSED
+45809 ns Write #202 to mem3 ts=1 vec=0
+45809 ns Checking output row 1
+  Row 1 PASSED
+46430 ns Write #203 to mem3 ts=2 vec=0
+46430 ns Checking output row 2
+  Row 2 PASSED
+47051 ns Write #204 to mem3 ts=3 vec=0
+47051 ns Checking output row 3
+  Row 3 PASSED
+47672 ns Write #205 to mem3 ts=4 vec=0
+47672 ns Checking output row 4
+  Row 4 PASSED
+48293 ns Write #206 to mem3 ts=5 vec=0
+48293 ns Checking output row 5
+  Row 5 PASSED
+48914 ns Write #207 to mem3 ts=6 vec=0
+48914 ns Checking output row 6
+  Row 6 PASSED
+49535 ns Write #208 to mem3 ts=7 vec=0
+49535 ns Checking output row 7
+  Row 7 PASSED
+50156 ns Write #209 to mem3 ts=8 vec=0
+50156 ns Checking output row 8
+  Row 8 PASSED
+50777 ns Write #20a to mem3 ts=9 vec=0
+50777 ns Checking output row 9
+  Row 9 PASSED
+51398 ns Write #20b to mem3 ts=a vec=0
+51398 ns Checking output row a
+  Row a PASSED
+52019 ns Write #20c to mem3 ts=b vec=0
+52019 ns Checking output row b
+  Row b PASSED
+52640 ns Write #20d to mem3 ts=c vec=0
+52640 ns Checking output row c
+  Row c PASSED
+53261 ns Write #20e to mem3 ts=d vec=0
+53261 ns Checking output row d
+  Row d PASSED
+53882 ns Write #20f to mem3 ts=e vec=0
+53882 ns Checking output row e
+  Row e PASSED
+54503 ns Write #210 to mem3 ts=f vec=0
+54503 ns Checking output row f
+  Row f PASSED
+55124 ns Write #211 to mem3 ts=10 vec=0
+55124 ns Checking output row 10
+  Row 10 PASSED
+55745 ns Write #212 to mem3 ts=11 vec=0
+55745 ns Checking output row 11
+  Row 11 PASSED
+56366 ns Write #213 to mem3 ts=12 vec=0
+56366 ns Checking output row 12
+  Row 12 PASSED
+56987 ns Write #214 to mem3 ts=13 vec=0
+56987 ns Checking output row 13
+  Row 13 PASSED
+57608 ns Write #215 to mem3 ts=14 vec=0
+57608 ns Checking output row 14
+  Row 14 PASSED
+58229 ns Write #216 to mem3 ts=15 vec=0
+58229 ns Checking output row 15
+  Row 15 PASSED
+58850 ns Write #217 to mem3 ts=16 vec=0
+58850 ns Checking output row 16
+  Row 16 PASSED
+59471 ns Write #218 to mem3 ts=17 vec=0
+59471 ns Checking output row 17
+  Row 17 PASSED
+60092 ns Write #219 to mem3 ts=18 vec=0
+60092 ns Checking output row 18
+  Row 18 PASSED
+60713 ns Write #21a to mem3 ts=19 vec=0
+60713 ns Checking output row 19
+  Row 19 PASSED
+61334 ns Write #21b to mem3 ts=1a vec=0
+61334 ns Checking output row 1a
+  Row 1a PASSED
+61955 ns Write #21c to mem3 ts=1b vec=0
+61955 ns Checking output row 1b
+  Row 1b PASSED
+62576 ns Write #21d to mem3 ts=1c vec=0
+62576 ns Checking output row 1c
+  Row 1c PASSED
+63197 ns Write #21e to mem3 ts=1d vec=0
+63197 ns Checking output row 1d
+  Row 1d PASSED
+63818 ns Write #21f to mem3 ts=1e vec=0
+63818 ns Checking output row 1e
+  Row 1e PASSED
+64439 ns Write #220 to mem3 ts=1f vec=0
+64439 ns Checking output row 1f
+  Row 1f PASSED
+65060 ns Write #221 to mem3 ts=20 vec=0
+65060 ns Checking output row 20
+  Row 20 PASSED
+65681 ns Write #222 to mem3 ts=21 vec=0
+65681 ns Checking output row 21
+  Row 21 PASSED
+66302 ns Write #223 to mem3 ts=22 vec=0
+66302 ns Checking output row 22
+  Row 22 PASSED
+66923 ns Write #224 to mem3 ts=23 vec=0
+66923 ns Checking output row 23
+  Row 23 PASSED
+67544 ns Write #225 to mem3 ts=24 vec=0
+67544 ns Checking output row 24
+  Row 24 PASSED
+68165 ns Write #226 to mem3 ts=25 vec=0
+68165 ns Checking output row 25
+  Row 25 PASSED
+68786 ns Write #227 to mem3 ts=26 vec=0
+68786 ns Checking output row 26
+  Row 26 PASSED
+69407 ns Write #228 to mem3 ts=27 vec=0
+69407 ns Checking output row 27
+  Row 27 PASSED
+70028 ns Write #229 to mem3 ts=28 vec=0
+70028 ns Checking output row 28
+  Row 28 PASSED
+70649 ns Write #22a to mem3 ts=29 vec=0
+70649 ns Checking output row 29
+  Row 29 PASSED
+71270 ns Write #22b to mem3 ts=2a vec=0
+71270 ns Checking output row 2a
+  Row 2a PASSED
+71891 ns Write #22c to mem3 ts=2b vec=0
+71891 ns Checking output row 2b
+  Row 2b PASSED
+72512 ns Write #22d to mem3 ts=2c vec=0
+72512 ns Checking output row 2c
+  Row 2c PASSED
+73133 ns Write #22e to mem3 ts=2d vec=0
+73133 ns Checking output row 2d
+  Row 2d PASSED
+73754 ns Write #22f to mem3 ts=2e vec=0
+73754 ns Checking output row 2e
+  Row 2e PASSED
+74375 ns Write #230 to mem3 ts=2f vec=0
+74375 ns Checking output row 2f
+  Row 2f PASSED
+74996 ns Write #231 to mem3 ts=30 vec=0
+74996 ns Checking output row 30
+  Row 30 PASSED
+75617 ns Write #232 to mem3 ts=31 vec=0
+75617 ns Checking output row 31
+  Row 31 PASSED
+76238 ns Write #233 to mem3 ts=32 vec=0
+76238 ns Checking output row 32
+  Row 32 PASSED
+76859 ns Write #234 to mem3 ts=33 vec=0
+76859 ns Checking output row 33
+  Row 33 PASSED
+77480 ns Write #235 to mem3 ts=34 vec=0
+77480 ns Checking output row 34
+  Row 34 PASSED
+78101 ns Write #236 to mem3 ts=35 vec=0
+78101 ns Checking output row 35
+  Row 35 PASSED
+78722 ns Write #237 to mem3 ts=36 vec=0
+78722 ns Checking output row 36
+  Row 36 PASSED
+79343 ns Write #238 to mem3 ts=37 vec=0
+79343 ns Checking output row 37
+  Row 37 PASSED
+79964 ns Write #239 to mem3 ts=38 vec=0
+79964 ns Checking output row 38
+  Row 38 PASSED
+80585 ns Write #23a to mem3 ts=39 vec=0
+80585 ns Checking output row 39
+  Row 39 PASSED
+81206 ns Write #23b to mem3 ts=3a vec=0
+81206 ns Checking output row 3a
+  Row 3a PASSED
+81827 ns Write #23c to mem3 ts=3b vec=0
+81827 ns Checking output row 3b
+  Row 3b PASSED
+82448 ns Write #23d to mem3 ts=3c vec=0
+82448 ns Checking output row 3c
+  Row 3c PASSED
+83069 ns Write #23e to mem3 ts=3d vec=0
+83069 ns Checking output row 3d
+  Row 3d PASSED
+83690 ns Write #23f to mem3 ts=3e vec=0
+83690 ns Checking output row 3e
+  Row 3e PASSED
+84311 ns Write #240 to mem3 ts=3f vec=0
+84311 ns Checking output row 3f
+  Row 3f PASSED
+84318 ns Attention DONE signal received!
+Total output rows checked: 64
+Total writes to mem3: 576
+400032 ns AXI read response data = 0x2400000224000006DC1
+400032 ns Performance counters: cycles=28097 gb_reads=8768 gb_writes=576
+@500004 ns sc_stop
+TESTBENCH PASS
+Simulation complete, time is 500004000 ps.
+sysc_skeleton.v, 438 : (*vcs_systemc_2,vcs_systemc_skel*) module sc_main;
+Turning FSDB off and flushing
+*Verdi* : Close all FSDB Files at 500,004,000 ps.
+Completed writing FSDB file ./default.fsdb...
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 500004000 ps
+CPU Time:    114.200 seconds;       Data structure size:   8.5Mb
+Sat Mar  7 23:11:21 2026

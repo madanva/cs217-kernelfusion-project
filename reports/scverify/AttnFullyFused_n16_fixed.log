@@ -1,0 +1,91 @@
+Command: /home/users/vmadan/cs217-project/hls/Top/GBPartition/GBModule/AttnFullyFused/./Catapult/AttnFullyFused.v1/scverify/concat_sim_AttnFullyFused_v_vcs/sc_mainpwr -systemcrun -verilogrun -ucli -ucli2Proc -i ./Catapult/AttnFullyFused.v1/scverify/concat_sim_AttnFullyFused_v_vcs/scverify_vcs_wave.tcl -l ./Catapult/AttnFullyFused.v1/scverify/concat_sim_AttnFullyFused_v_vcs/sim.log
+Chronologic VCS simulator copyright 1991-2023
+Contains Synopsys proprietary information.
+Compiler version U-2023.03_Full64; Runtime version U-2023.03_Full64;  Mar  7 22:51 2026
+Connections Clock: tb.clk Period: 1 ns
+ucli% # Source static function file
+ucli% global env
+ucli% # Source the common TCL file (that also reads the wave database file)
+ucli% source $env(MGC_HOME)/pkgs/sif/userware/En_na/flows/vcs_funcs.tcl
+ucli% read_ccs_wave ./Catapult/AttnFullyFused.v1/scverify/ccs_wave_signals.dat
+Reading SCVerify waveform database './Catapult/AttnFullyFused.v1/scverify/ccs_wave_signals.dat'
+ucli% setup_vcd_file ./Catapult/AttnFullyFused.v1/.dut_inst_info.tcl
+DUT Instance Path = sc_main.tb.dut.ccs_rtl.dut_inst
+Preparing to write FSDB file ./default.fsdb...
+ucli% populate_wave_window
+ucli% if { ("0" != {}) && [file exists "0"] } {
+   source "0"
+}
+ucli% # If not running in GUI mode, run the entire simulation
+ucli% if { ![gui_is_active] } {
+   do_simulation_run
+}
+Running up to VCD start time: '0 ns'
+run 0 ns
+sysc_skeleton.v, 438 : (*vcs_systemc_2,vcs_systemc_skel*) module sc_main;
+Turning FSDB on
+*Verdi* Loading libsscore_vcs202303.so
+*Verdi* : Loading SystemC dumping library libsscore_vcs202303_sc233_gcc920.so.
+*Verdi* : Env. FSDB_VCS_RD_SC_VALPTR_PROTECT=1(1) was set.
+FSDB Dumper for VCS, Release Verdi_V-2023.12-SP2-4, Linux x86_64/64bit, 11/18/2024
+(C) 1996 - 2024 by Synopsys, Inc.
+*Verdi* : Create FSDB file './default.fsdb'
+*Verdi* : Begin traversing the scopes, layer (0).
+*Verdi* : End of traversing.
+fsdbDumpvars 0 sc_main.tb.dut.ccs_rtl.dut_inst
+*Verdi* : Begin traversing the scope (sc_main.tb.dut.ccs_rtl.dut_inst), layer (0).
+*Verdi* : End of traversing.
+*Verdi* : fsdbDumpon - All FSDB files at 0 ps.
+Continuing to VCD end time: 'end'
+run -all
+@2 ns Asserting reset
+@4 ns De-Asserting reset
+9 ns AXI read response data = 0x100100010000302010001
+9 ns Config readback matched
+304 ns Output write for row 0
+  Row 0 PASSED
+577 ns Output write for row 1
+  Row 1 PASSED
+850 ns Output write for row 2
+  Row 2 PASSED
+1123 ns Output write for row 3
+  Row 3 PASSED
+1396 ns Output write for row 4
+  Row 4 PASSED
+1669 ns Output write for row 5
+  Row 5 PASSED
+1942 ns Output write for row 6
+  Row 6 PASSED
+2215 ns Output write for row 7
+  Row 7 PASSED
+2488 ns Output write for row 8
+  Row 8 PASSED
+2761 ns Output write for row 9
+  Row 9 PASSED
+3034 ns Output write for row a
+  Row a PASSED
+3307 ns Output write for row b
+  Row b PASSED
+3580 ns Output write for row c
+  Row c PASSED
+3853 ns Output write for row d
+  Row d PASSED
+4126 ns Output write for row e
+  Row e PASSED
+4399 ns Output write for row f
+  Row f PASSED
+4401 ns Attention DONE signal received!
+Total output rows checked: 16
+200031 ns AXI read response data = 0x1000000210000007B2
+200031 ns Performance counters: cycles=1970 gb_reads=528 gb_writes=16
+@300004 ns sc_stop
+TESTBENCH PASS
+Simulation complete, time is 300004000 ps.
+sysc_skeleton.v, 438 : (*vcs_systemc_2,vcs_systemc_skel*) module sc_main;
+Turning FSDB off and flushing
+*Verdi* : Close all FSDB Files at 300,004,000 ps.
+Completed writing FSDB file ./default.fsdb...
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 300004000 ps
+CPU Time:     52.070 seconds;       Data structure size:   8.4Mb
+Sat Mar  7 22:52:03 2026

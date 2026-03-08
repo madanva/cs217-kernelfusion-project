@@ -255,7 +255,8 @@ SC_MODULE(testbench) {
   Connections::Combinational<spec::GB::Large::DataReq> gbcontrol_large_req;
   Connections::Combinational<spec::GB::Large::DataRsp<1>> gbcontrol_large_rsp;
 
-
+  Connections::Combinational<spec::GB::Large::DataReq> attn_large_req;
+  Connections::Combinational<spec::GB::Large::DataRsp<1>> attn_large_rsp;
 
   // Module instances
   NVHLS_DESIGN(GBCore) dut;
@@ -278,6 +279,8 @@ SC_MODULE(testbench) {
     dut.nmp_large_rsp(nmp_large_rsp);
     dut.gbcontrol_large_req(gbcontrol_large_req);
     dut.gbcontrol_large_rsp(gbcontrol_large_rsp);
+    dut.attn_large_req(attn_large_req);
+    dut.attn_large_rsp(attn_large_rsp);
     dut.SC_SRAM_CONFIG(sc_sram_config);
 
     source.clk(clk);

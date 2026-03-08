@@ -1,0 +1,508 @@
+Command: /home/users/vmadan/cs217-project/hls/Top/GBPartition/GBModule/AttnPartialFused/./Catapult/AttnPartialFused.v1/scverify/concat_sim_AttnPartialFused_v_vcs/sc_mainpwr -systemcrun -verilogrun -ucli -ucli2Proc -i ./Catapult/AttnPartialFused.v1/scverify/concat_sim_AttnPartialFused_v_vcs/scverify_vcs_wave.tcl -l ./Catapult/AttnPartialFused.v1/scverify/concat_sim_AttnPartialFused_v_vcs/sim.log
+Chronologic VCS simulator copyright 1991-2023
+Contains Synopsys proprietary information.
+Compiler version U-2023.03_Full64; Runtime version U-2023.03_Full64;  Mar  7 21:41 2026
+Connections Clock: tb.clk Period: 1 ns
+ucli% # Source static function file
+ucli% global env
+ucli% # Source the common TCL file (that also reads the wave database file)
+ucli% source $env(MGC_HOME)/pkgs/sif/userware/En_na/flows/vcs_funcs.tcl
+ucli% read_ccs_wave ./Catapult/AttnPartialFused.v1/scverify/ccs_wave_signals.dat
+Reading SCVerify waveform database './Catapult/AttnPartialFused.v1/scverify/ccs_wave_signals.dat'
+ucli% setup_vcd_file ./Catapult/AttnPartialFused.v1/.dut_inst_info.tcl
+DUT Instance Path = sc_main.tb.dut.ccs_rtl.dut_inst
+Preparing to write FSDB file ./default.fsdb...
+ucli% populate_wave_window
+ucli% if { ("0" != {}) && [file exists "0"] } {
+   source "0"
+}
+ucli% # If not running in GUI mode, run the entire simulation
+ucli% if { ![gui_is_active] } {
+   do_simulation_run
+}
+Running up to VCD start time: '0 ns'
+run 0 ns
+sysc_skeleton.v, 438 : (*vcs_systemc_2,vcs_systemc_skel*) module sc_main;
+Turning FSDB on
+*Verdi* Loading libsscore_vcs202303.so
+*Verdi* : Loading SystemC dumping library libsscore_vcs202303_sc233_gcc920.so.
+*Verdi* : Env. FSDB_VCS_RD_SC_VALPTR_PROTECT=1(1) was set.
+FSDB Dumper for VCS, Release Verdi_V-2023.12-SP2-4, Linux x86_64/64bit, 11/18/2024
+(C) 1996 - 2024 by Synopsys, Inc.
+*Verdi* : Create FSDB file './default.fsdb'
+*Verdi* : Begin traversing the scopes, layer (0).
+*Verdi* : End of traversing.
+fsdbDumpvars 0 sc_main.tb.dut.ccs_rtl.dut_inst
+*Verdi* : Begin traversing the scope (sc_main.tb.dut.ccs_rtl.dut_inst), layer (0).
+*Verdi* : End of traversing.
+*Verdi* : fsdbDumpon - All FSDB files at 0 ps.
+Continuing to VCD end time: 'end'
+run -all
+@2 ns Asserting reset
+@4 ns De-Asserting reset
+20 ns AXI read response data = 0x400100040000302010001
+20 ns Config readback matched
+1031 ns Write to mem3: ts=0 vec_idx=0 total_writes=0
+1037 ns Write to mem3: ts=0 vec_idx=1 total_writes=1
+1043 ns Write to mem3: ts=0 vec_idx=2 total_writes=2
+1049 ns Write to mem3: ts=0 vec_idx=3 total_writes=3
+2045 ns Write to mem3: ts=1 vec_idx=0 total_writes=4
+2051 ns Write to mem3: ts=1 vec_idx=1 total_writes=5
+2057 ns Write to mem3: ts=1 vec_idx=2 total_writes=6
+2063 ns Write to mem3: ts=1 vec_idx=3 total_writes=7
+3059 ns Write to mem3: ts=2 vec_idx=0 total_writes=8
+3065 ns Write to mem3: ts=2 vec_idx=1 total_writes=9
+3071 ns Write to mem3: ts=2 vec_idx=2 total_writes=a
+3077 ns Write to mem3: ts=2 vec_idx=3 total_writes=b
+4073 ns Write to mem3: ts=3 vec_idx=0 total_writes=c
+4079 ns Write to mem3: ts=3 vec_idx=1 total_writes=d
+4085 ns Write to mem3: ts=3 vec_idx=2 total_writes=e
+4091 ns Write to mem3: ts=3 vec_idx=3 total_writes=f
+5087 ns Write to mem3: ts=4 vec_idx=0 total_writes=10
+5093 ns Write to mem3: ts=4 vec_idx=1 total_writes=11
+5099 ns Write to mem3: ts=4 vec_idx=2 total_writes=12
+5105 ns Write to mem3: ts=4 vec_idx=3 total_writes=13
+6101 ns Write to mem3: ts=5 vec_idx=0 total_writes=14
+6107 ns Write to mem3: ts=5 vec_idx=1 total_writes=15
+6113 ns Write to mem3: ts=5 vec_idx=2 total_writes=16
+6119 ns Write to mem3: ts=5 vec_idx=3 total_writes=17
+7115 ns Write to mem3: ts=6 vec_idx=0 total_writes=18
+7121 ns Write to mem3: ts=6 vec_idx=1 total_writes=19
+7127 ns Write to mem3: ts=6 vec_idx=2 total_writes=1a
+7133 ns Write to mem3: ts=6 vec_idx=3 total_writes=1b
+8129 ns Write to mem3: ts=7 vec_idx=0 total_writes=1c
+8135 ns Write to mem3: ts=7 vec_idx=1 total_writes=1d
+8141 ns Write to mem3: ts=7 vec_idx=2 total_writes=1e
+8147 ns Write to mem3: ts=7 vec_idx=3 total_writes=1f
+9143 ns Write to mem3: ts=8 vec_idx=0 total_writes=20
+9149 ns Write to mem3: ts=8 vec_idx=1 total_writes=21
+9155 ns Write to mem3: ts=8 vec_idx=2 total_writes=22
+9161 ns Write to mem3: ts=8 vec_idx=3 total_writes=23
+10157 ns Write to mem3: ts=9 vec_idx=0 total_writes=24
+10163 ns Write to mem3: ts=9 vec_idx=1 total_writes=25
+10169 ns Write to mem3: ts=9 vec_idx=2 total_writes=26
+10175 ns Write to mem3: ts=9 vec_idx=3 total_writes=27
+11171 ns Write to mem3: ts=a vec_idx=0 total_writes=28
+11177 ns Write to mem3: ts=a vec_idx=1 total_writes=29
+11183 ns Write to mem3: ts=a vec_idx=2 total_writes=2a
+11189 ns Write to mem3: ts=a vec_idx=3 total_writes=2b
+12185 ns Write to mem3: ts=b vec_idx=0 total_writes=2c
+12191 ns Write to mem3: ts=b vec_idx=1 total_writes=2d
+12197 ns Write to mem3: ts=b vec_idx=2 total_writes=2e
+12203 ns Write to mem3: ts=b vec_idx=3 total_writes=2f
+13199 ns Write to mem3: ts=c vec_idx=0 total_writes=30
+13205 ns Write to mem3: ts=c vec_idx=1 total_writes=31
+13211 ns Write to mem3: ts=c vec_idx=2 total_writes=32
+13217 ns Write to mem3: ts=c vec_idx=3 total_writes=33
+14213 ns Write to mem3: ts=d vec_idx=0 total_writes=34
+14219 ns Write to mem3: ts=d vec_idx=1 total_writes=35
+14225 ns Write to mem3: ts=d vec_idx=2 total_writes=36
+14231 ns Write to mem3: ts=d vec_idx=3 total_writes=37
+15227 ns Write to mem3: ts=e vec_idx=0 total_writes=38
+15233 ns Write to mem3: ts=e vec_idx=1 total_writes=39
+15239 ns Write to mem3: ts=e vec_idx=2 total_writes=3a
+15245 ns Write to mem3: ts=e vec_idx=3 total_writes=3b
+16241 ns Write to mem3: ts=f vec_idx=0 total_writes=3c
+16247 ns Write to mem3: ts=f vec_idx=1 total_writes=3d
+16253 ns Write to mem3: ts=f vec_idx=2 total_writes=3e
+16259 ns Write to mem3: ts=f vec_idx=3 total_writes=3f
+17255 ns Write to mem3: ts=10 vec_idx=0 total_writes=40
+17261 ns Write to mem3: ts=10 vec_idx=1 total_writes=41
+17267 ns Write to mem3: ts=10 vec_idx=2 total_writes=42
+17273 ns Write to mem3: ts=10 vec_idx=3 total_writes=43
+18269 ns Write to mem3: ts=11 vec_idx=0 total_writes=44
+18275 ns Write to mem3: ts=11 vec_idx=1 total_writes=45
+18281 ns Write to mem3: ts=11 vec_idx=2 total_writes=46
+18287 ns Write to mem3: ts=11 vec_idx=3 total_writes=47
+19283 ns Write to mem3: ts=12 vec_idx=0 total_writes=48
+19289 ns Write to mem3: ts=12 vec_idx=1 total_writes=49
+19295 ns Write to mem3: ts=12 vec_idx=2 total_writes=4a
+19301 ns Write to mem3: ts=12 vec_idx=3 total_writes=4b
+20297 ns Write to mem3: ts=13 vec_idx=0 total_writes=4c
+20303 ns Write to mem3: ts=13 vec_idx=1 total_writes=4d
+20309 ns Write to mem3: ts=13 vec_idx=2 total_writes=4e
+20315 ns Write to mem3: ts=13 vec_idx=3 total_writes=4f
+21311 ns Write to mem3: ts=14 vec_idx=0 total_writes=50
+21317 ns Write to mem3: ts=14 vec_idx=1 total_writes=51
+21323 ns Write to mem3: ts=14 vec_idx=2 total_writes=52
+21329 ns Write to mem3: ts=14 vec_idx=3 total_writes=53
+22325 ns Write to mem3: ts=15 vec_idx=0 total_writes=54
+22331 ns Write to mem3: ts=15 vec_idx=1 total_writes=55
+22337 ns Write to mem3: ts=15 vec_idx=2 total_writes=56
+22343 ns Write to mem3: ts=15 vec_idx=3 total_writes=57
+23339 ns Write to mem3: ts=16 vec_idx=0 total_writes=58
+23345 ns Write to mem3: ts=16 vec_idx=1 total_writes=59
+23351 ns Write to mem3: ts=16 vec_idx=2 total_writes=5a
+23357 ns Write to mem3: ts=16 vec_idx=3 total_writes=5b
+24353 ns Write to mem3: ts=17 vec_idx=0 total_writes=5c
+24359 ns Write to mem3: ts=17 vec_idx=1 total_writes=5d
+24365 ns Write to mem3: ts=17 vec_idx=2 total_writes=5e
+24371 ns Write to mem3: ts=17 vec_idx=3 total_writes=5f
+25367 ns Write to mem3: ts=18 vec_idx=0 total_writes=60
+25373 ns Write to mem3: ts=18 vec_idx=1 total_writes=61
+25379 ns Write to mem3: ts=18 vec_idx=2 total_writes=62
+25385 ns Write to mem3: ts=18 vec_idx=3 total_writes=63
+26381 ns Write to mem3: ts=19 vec_idx=0 total_writes=64
+26387 ns Write to mem3: ts=19 vec_idx=1 total_writes=65
+26393 ns Write to mem3: ts=19 vec_idx=2 total_writes=66
+26399 ns Write to mem3: ts=19 vec_idx=3 total_writes=67
+27395 ns Write to mem3: ts=1a vec_idx=0 total_writes=68
+27401 ns Write to mem3: ts=1a vec_idx=1 total_writes=69
+27407 ns Write to mem3: ts=1a vec_idx=2 total_writes=6a
+27413 ns Write to mem3: ts=1a vec_idx=3 total_writes=6b
+28409 ns Write to mem3: ts=1b vec_idx=0 total_writes=6c
+28415 ns Write to mem3: ts=1b vec_idx=1 total_writes=6d
+28421 ns Write to mem3: ts=1b vec_idx=2 total_writes=6e
+28427 ns Write to mem3: ts=1b vec_idx=3 total_writes=6f
+29423 ns Write to mem3: ts=1c vec_idx=0 total_writes=70
+29429 ns Write to mem3: ts=1c vec_idx=1 total_writes=71
+29435 ns Write to mem3: ts=1c vec_idx=2 total_writes=72
+29441 ns Write to mem3: ts=1c vec_idx=3 total_writes=73
+30437 ns Write to mem3: ts=1d vec_idx=0 total_writes=74
+30443 ns Write to mem3: ts=1d vec_idx=1 total_writes=75
+30449 ns Write to mem3: ts=1d vec_idx=2 total_writes=76
+30455 ns Write to mem3: ts=1d vec_idx=3 total_writes=77
+31451 ns Write to mem3: ts=1e vec_idx=0 total_writes=78
+31457 ns Write to mem3: ts=1e vec_idx=1 total_writes=79
+31463 ns Write to mem3: ts=1e vec_idx=2 total_writes=7a
+31469 ns Write to mem3: ts=1e vec_idx=3 total_writes=7b
+32465 ns Write to mem3: ts=1f vec_idx=0 total_writes=7c
+32471 ns Write to mem3: ts=1f vec_idx=1 total_writes=7d
+32477 ns Write to mem3: ts=1f vec_idx=2 total_writes=7e
+32483 ns Write to mem3: ts=1f vec_idx=3 total_writes=7f
+33479 ns Write to mem3: ts=20 vec_idx=0 total_writes=80
+33485 ns Write to mem3: ts=20 vec_idx=1 total_writes=81
+33491 ns Write to mem3: ts=20 vec_idx=2 total_writes=82
+33497 ns Write to mem3: ts=20 vec_idx=3 total_writes=83
+34493 ns Write to mem3: ts=21 vec_idx=0 total_writes=84
+34499 ns Write to mem3: ts=21 vec_idx=1 total_writes=85
+34505 ns Write to mem3: ts=21 vec_idx=2 total_writes=86
+34511 ns Write to mem3: ts=21 vec_idx=3 total_writes=87
+35507 ns Write to mem3: ts=22 vec_idx=0 total_writes=88
+35513 ns Write to mem3: ts=22 vec_idx=1 total_writes=89
+35519 ns Write to mem3: ts=22 vec_idx=2 total_writes=8a
+35525 ns Write to mem3: ts=22 vec_idx=3 total_writes=8b
+36521 ns Write to mem3: ts=23 vec_idx=0 total_writes=8c
+36527 ns Write to mem3: ts=23 vec_idx=1 total_writes=8d
+36533 ns Write to mem3: ts=23 vec_idx=2 total_writes=8e
+36539 ns Write to mem3: ts=23 vec_idx=3 total_writes=8f
+37535 ns Write to mem3: ts=24 vec_idx=0 total_writes=90
+37541 ns Write to mem3: ts=24 vec_idx=1 total_writes=91
+37547 ns Write to mem3: ts=24 vec_idx=2 total_writes=92
+37553 ns Write to mem3: ts=24 vec_idx=3 total_writes=93
+38549 ns Write to mem3: ts=25 vec_idx=0 total_writes=94
+38555 ns Write to mem3: ts=25 vec_idx=1 total_writes=95
+38561 ns Write to mem3: ts=25 vec_idx=2 total_writes=96
+38567 ns Write to mem3: ts=25 vec_idx=3 total_writes=97
+39563 ns Write to mem3: ts=26 vec_idx=0 total_writes=98
+39569 ns Write to mem3: ts=26 vec_idx=1 total_writes=99
+39575 ns Write to mem3: ts=26 vec_idx=2 total_writes=9a
+39581 ns Write to mem3: ts=26 vec_idx=3 total_writes=9b
+40577 ns Write to mem3: ts=27 vec_idx=0 total_writes=9c
+40583 ns Write to mem3: ts=27 vec_idx=1 total_writes=9d
+40589 ns Write to mem3: ts=27 vec_idx=2 total_writes=9e
+40595 ns Write to mem3: ts=27 vec_idx=3 total_writes=9f
+41591 ns Write to mem3: ts=28 vec_idx=0 total_writes=a0
+41597 ns Write to mem3: ts=28 vec_idx=1 total_writes=a1
+41603 ns Write to mem3: ts=28 vec_idx=2 total_writes=a2
+41609 ns Write to mem3: ts=28 vec_idx=3 total_writes=a3
+42605 ns Write to mem3: ts=29 vec_idx=0 total_writes=a4
+42611 ns Write to mem3: ts=29 vec_idx=1 total_writes=a5
+42617 ns Write to mem3: ts=29 vec_idx=2 total_writes=a6
+42623 ns Write to mem3: ts=29 vec_idx=3 total_writes=a7
+43619 ns Write to mem3: ts=2a vec_idx=0 total_writes=a8
+43625 ns Write to mem3: ts=2a vec_idx=1 total_writes=a9
+43631 ns Write to mem3: ts=2a vec_idx=2 total_writes=aa
+43637 ns Write to mem3: ts=2a vec_idx=3 total_writes=ab
+44633 ns Write to mem3: ts=2b vec_idx=0 total_writes=ac
+44639 ns Write to mem3: ts=2b vec_idx=1 total_writes=ad
+44645 ns Write to mem3: ts=2b vec_idx=2 total_writes=ae
+44651 ns Write to mem3: ts=2b vec_idx=3 total_writes=af
+45647 ns Write to mem3: ts=2c vec_idx=0 total_writes=b0
+45653 ns Write to mem3: ts=2c vec_idx=1 total_writes=b1
+45659 ns Write to mem3: ts=2c vec_idx=2 total_writes=b2
+45665 ns Write to mem3: ts=2c vec_idx=3 total_writes=b3
+46661 ns Write to mem3: ts=2d vec_idx=0 total_writes=b4
+46667 ns Write to mem3: ts=2d vec_idx=1 total_writes=b5
+46673 ns Write to mem3: ts=2d vec_idx=2 total_writes=b6
+46679 ns Write to mem3: ts=2d vec_idx=3 total_writes=b7
+47675 ns Write to mem3: ts=2e vec_idx=0 total_writes=b8
+47681 ns Write to mem3: ts=2e vec_idx=1 total_writes=b9
+47687 ns Write to mem3: ts=2e vec_idx=2 total_writes=ba
+47693 ns Write to mem3: ts=2e vec_idx=3 total_writes=bb
+48689 ns Write to mem3: ts=2f vec_idx=0 total_writes=bc
+48695 ns Write to mem3: ts=2f vec_idx=1 total_writes=bd
+48701 ns Write to mem3: ts=2f vec_idx=2 total_writes=be
+48707 ns Write to mem3: ts=2f vec_idx=3 total_writes=bf
+49703 ns Write to mem3: ts=30 vec_idx=0 total_writes=c0
+49709 ns Write to mem3: ts=30 vec_idx=1 total_writes=c1
+49715 ns Write to mem3: ts=30 vec_idx=2 total_writes=c2
+49721 ns Write to mem3: ts=30 vec_idx=3 total_writes=c3
+50717 ns Write to mem3: ts=31 vec_idx=0 total_writes=c4
+50723 ns Write to mem3: ts=31 vec_idx=1 total_writes=c5
+50729 ns Write to mem3: ts=31 vec_idx=2 total_writes=c6
+50735 ns Write to mem3: ts=31 vec_idx=3 total_writes=c7
+51731 ns Write to mem3: ts=32 vec_idx=0 total_writes=c8
+51737 ns Write to mem3: ts=32 vec_idx=1 total_writes=c9
+51743 ns Write to mem3: ts=32 vec_idx=2 total_writes=ca
+51749 ns Write to mem3: ts=32 vec_idx=3 total_writes=cb
+52745 ns Write to mem3: ts=33 vec_idx=0 total_writes=cc
+52751 ns Write to mem3: ts=33 vec_idx=1 total_writes=cd
+52757 ns Write to mem3: ts=33 vec_idx=2 total_writes=ce
+52763 ns Write to mem3: ts=33 vec_idx=3 total_writes=cf
+53759 ns Write to mem3: ts=34 vec_idx=0 total_writes=d0
+53765 ns Write to mem3: ts=34 vec_idx=1 total_writes=d1
+53771 ns Write to mem3: ts=34 vec_idx=2 total_writes=d2
+53777 ns Write to mem3: ts=34 vec_idx=3 total_writes=d3
+54773 ns Write to mem3: ts=35 vec_idx=0 total_writes=d4
+54779 ns Write to mem3: ts=35 vec_idx=1 total_writes=d5
+54785 ns Write to mem3: ts=35 vec_idx=2 total_writes=d6
+54791 ns Write to mem3: ts=35 vec_idx=3 total_writes=d7
+55787 ns Write to mem3: ts=36 vec_idx=0 total_writes=d8
+55793 ns Write to mem3: ts=36 vec_idx=1 total_writes=d9
+55799 ns Write to mem3: ts=36 vec_idx=2 total_writes=da
+55805 ns Write to mem3: ts=36 vec_idx=3 total_writes=db
+56801 ns Write to mem3: ts=37 vec_idx=0 total_writes=dc
+56807 ns Write to mem3: ts=37 vec_idx=1 total_writes=dd
+56813 ns Write to mem3: ts=37 vec_idx=2 total_writes=de
+56819 ns Write to mem3: ts=37 vec_idx=3 total_writes=df
+57815 ns Write to mem3: ts=38 vec_idx=0 total_writes=e0
+57821 ns Write to mem3: ts=38 vec_idx=1 total_writes=e1
+57827 ns Write to mem3: ts=38 vec_idx=2 total_writes=e2
+57833 ns Write to mem3: ts=38 vec_idx=3 total_writes=e3
+58829 ns Write to mem3: ts=39 vec_idx=0 total_writes=e4
+58835 ns Write to mem3: ts=39 vec_idx=1 total_writes=e5
+58841 ns Write to mem3: ts=39 vec_idx=2 total_writes=e6
+58847 ns Write to mem3: ts=39 vec_idx=3 total_writes=e7
+59843 ns Write to mem3: ts=3a vec_idx=0 total_writes=e8
+59849 ns Write to mem3: ts=3a vec_idx=1 total_writes=e9
+59855 ns Write to mem3: ts=3a vec_idx=2 total_writes=ea
+59861 ns Write to mem3: ts=3a vec_idx=3 total_writes=eb
+60857 ns Write to mem3: ts=3b vec_idx=0 total_writes=ec
+60863 ns Write to mem3: ts=3b vec_idx=1 total_writes=ed
+60869 ns Write to mem3: ts=3b vec_idx=2 total_writes=ee
+60875 ns Write to mem3: ts=3b vec_idx=3 total_writes=ef
+61871 ns Write to mem3: ts=3c vec_idx=0 total_writes=f0
+61877 ns Write to mem3: ts=3c vec_idx=1 total_writes=f1
+61883 ns Write to mem3: ts=3c vec_idx=2 total_writes=f2
+61889 ns Write to mem3: ts=3c vec_idx=3 total_writes=f3
+62885 ns Write to mem3: ts=3d vec_idx=0 total_writes=f4
+62891 ns Write to mem3: ts=3d vec_idx=1 total_writes=f5
+62897 ns Write to mem3: ts=3d vec_idx=2 total_writes=f6
+62903 ns Write to mem3: ts=3d vec_idx=3 total_writes=f7
+63899 ns Write to mem3: ts=3e vec_idx=0 total_writes=f8
+63905 ns Write to mem3: ts=3e vec_idx=1 total_writes=f9
+63911 ns Write to mem3: ts=3e vec_idx=2 total_writes=fa
+63917 ns Write to mem3: ts=3e vec_idx=3 total_writes=fb
+64913 ns Write to mem3: ts=3f vec_idx=0 total_writes=fc
+64919 ns Write to mem3: ts=3f vec_idx=1 total_writes=fd
+64925 ns Write to mem3: ts=3f vec_idx=2 total_writes=fe
+64931 ns Write to mem3: ts=3f vec_idx=3 total_writes=ff
+65970 ns Write to mem3: ts=0 vec_idx=0 total_writes=100
+65970 ns Checking output row 0
+  Row 0 PASSED
+67011 ns Write to mem3: ts=1 vec_idx=0 total_writes=101
+67011 ns Checking output row 1
+  Row 1 PASSED
+68052 ns Write to mem3: ts=2 vec_idx=0 total_writes=102
+68052 ns Checking output row 2
+  Row 2 PASSED
+69093 ns Write to mem3: ts=3 vec_idx=0 total_writes=103
+69093 ns Checking output row 3
+  Row 3 PASSED
+70134 ns Write to mem3: ts=4 vec_idx=0 total_writes=104
+70134 ns Checking output row 4
+  Row 4 PASSED
+71175 ns Write to mem3: ts=5 vec_idx=0 total_writes=105
+71175 ns Checking output row 5
+  Row 5 PASSED
+72216 ns Write to mem3: ts=6 vec_idx=0 total_writes=106
+72216 ns Checking output row 6
+  Row 6 PASSED
+73257 ns Write to mem3: ts=7 vec_idx=0 total_writes=107
+73257 ns Checking output row 7
+  Row 7 PASSED
+74298 ns Write to mem3: ts=8 vec_idx=0 total_writes=108
+74298 ns Checking output row 8
+  Row 8 PASSED
+75339 ns Write to mem3: ts=9 vec_idx=0 total_writes=109
+75339 ns Checking output row 9
+  Row 9 PASSED
+76380 ns Write to mem3: ts=a vec_idx=0 total_writes=10a
+76380 ns Checking output row a
+  Row a PASSED
+77421 ns Write to mem3: ts=b vec_idx=0 total_writes=10b
+77421 ns Checking output row b
+  Row b PASSED
+78462 ns Write to mem3: ts=c vec_idx=0 total_writes=10c
+78462 ns Checking output row c
+  Row c PASSED
+79503 ns Write to mem3: ts=d vec_idx=0 total_writes=10d
+79503 ns Checking output row d
+  Row d PASSED
+80544 ns Write to mem3: ts=e vec_idx=0 total_writes=10e
+80544 ns Checking output row e
+  Row e PASSED
+81585 ns Write to mem3: ts=f vec_idx=0 total_writes=10f
+81585 ns Checking output row f
+  Row f PASSED
+82626 ns Write to mem3: ts=10 vec_idx=0 total_writes=110
+82626 ns Checking output row 10
+  Row 10 PASSED
+83667 ns Write to mem3: ts=11 vec_idx=0 total_writes=111
+83667 ns Checking output row 11
+  Row 11 PASSED
+84708 ns Write to mem3: ts=12 vec_idx=0 total_writes=112
+84708 ns Checking output row 12
+  Row 12 PASSED
+85749 ns Write to mem3: ts=13 vec_idx=0 total_writes=113
+85749 ns Checking output row 13
+  Row 13 PASSED
+86790 ns Write to mem3: ts=14 vec_idx=0 total_writes=114
+86790 ns Checking output row 14
+  Row 14 PASSED
+87831 ns Write to mem3: ts=15 vec_idx=0 total_writes=115
+87831 ns Checking output row 15
+  Row 15 PASSED
+88872 ns Write to mem3: ts=16 vec_idx=0 total_writes=116
+88872 ns Checking output row 16
+  Row 16 PASSED
+89913 ns Write to mem3: ts=17 vec_idx=0 total_writes=117
+89913 ns Checking output row 17
+  Row 17 PASSED
+90954 ns Write to mem3: ts=18 vec_idx=0 total_writes=118
+90954 ns Checking output row 18
+  Row 18 PASSED
+91995 ns Write to mem3: ts=19 vec_idx=0 total_writes=119
+91995 ns Checking output row 19
+  Row 19 PASSED
+93036 ns Write to mem3: ts=1a vec_idx=0 total_writes=11a
+93036 ns Checking output row 1a
+  Row 1a PASSED
+94077 ns Write to mem3: ts=1b vec_idx=0 total_writes=11b
+94077 ns Checking output row 1b
+  Row 1b PASSED
+95118 ns Write to mem3: ts=1c vec_idx=0 total_writes=11c
+95118 ns Checking output row 1c
+  Row 1c PASSED
+96159 ns Write to mem3: ts=1d vec_idx=0 total_writes=11d
+96159 ns Checking output row 1d
+  Row 1d PASSED
+97200 ns Write to mem3: ts=1e vec_idx=0 total_writes=11e
+97200 ns Checking output row 1e
+  Row 1e PASSED
+98241 ns Write to mem3: ts=1f vec_idx=0 total_writes=11f
+98241 ns Checking output row 1f
+  Row 1f PASSED
+99282 ns Write to mem3: ts=20 vec_idx=0 total_writes=120
+99282 ns Checking output row 20
+  Row 20 PASSED
+100323 ns Write to mem3: ts=21 vec_idx=0 total_writes=121
+100323 ns Checking output row 21
+  Row 21 PASSED
+101364 ns Write to mem3: ts=22 vec_idx=0 total_writes=122
+101364 ns Checking output row 22
+  Row 22 PASSED
+102405 ns Write to mem3: ts=23 vec_idx=0 total_writes=123
+102405 ns Checking output row 23
+  Row 23 PASSED
+103446 ns Write to mem3: ts=24 vec_idx=0 total_writes=124
+103446 ns Checking output row 24
+  Row 24 PASSED
+104487 ns Write to mem3: ts=25 vec_idx=0 total_writes=125
+104487 ns Checking output row 25
+  Row 25 PASSED
+105528 ns Write to mem3: ts=26 vec_idx=0 total_writes=126
+105528 ns Checking output row 26
+  Row 26 PASSED
+106569 ns Write to mem3: ts=27 vec_idx=0 total_writes=127
+106569 ns Checking output row 27
+  Row 27 PASSED
+107610 ns Write to mem3: ts=28 vec_idx=0 total_writes=128
+107610 ns Checking output row 28
+  Row 28 PASSED
+108651 ns Write to mem3: ts=29 vec_idx=0 total_writes=129
+108651 ns Checking output row 29
+  Row 29 PASSED
+109692 ns Write to mem3: ts=2a vec_idx=0 total_writes=12a
+109692 ns Checking output row 2a
+  Row 2a PASSED
+110733 ns Write to mem3: ts=2b vec_idx=0 total_writes=12b
+110733 ns Checking output row 2b
+  Row 2b PASSED
+111774 ns Write to mem3: ts=2c vec_idx=0 total_writes=12c
+111774 ns Checking output row 2c
+  Row 2c PASSED
+112815 ns Write to mem3: ts=2d vec_idx=0 total_writes=12d
+112815 ns Checking output row 2d
+  Row 2d PASSED
+113856 ns Write to mem3: ts=2e vec_idx=0 total_writes=12e
+113856 ns Checking output row 2e
+  Row 2e PASSED
+114897 ns Write to mem3: ts=2f vec_idx=0 total_writes=12f
+114897 ns Checking output row 2f
+  Row 2f PASSED
+115938 ns Write to mem3: ts=30 vec_idx=0 total_writes=130
+115938 ns Checking output row 30
+  Row 30 PASSED
+116979 ns Write to mem3: ts=31 vec_idx=0 total_writes=131
+116979 ns Checking output row 31
+  Row 31 PASSED
+118020 ns Write to mem3: ts=32 vec_idx=0 total_writes=132
+118020 ns Checking output row 32
+  Row 32 PASSED
+119061 ns Write to mem3: ts=33 vec_idx=0 total_writes=133
+119061 ns Checking output row 33
+  Row 33 PASSED
+120102 ns Write to mem3: ts=34 vec_idx=0 total_writes=134
+120102 ns Checking output row 34
+  Row 34 PASSED
+121143 ns Write to mem3: ts=35 vec_idx=0 total_writes=135
+121143 ns Checking output row 35
+  Row 35 PASSED
+122184 ns Write to mem3: ts=36 vec_idx=0 total_writes=136
+122184 ns Checking output row 36
+  Row 36 PASSED
+123225 ns Write to mem3: ts=37 vec_idx=0 total_writes=137
+123225 ns Checking output row 37
+  Row 37 PASSED
+124266 ns Write to mem3: ts=38 vec_idx=0 total_writes=138
+124266 ns Checking output row 38
+  Row 38 PASSED
+125307 ns Write to mem3: ts=39 vec_idx=0 total_writes=139
+125307 ns Checking output row 39
+  Row 39 PASSED
+126348 ns Write to mem3: ts=3a vec_idx=0 total_writes=13a
+126348 ns Checking output row 3a
+  Row 3a PASSED
+127389 ns Write to mem3: ts=3b vec_idx=0 total_writes=13b
+127389 ns Checking output row 3b
+  Row 3b PASSED
+128430 ns Write to mem3: ts=3c vec_idx=0 total_writes=13c
+128430 ns Checking output row 3c
+  Row 3c PASSED
+129471 ns Write to mem3: ts=3d vec_idx=0 total_writes=13d
+129471 ns Checking output row 3d
+  Row 3d PASSED
+130512 ns Write to mem3: ts=3e vec_idx=0 total_writes=13e
+130512 ns Checking output row 3e
+  Row 3e PASSED
+131553 ns Write to mem3: ts=3f vec_idx=0 total_writes=13f
+131553 ns Checking output row 3f
+  Row 3f PASSED
+131561 ns Attention DONE signal received!
+Total output rows checked: 64
+Total writes to mem3: 320
+200042 ns AXI read response data = 0x140000021400001046C
+200042 ns Performance counters: cycles=66668 gb_reads=8512 gb_writes=320
+@300004 ns sc_stop
+TESTBENCH PASS
+Simulation complete, time is 300004000 ps.
+sysc_skeleton.v, 438 : (*vcs_systemc_2,vcs_systemc_skel*) module sc_main;
+Turning FSDB off and flushing
+*Verdi* : Close all FSDB Files at 300,004,000 ps.
+Completed writing FSDB file ./default.fsdb...
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 300004000 ps
+CPU Time:     92.620 seconds;       Data structure size:   8.3Mb
+Sat Mar  7 21:43:03 2026

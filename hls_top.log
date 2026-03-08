@@ -1,0 +1,66 @@
+/bin/rm -rf ./catapult_cache
+/bin/rm -rf ./*~
+/bin/rm -rf ./*.key
+/bin/rm -rf ./core*
+/bin/rm -rf ./Catapult*
+/bin/rm -rf ./catapult*
+/bin/rm -rf ./*.log
+/bin/rm -rf ./design_checker_*.tcl
+/bin/rm -rf ./DVE*
+/bin/rm -rf ./verdi*
+/bin/rm -rf ./slec*
+/bin/rm -rf ./novas*
+/bin/rm -rf ./*.fsdb
+/bin/rm -rf ./*.saif*
+/bin/rm -rf ./*.vpd
+export NOVAS_INST_DIR=/cad/synopsys/verdi/V-2023.12-SP2-4; \
+        export LIBRARY_PATH=/usr/lib64:IBRARY_PATH; \
+	catapult -shell -product ultra -file /home/users/vmadan/cs217-project/scripts/hls/go_hls.tcl
+//  Catapult Ultra Synthesis 2024.2_1/1143609 (Production Release) Wed Nov 13 18:57:31 PST 2024
+//  
+//          Copyright (c) Siemens EDA, 1996-2024, All Rights Reserved.
+//                        UNPUBLISHED, LICENSED SOFTWARE.
+//             CONFIDENTIAL AND PROPRIETARY INFORMATION WHICH IS THE
+//                   PROPERTY OF SIEMENS EDA OR ITS LICENSORS.
+//  
+//  Running on Linux vmadan@rice-03:331447 6.14.0-37-generic x86_64 aol
+//  
+//  Package information: SIFLIBS v27.2_1.0, HLS_PKGS v27.2_1.0, 
+//                       SIF_TOOLKITS v27.2_1.0, SIF_XILINX v27.2_1.0, 
+//                       SIF_ALTERA v27.2_1.0, CCS_LIBS v27.2_1.0, 
+//                       CDS_PPRO v2024.1_3, CDS_DesignChecker v2024.2_1, 
+//                       CDS_OASYS v21.1_3.1, CDS_PSR v24.1_0.20, 
+//                       DesignPad v2.78_1.0, DesignAnalyzer 2024.2/1130210
+//  
+# Connected to license server 1717@cadlic0.stanford.edu (LIC-13)
+# Catapult product license successfully checked out, elapsed time 00:01 (LIC-14)
+dofile ../../scripts/hls/go_hls.tcl
+# > source $env(HLS_SCRIPTS)/nvhls_exec.tcl
+# Info: Branching solution 'solution.v2' at state 'initial' (PRJ-2)
+# Warning: REGISTER_IDLE_SIGNAL directive is deprecated (DIR-58)
+# > namespace eval nvhls {
+# >     proc set_bup_blocks {BUP_BLOCKS} {
+# >       upvar 1 $BUP_BLOCKS MY_BLOCKS
+# >       set MY_BLOCKS {"PEPartition" "PEModule" "PECore" "ActUnit" "GBPartition" "GBModule" "NMP" "GBCore" "GBControl" "AttnFullyFused"}
+# >     }
+# > 
+# >     proc usercmd_post_assembly {} {
+# >       directive set -CLOCK_OVERHEAD 0
+# >     }
+# > 
+# > }
+# > nvhls::run
+# ***USER SETTINGS***
+# TOP_NAME = Top
+# CLK_PERIOD = 4.0
+# SRC_PATH = ../../src/
+# SEARCH_PATH = /cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include /cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include /cad/mentor/2024.2_1/Mgc_home/shared/include /cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 /home/users/vmadan/cs217-project/src/include /home/users/vmadan/cs217-project/src/
+# HLS_CATAPULT = 1
+# RUN_SCVERIFY = 0
+# COMPILER_FLAGS = HLS_ALGORITHMICC CONNECTIONS_ACCURATE_SIM SC_INCLUDE_DYNAMIC_PROCESSES
+# SYSTEMC_DESIGN = 1
+# RUN_CDESIGN_CHECKER = 0
+# load_bup_blocks_pre  "PEPartition" "PEModule" "PECore" "ActUnit" "GBPartition" "GBModule" "NMP" "GBCore" "GBControl" "AttnFullyFused"
+# > end dofile ../../scripts/hls/go_hls.tcl
+# Error: solution library add: Could not locate library file for library name [Block] PECore.v1 for current configuration
+make: *** [hls] Error 2

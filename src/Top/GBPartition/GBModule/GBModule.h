@@ -30,6 +30,7 @@
 #include "GBCore/GBCore.h"
 #include "GBControl/GBControl.h"
 #include "NMP/NMP.h"
+#include "AttnFullyFused/AttnFullyFused.h"
 #include "Spec.h"
 
 
@@ -103,6 +104,14 @@ public:
   Connections::Combinational<bool> gbcontrol_done;
   Connections::Combinational<bool> nmp_done;
 
+  /** Attention unit channels */
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Write> attn_rva_in;
+  Connections::Combinational<spec::Axi::SubordinateToRVA::Read> attn_rva_out;
+  Connections::Combinational<spec::GB::Large::DataReq> attn_large_req;
+  Connections::Combinational<spec::GB::Large::DataRsp<1>> attn_large_rsp;
+  Connections::Combinational<bool> attn_start;
+  Connections::Combinational<bool> attn_done;
+
   // ===========================================================================
   // Submodule Instances
   // ===========================================================================
@@ -112,6 +121,8 @@ public:
   NMP nmp_inst;
   /** GBControl for data in and out */
   GBControl gbcontrol_inst;
+  /** Attention unit */
+  AttnFullyFused attn_inst;
 
 
   // ===========================================================================
@@ -136,10 +147,17 @@ public:
       nmp_large_rsp("nmp_large_rsp"),
       gbcontrol_large_req("gbcontrol_large_req"),
       gbcontrol_large_rsp("gbcontrol_large_rsp"),
+      attn_rva_in("attn_rva_in"),
+      attn_rva_out("attn_rva_out"),
+      attn_large_req("attn_large_req"),
+      attn_large_rsp("attn_large_rsp"),
+      attn_start("attn_start"),
+      attn_done("attn_done"),
       SC_SRAM_CONFIG("SC_SRAM_CONFIG"),
       gbcore_inst("gbcore_inst"),
       nmp_inst("nmp_inst"),
-      gbcontrol_inst("gbcontrol_inst") {
+      gbcontrol_inst("gbcontrol_inst"),
+      attn_inst("attn_inst") {
     SC_THREAD(RVAInRun);
     sensitive << clk.pos();
     async_reset_signal_is(rst, false);
@@ -161,6 +179,8 @@ public:
     gbcore_inst.nmp_large_rsp(nmp_large_rsp);
     gbcore_inst.gbcontrol_large_req(gbcontrol_large_req);
     gbcore_inst.gbcontrol_large_rsp(gbcontrol_large_rsp);
+    gbcore_inst.attn_large_req(attn_large_req);
+    gbcore_inst.attn_large_rsp(attn_large_rsp);
     gbcore_inst.SC_SRAM_CONFIG(SC_SRAM_CONFIG);
 
     // NMP port bindings
@@ -187,6 +207,16 @@ public:
     gbcontrol_inst.pe_start(pe_start);
     gbcontrol_inst.pe_done(pe_done);
 
+    // Attention unit port bindings
+    attn_inst.clk(clk);
+    attn_inst.rst(rst);
+    attn_inst.rva_in(attn_rva_in);
+    attn_inst.rva_out(attn_rva_out);
+    attn_inst.start(attn_start);
+    attn_inst.done(attn_done);
+    attn_inst.large_req(attn_large_req);
+    attn_inst.large_rsp(attn_large_rsp);
+
   } // GBModule
 
   // ===========================================================================
@@ -201,8 +231,10 @@ public:
     gbcore_rva_in.ResetWrite();
     nmp_rva_in.ResetWrite();
     gbcontrol_rva_in.ResetWrite();
+    attn_rva_in.ResetWrite();
     gbcontrol_start.ResetWrite();
     nmp_start.ResetWrite();
+    attn_start.ResetWrite();
     SC_SRAM_CONFIG.write(0);
 
 #pragma hls_pipeline_init_interval 1
@@ -219,6 +251,8 @@ public:
           gbcore_rva_in.Push(rva_in_reg);
         } else if (tmp == 0xC) {
           nmp_rva_in.Push(rva_in_reg);
+        } else if (tmp == 0xD) {
+          attn_rva_in.Push(rva_in_reg);
         } else if (tmp == 0x7) {
           gbcontrol_rva_in.Push(rva_in_reg);
         } else if (tmp == 0x0){
@@ -232,9 +266,12 @@ public:
               case 0x1: 
                 gbcontrol_start.Push(1);
                 break;
-              case 0x2: 
+              case 0x2:
                 nmp_start.Push(1);
-                break;         
+                break;
+              case 0x3:
+                attn_start.Push(1);
+                break;
               default:
                 break;
             }
@@ -254,6 +291,7 @@ public:
     gbcore_rva_out.ResetRead();
     nmp_rva_out.ResetRead();
     gbcontrol_rva_out.ResetRead();
+    attn_rva_out.ResetRead();
 
 #pragma hls_pipeline_init_interval 1
     while (1) {
@@ -264,6 +302,8 @@ public:
       } else if (nmp_rva_out.PopNB(rva_out_reg)) {
         is_valid = 1;
       } else if (gbcontrol_rva_out.PopNB(rva_out_reg)) {
+        is_valid = 1;
+      } else if (attn_rva_out.PopNB(rva_out_reg)) {
         is_valid = 1;
       }
       if (is_valid) {
@@ -277,7 +317,7 @@ public:
     gb_done.Reset();
     gbcontrol_done.ResetRead();
     nmp_done.ResetRead();
-
+    attn_done.ResetRead();
 
     #pragma hls_pipeline_init_interval 1
     while(1) {
@@ -287,6 +327,9 @@ public:
         is_done = 1;
       }
       else if (nmp_done.PopNB(done_reg)) {
+        is_done = 1;
+      }
+      else if (attn_done.PopNB(done_reg)) {
         is_done = 1;
       }
       if (is_done == 1){
