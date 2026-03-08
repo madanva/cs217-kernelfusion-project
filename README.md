@@ -1,111 +1,102 @@
-# Lab 4: System Integration and Interconnect
+# CS 217 Project: Kernel Fusion for Attention on FPGA
 
-## Table of Contents
-- [1. Introduction](#1-introduction)
-  - [File Structure](#file-structure)
-- [2. Architecture Overview](#2-architecture-overview)
-- [3. SystemC test and HLS to RTL](#3-systemc-test-and-hls-to-rtl)
-- [4. FPGA Implementation](#4-fpga-implementation)
-- [5. How was Timing fixed?](#5-how-was-timing-fixed)
-- [6. Documentation](#6-documentation)
+## Overview
 
+FPGA-based attention accelerator comparing three fusion variants of scaled dot-product attention:
 
-## 1. Introduction 
-This repository contains the solution to Lab 4 with a timing-clean AWS environment. 
+**Attention(Q, K, V) = softmax(QK^T / sqrt(d)) * V**
 
-### File Structure
+| Variant | Fusion Level | Description |
+|---------|-------------|-------------|
+| **Unfused** | None | 3 separate phases: QK^T → Softmax (NMP) → V multiply. All intermediates written to SRAM. |
+| **Partial Fused** | QK^T + Softmax | Online softmax fused with QK^T computation. Attention weights still materialized. |
+| **Fully Fused** | QK^T + Softmax + V | FlashAttention-style single pass. All intermediates in registers, 2-thread dataflow. |
 
-The repository is organized into the following directories:
+Parameters: N=16/64, d=16, tile_size=16, int8 I/O, 32-bit fixed-point intermediates.
 
--   `src/`: Contains the SystemC source code for the accelerator. This is where you will spend most of your time for this lab.
-    -   `src/include/`: Shared header files, including definitions for AXI signals (`AxiSpec.h`) and other specifications.
-    -   `src/DataBus/`: Modules for handling data and control signal distribution between the GB and PEs.
-    -   `src/Top/GBPartition/`: The Global Buffer partition, which includes the `GBModule` and its sub-modules.
-    -   `src/Top/PEPartition/`: The Processing Element partition, which includes the `PEModule` and its sub-modules.
-    -   `src/Top/`: The top-level module that integrates the GB and PE partitions.
--   `hls/`: Contains the scripts and Makefiles for running the High-Level Synthesis (HLS) flow. The structure mirrors the `src` directory.
--   `design_top/`: Contains the files for building the design for the AWS F2 FPGA, including Verilog/SystemVerilog files, constraints, and build scripts.
-    -   `design_top/design/`: Synthesized RTL files and other design sources.
-    -   `design_top/verif/`: Verification environment for the RTL design.
-    -   `design_top/build/`: Scripts and constraints for synthesis and implementation.
--   `scripts/`: Utility scripts for the project.
-    -   `scripts/hls/`: Scripts for the HLS flow.
-    -   `scripts/aws/`: Scripts for interacting with AWS.
--   `docs/`: Contains documentation for the project, including setup guides.
--   `reports/`: Directory for storing reports from HLS and FPGA builds.
+Built on the Stanford CS 217 lab infrastructure (GBCore SRAM, NMP, MatchLib Connections, Catapult HLS).
 
-## 2. Architecture Overview
+## Results
 
-The top-level design consists of three main components:
+### HLS Synthesis (CLK_PERIOD=4.0ns)
 
--   **GBPartition**: The Global Buffer partition, which is responsible for storing weights and activations. It contains the `GBModule`.
--   **PEPartition**: The Processing Element partition. The design instantiates multiple PEs. Each partition contains a `PEModule`.
--   **AxiSplitter**: An AXI4 interconnect that routes AXI transactions from the host to the appropriate partition (GB or one of the PEs) based on the address.
--   **DataBus**: A set of modules that manage the broadcasting of data from the GB to all PEs (`GBSend`), the collection of results from PEs back to the GB (`GBRecv`), and the distribution/aggregation of control signals (`PEStart`, `PEDone`).
+|  | Unfused | Partial Fused | Fully Fused |
+|--|---------|---------------|-------------|
+| Throughput (II) | 3 | 3 | MemCtrl=1, Compute=3 |
+| DSPs | 96 | 95 | 186 |
+| LUTs | 8,667 | 16,650 | 17,817 |
+| Total Area Score | 72,699 | 80,015 | 141,879 |
 
-## 3. SystemC test and HLS to RTL
-1. SystemC test - `python3 test.py --action systemc_sim`
-2. RTL generation and sim - `python3 test.py --action rtl_sim`
+### RTL Scverify (N=64)
 
-## 4. FPGA Implementation
+|  | Unfused | Partial Fused | Fully Fused |
+|--|---------|---------------|-------------|
+| Sim Clocks | 84,296 | 130,793 | 66,454 |
+| GB Reads | 8,768 | 8,512 | 8,256 |
+| GB Writes | 576 | 320 | 64 |
+| Write Reduction | 1x | 1.8x | 9x |
+| Speedup | 1x | 0.64x | 1.27x |
 
-**Disclaimer:** If your `hw_sim` fails with a testbench error, please check out the following commit for the `aws-fpga` repo before sourcing `hdk_setup.sh`: `git checkout 2f1f343259dcb794adc596a76c31593280fd7c7b`
+All 3 variants: TESTBENCH PASS (SystemC + HLS RTL scverify).
 
-Clone your lab repository to AWS F2 and set up the environment. This should be similar to previous labs:
+## File Structure
 
-```bash
-# SSH into AWS F2 instance
-
-# Source AWS F2 environment
-cd ~/aws-fpga
-source hdk_setup.sh
-source sdk_setup.sh
-
-# Move to design_top folder
-cd [path-to-lab4-repo]/design_top
-source setup.sh
+```
+src/
+  include/
+    AttentionSpec.h          # Attention config, counters, types
+    AttnDatapath.h           # Dot product, weighted accum helpers
+  Top/GBPartition/GBModule/
+    AttnUnfused/             # Unfused attention + testbench
+    AttnPartialFused/        # Partial fused attention + testbench
+    AttnFullyFused/          # Fully fused attention + testbench
+    GBCore/GBCore.h          # SRAM controller (attention ports added)
+    GBModule.h               # Top-level wiring (AXI region 0xD)
+hls/
+  Top/GBPartition/GBModule/
+    AttnUnfused/Makefile     # HLS synthesis Makefiles
+    AttnPartialFused/Makefile
+    AttnFullyFused/Makefile
+reports/
+  attention_results.txt      # Full results summary
+  scverify/                  # Saved simulation logs
+design_top/                  # AWS F2 FPGA build environment
 ```
 
-Run hardware simulation on AWS F2 for the synthesized RTL:
+## Building
 
+### SystemC Simulation (standalone testbenches)
 ```bash
-# Run RTL simulation
-make hw_sim
+# Inside rhel8 container
+cd src/Top/GBPartition/GBModule/AttnUnfused
+make clean && make sim_test && ./sim_test
 ```
 
-Build the FPGA bitstream, generate the AFI, and program the FPGA:
-
+### HLS Synthesis + RTL Scverify
 ```bash
-cd design_top
-
-make fpga_build          # should take about 2.5 hours
-make generate_afi
-
-# Wait for AFI to become available
-make check_afi_available
-
-# Once available
-make program_fpga
-make run_fpga_test
+# Inside rhel8 container
+cd hls/Top/GBPartition/GBModule/AttnUnfused
+make clean && make hls
 ```
-### 5. How was Timing fixed?
 
-Credits to @jadbitar for the timing-fixed solution code.
+### Top-level
+```bash
+python3 test.py --action systemc_sim   # SystemC sim
+python3 test.py --action rtl_sim       # HLS + RTL scverify
+```
 
-1. HLS closed at 250MHz to prevent long buffer paths in RTL when closed at 125MHz
-2. The AWS clock `clk_main_a0` is put through a clock divider to supply 125MHz to all the components. Appropriate synchronization primitives were used.
+## AXI Address Map (Attention)
 
-Files changed from Lab 4 release repo
-1. `design_top/design/design_top.sv`
-2. `design_top/build/constraints/cl_timing_user.xdc`
-3. `design_top/build/scripts/synth_design_top.tcl`
+| Address | Function |
+|---------|----------|
+| `0x330D0010` | Attention config register |
+| `0x33000030` | Attention start trigger |
 
-## 6. Documentation
+Attention uses AXI tag `0xD` for configuration and start trigger `local_index=0x3`.
 
-Refer to the following documentation for SystemC and MatchLib, found on both Canvas and in `/cad/mentor/2024.2_1/Mgc_home/shared/pdfdocs`:
+## Key Design Decisions
 
-- `ac_datatypes_ref.pdf`: Algorithmic C datatypes reference manual. Specifically, see `ac_fixed` and `ac_float` classes.
-- `ac_math_ref.pdf`: Algorithmic C math library reference manual. Specifically, see functions for power, reciprocal, and square root.
-- `connections-guide.pdf`: Documentation for the Connections library, including detailed information on `Push`/`Pop` semantics and coding best practices.
-- `catapult_useref.pdf`: User reference manual for Catapult HLS, including pragmas and synthesis directives. 
-- `https://nvlabs.github.io/matchlib`: MatchLib online documentation, including component reference and tutorials.
+- **Online softmax** (partial + fully fused): Running max/sum avoids two-pass softmax, enables streaming
+- **addtree pragma**: Fixes SCHD-3 feedback path on running_sum accumulation (O(log N) vs O(N) depth)
+- **2-thread dataflow** (fully fused): Separates MemCtrl (II=1) from Compute (II=3) via ac_channel
+- **Performance metric**: Scverify simulation timestamps (sc_time_stamp) as ground truth, matching lab infrastructure approach
