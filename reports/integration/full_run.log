@@ -1,0 +1,64 @@
+============================================
+ Attention Integration Tests (GBModule)
+ Sun Mar  8 01:59:52 PST 2026
+============================================
+
+--------------------------------------------
+ Building: UNFUSED
+--------------------------------------------
+g++ -o sim_test_attn -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11 -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/vmadan/cs217-project/src/include -I/home/users/vmadan/cs217-project/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DATTN_UNFUSED testbench_attn.cpp  -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
+Build OK, running...
+PASS: UNFUSED
+
+2602 ns Performance counters: cycles=2449 gb_reads=560 gb_writes=48
+
+Info: /OSCI/SystemC: Simulation stopped by user.
+
+========================================
+ Attention Integration Test: PASS
+ Outputs checked: 16/16
+ Mismatches: 0
+========================================
+TESTBENCH PASS
+
+--------------------------------------------
+ Building: PARTIAL_FUSED
+--------------------------------------------
+g++ -o sim_test_attn -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11 -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/vmadan/cs217-project/src/include -I/home/users/vmadan/cs217-project/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT -DATTN_PARTIAL_FUSED testbench_attn.cpp  -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
+Build OK, running...
+PASS: PARTIAL_FUSED
+
+2442 ns Performance counters: cycles=2289 gb_reads=544 gb_writes=32
+
+Info: /OSCI/SystemC: Simulation stopped by user.
+
+========================================
+ Attention Integration Test: PASS
+ Outputs checked: 16/16
+ Mismatches: 0
+========================================
+TESTBENCH PASS
+
+--------------------------------------------
+ Building: FULLY_FUSED
+--------------------------------------------
+g++ -o sim_test_attn -DHLS_ALGORITHMICC -Wall -Wno-unknown-pragmas -Wno-virtual-move-assign -Wno-unused-local-typedefs -std=c++11 -I. -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/tps/boost_1_64_0 -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/home/users/vmadan/cs217-project/src/include -I/home/users/vmadan/cs217-project/src -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib_connections/include -I/cad/mentor/2024.2_1/Mgc_home/shared/include -I/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/matchlib/cmod/include -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/cardano/lib/lnx64.o -I/cad/xilinx/vitis/2020.1/Vitis/2020.1/lib/lnx64.o -L. -L/cad/mentor/2024.2_1/Mgc_home/shared/lib -L/cad/mentor/2024.2_1/Mgc_home/shared/pkgs/boostpp/pp/lib -DHLS_CATAPULT  testbench_attn.cpp  -lstdc++ -lsystemc -lm -lpthread > build.log 2>&1
+Build OK, running...
+PASS: FULLY_FUSED
+
+2443 ns Performance counters: cycles=2290 gb_reads=528 gb_writes=16
+
+Info: /OSCI/SystemC: Simulation stopped by user.
+
+========================================
+ Attention Integration Test: PASS
+ Outputs checked: 16/16
+ Mismatches: 0
+========================================
+TESTBENCH PASS
+
+============================================
+ RESULTS: 3 passed, 0 failed
+ Logs in: reports/integration/
+ Sun Mar  8 03:00:35 PDT 2026
+============================================

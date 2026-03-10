@@ -1,0 +1,62 @@
+
+        SystemC 2.3.3-Accellera --- Jun  7 2022 13:10:00
+        Copyright (c) 1996-2018 by all Contributors,
+        ALL RIGHTS RESERVED
+================================
+SETTING RANDOM SEED = 19650218
+================================
+Connections Clock: tb.clk Period: 1 ns
+@2 ns Asserting reset
+@4 ns De-Asserting reset
+4 ns Golden reference computed
+4 ns GBCore address mapping configured
+21 ns Q data written to GBCore
+37 ns K data written to GBCore
+53 ns V data written to GBCore
+53 ns Attention configured
+54 ns Attention START triggered
+2507 ns GB_DONE received!
+2508 ns Attention DONE received, reading output
+2522 ns Checking output row 1...
+  Row 1 PASSED
+2527 ns Checking output row 2...
+  Row 2 PASSED
+2532 ns Checking output row 3...
+  Row 3 PASSED
+2537 ns Checking output row 4...
+  Row 4 PASSED
+2542 ns Checking output row 5...
+  Row 5 PASSED
+2547 ns Checking output row 6...
+  Row 6 PASSED
+2552 ns Checking output row 7...
+  Row 7 PASSED
+2557 ns Checking output row 8...
+  Row 8 PASSED
+2562 ns Checking output row 9...
+  Row 9 PASSED
+2567 ns Checking output row 10...
+  Row 10 PASSED
+2572 ns Checking output row 11...
+  Row 11 PASSED
+2577 ns Checking output row 12...
+  Row 12 PASSED
+2582 ns Checking output row 13...
+  Row 13 PASSED
+2587 ns Checking output row 14...
+  Row 14 PASSED
+2592 ns Checking output row 15...
+  Row 15 PASSED
+2597 ns Checking output row 16...
+  Row 16 PASSED
+2598 ns All outputs read back
+2602 ns Performance counters: cycles=2449 gb_reads=560 gb_writes=48
+
+Info: /OSCI/SystemC: Simulation stopped by user.
+
+========================================
+ Attention Integration Test: PASS
+ Outputs checked: 16/16
+ Mismatches: 0
+========================================
+TESTBENCH PASS
