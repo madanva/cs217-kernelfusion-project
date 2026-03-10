@@ -30,7 +30,14 @@
 #include "GBCore/GBCore.h"
 #include "GBControl/GBControl.h"
 #include "NMP/NMP.h"
+// Compile-time attention variant selection
+#if defined(ATTN_UNFUSED)
+#include "AttnUnfused/AttnUnfused.h"
+#elif defined(ATTN_PARTIAL_FUSED)
+#include "AttnPartialFused/AttnPartialFused.h"
+#else
 #include "AttnFullyFused/AttnFullyFused.h"
+#endif
 #include "Spec.h"
 
 
@@ -122,7 +129,13 @@ public:
   /** GBControl for data in and out */
   GBControl gbcontrol_inst;
   /** Attention unit */
+#if defined(ATTN_UNFUSED)
+  AttnUnfused attn_inst;
+#elif defined(ATTN_PARTIAL_FUSED)
+  AttnPartialFused attn_inst;
+#else
   AttnFullyFused attn_inst;
+#endif
 
 
   // ===========================================================================

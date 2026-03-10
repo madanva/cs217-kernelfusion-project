@@ -170,8 +170,14 @@ namespace eval nvhls {
         solution options set ComponentLibs/SearchPath [exec readlink -f ./GBPartition/GBModule/GBControl/Catapult] -append
         solution library add "\[Block\] GBControl.v1"
 
-        solution options set ComponentLibs/SearchPath [exec readlink -f ./GBPartition/GBModule/AttnFullyFused/Catapult] -append
-        solution library add "\[Block\] AttnFullyFused.v1"
+        global env
+        if {[info exists env(ATTN_VARIANT)]} {
+            set attn_block $env(ATTN_VARIANT)
+        } else {
+            set attn_block "AttnFullyFused"
+        }
+        solution options set ComponentLibs/SearchPath [exec readlink -f ./GBPartition/GBModule/${attn_block}/Catapult] -append
+        solution library add "\[Block\] ${attn_block}.v1"
 
         solution options set ComponentLibs/SearchPath [exec readlink -f ./GBPartition/GBModule/Catapult] -append
         solution library add "\[Block\] GBModule.v1"

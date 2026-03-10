@@ -19,15 +19,27 @@ HLS_SCRIPTS ?= $(REPO_TOP)/scripts/hls/
 
 include $(HLS_SCRIPTS)/Makefile_src
 
-.PHONY: all run
+.PHONY: all run clean_attn
 
 all: clean sim_test run
 
 run:
 	./sim_test
 
-sim_test: $(wildcard *.h) $(wildcard *.cpp)
-	$(CC) -o sim_test $(CFLAGS) $(USER_FLAGS) $(wildcard *.cpp) $(BOOSTLIBS) $(LIBS) > $(LOGFILE) 2>&1
+# Original GBModule testbench (NMP/GBControl tests)
+sim_test: testbench.cpp $(wildcard *.h)
+	$(CC) -o sim_test $(CFLAGS) $(USER_FLAGS) testbench.cpp $(BOOSTLIBS) $(LIBS) > $(LOGFILE) 2>&1
 
-sim_test_debug: $(wildcard *.h) $(wildcard *.cpp)
-	$(CC) -o sim_test $(CFLAGS) $(DEBUG_FLAG) $(USER_FLAGS) $(wildcard *.cpp) $(BOOSTLIBS) $(LIBS) > $(LOGFILE) 2>&1
+sim_test_debug: testbench.cpp $(wildcard *.h)
+	$(CC) -o sim_test $(CFLAGS) $(DEBUG_FLAG) $(USER_FLAGS) testbench.cpp $(BOOSTLIBS) $(LIBS) > $(LOGFILE) 2>&1
+
+# Attention integration testbench
+# Usage:
+#   make sim_test_attn                              # default: fully fused
+#   make sim_test_attn USER_FLAGS="-DATTN_UNFUSED"  # unfused variant
+#   make sim_test_attn USER_FLAGS="-DATTN_PARTIAL_FUSED"  # partial fused
+sim_test_attn: testbench_attn.cpp $(wildcard *.h)
+	$(CC) -o sim_test_attn $(CFLAGS) $(USER_FLAGS) testbench_attn.cpp $(BOOSTLIBS) $(LIBS) > $(LOGFILE) 2>&1
+
+clean_attn:
+	rm -f sim_test_attn

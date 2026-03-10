@@ -82,4 +82,15 @@ int ocl_rd32(int bar_handle, uint16_t addr, uint32_t* data);
 int top_write(int bar_handle, const AxiWriteCommand* write_command);
 int top_read(int bar_handle, AxiReadCommand* read_command);
 
+// Attention host driver functions
+int attn_write_sram(int bar_handle, uint16_t phys_addr, const uint32_t data[4]);
+int attn_read_sram(int bar_handle, uint16_t phys_addr, uint32_t data_out[4]);
+int attn_configure_gbcore(int bar_handle, uint16_t base0, uint16_t base1,
+                          uint16_t base2, uint16_t base3);
+int attn_configure(int bar_handle, uint8_t seq_len, uint8_t num_tiles);
+int attn_start(int bar_handle);
+int attn_wait_done(int bar_handle, uint32_t* cycles_out);
+int attn_read_perf(int bar_handle, uint32_t* cycles, uint32_t* reads, uint32_t* writes);
+int attn_fpga_test(int bar_handle, int seq_len);
+
 #endif // DESIGN_TOP_H

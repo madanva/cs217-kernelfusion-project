@@ -111,3 +111,25 @@ Fully Fused only:
 - Key metric is GB writes (proxy for off-chip traffic), not cycles:
   Unfused=576, Partial=320, Fused=64 — fusion eliminates intermediate materialization
 - Fusion tradeoff: Fully Fused wins on latency AND data movement, but costs 2x area
+
+=== CPU Baseline (Double-Precision, Host CPU) ===
+
+Compiled: g++ -O2, measured with clock_gettime(CLOCK_MONOTONIC)
+
+N=16, d=16:
+  CPU Unfused:  9.86 us     CPU Fused:  9.20 us
+  FPGA Unfused @125MHz: 45.38 us    FPGA Fused: 35.14 us
+  FPGA/CPU speedup: 0.2x (unfused), 0.3x (fused)
+
+N=64, d=16:
+  CPU Unfused:  162.40 us   CPU Fused:  148.65 us
+  FPGA Unfused @125MHz: 674.37 us   FPGA Fused: 531.63 us
+  FPGA/CPU speedup: 0.2x (unfused), 0.3x (fused)
+
+Note: FPGA is slower than CPU at these small sizes. This is expected:
+- CPU runs at ~3+ GHz vs FPGA at 125 MHz (24x clock advantage)
+- N=16-64 fits entirely in CPU L1 cache (~10 KB working set)
+- FPGA advantage emerges at larger N where off-chip memory bandwidth
+  becomes the bottleneck (N^2 intermediate matrices exceed cache/SRAM)
+- The key result is the relative comparison between fusion variants,
+  not absolute FPGA vs CPU speedup at toy sizes

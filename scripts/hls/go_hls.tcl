@@ -17,7 +17,13 @@ source $env(HLS_SCRIPTS)/nvhls_exec.tcl
 namespace eval nvhls {
     proc set_bup_blocks {BUP_BLOCKS} {
       upvar 1 $BUP_BLOCKS MY_BLOCKS
-      set MY_BLOCKS {"PEPartition" "PEModule" "PECore" "ActUnit" "GBPartition" "GBModule" "NMP" "GBCore" "GBControl" "AttnFullyFused"}
+      global env
+      if {[info exists env(ATTN_VARIANT)]} {
+        set attn_block $env(ATTN_VARIANT)
+      } else {
+        set attn_block "AttnFullyFused"
+      }
+      set MY_BLOCKS [list "PEPartition" "PEModule" "PECore" "ActUnit" "GBPartition" "GBModule" "NMP" "GBCore" "GBControl" $attn_block]
     }
 
     proc usercmd_post_assembly {} {
