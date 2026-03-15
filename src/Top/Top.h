@@ -49,8 +49,10 @@
 #include "Spec.h"
 #include "AxiSpec.h" // AxiSplitter
 #include "GBPartition/GBPartition.h"
+#ifndef ATTN_ONLY_MODE
 #include "PEPartition/PEPartition.h"
 #include "DataBus/DataBus.h"
+#endif
 
 SC_MODULE(Interrupt) {
   static const int IRQ_LENGTH = 10;
@@ -91,7 +93,11 @@ SC_MODULE(Interrupt) {
 };
 
 SC_MODULE(Top){
+#ifdef ATTN_ONLY_MODE
+  static const int numSubordinates = 1; // Attention-only: GB partition only, no PE
+#else
   static const int numSubordinates = spec::kNumPE+1; // Num of partition = PE*N + GB
+#endif
  public:
 // Accelerator I/O follows SMIV definition, clk, rst, IRQ (done), axi::subordinate::write, axi::subordinate::read
   sc_in<bool>  clk;
@@ -123,36 +129,48 @@ SC_MODULE(Top){
 //                to configure the delay cycles 
   // GB sends gb_done which triggers IRQ
   Connections::Combinational<bool>              gb_done;
+#ifndef ATTN_ONLY_MODE
   // GB sends all_pe_start which is handled by pe_start_inst to activate all PEs
   Connections::Combinational<bool>              all_pe_start;
-  Connections::Combinational<bool>              pe_start_array[spec::kNumPE];  
+  Connections::Combinational<bool>              pe_start_array[spec::kNumPE];
   // Each PE sends done signal handled by pe_done_inst, the all_pe_done is send to GB when all PE are done
   Connections::Combinational<bool>              pe_done_array[spec::kNumPE];
   Connections::Combinational<bool>              all_pe_done;
   // GB broadcast activations to PEs by gb_send_inst
-  Connections::Combinational<spec::StreamType>  gb_output;   
+  Connections::Combinational<spec::StreamType>  gb_output;
   Connections::Combinational<spec::StreamType>  pe_inputs[spec::kNumPE];
-  
-  // Each PE sends a number of final output of an RNN cell, we need ArbitratedCrossBar, gb_recv_inst, to handle 
-  // multiple data streams from PE to GB properly.ks less 
+
+  // Each PE sends a number of final output of an RNN cell, we need ArbitratedCrossBar, gb_recv_inst, to handle
+  // multiple data streams from PE to GB properly.ks less
   Connections::Combinational<spec::StreamType>      data_in[spec::kNumPE]; // data_in: pe_outputs:
-  Connections::Combinational<spec::StreamType>      data_out;              // data_out: gb_input:  
+  Connections::Combinational<spec::StreamType>      data_out;              // data_out: gb_input:
+#else
+  // Attention-only: stub signals for GB's PE-facing ports
+  Connections::Combinational<bool>              all_pe_start;
+  Connections::Combinational<bool>              all_pe_done;
+  Connections::Combinational<spec::StreamType>  gb_output;
+  Connections::Combinational<spec::StreamType>  data_out;
+#endif
   
-// Module Instantiation 
-  // Need to use pointer array with instantiation to declare PEPartition  
+// Module Instantiation
+  // Need to use pointer array with instantiation to declare PEPartition
   GBPartition gb_inst;
+#ifndef ATTN_ONLY_MODE
   PEPartition* pe_ptrs[spec::kNumPE];
+#endif
 
   // Axi Spliter, and configuration regs (hard coded)
   // NOTE: spec::kNumPE+1 = numSubordinates
   spec::Axi::AxiSplitter axispliter_inst;
   sc_signal<NVUINTW(spec::Axi::axiCfg::addrWidth)> addrBound[numSubordinates][2];
 
+#ifndef ATTN_ONLY_MODE
   // Databus modules
   PEStart pe_start_inst;
   PEDone  pe_done_inst;
   GBSend  gb_send_inst;
   GBRecv  gb_recv_inst;
+#endif
   // Interrupt sender
   Interrupt irq_inst;
   
@@ -176,11 +194,13 @@ SC_MODULE(Top){
      if_axi_rd("if_axi_rd"),
      if_axi_wr("if_axi_wr"),
      gb_inst("gb_inst"),
-     axispliter_inst ("axispliter_inst"),     
+     axispliter_inst ("axispliter_inst"),
+#ifndef ATTN_ONLY_MODE
      pe_start_inst("pe_start_inst"),
      pe_done_inst ("pe_done_inst"),
      gb_send_inst ("gb_send_inst"),
      gb_recv_inst ("gb_recv_inst"),
+#endif
      irq_inst ("irq_inst")
   {
     WriteAxiSplitterConfig();
@@ -207,28 +227,22 @@ SC_MODULE(Top){
     /////////////// YOUR CODE ENDS HERE ///////////////
 
     // TODO #2: Instantiate and connect PEPartition modules
-    // 1. Loop through the number of PEs (spec::kNumPE). While in the spec kNumPE is defined as 1, we want you to think about scaling the design and write accordingly
-    // 2. Dynamically create each PEPartition instance.
-    // 3. Connect clk, rst.
-    // 4. Connect AXI subordinate channels (read/write), starting from index 1 of the channel arrays.
-    // 5. Connect data ports for GB communication (input_port, output_port).
-    // 6. Connect control signals for synchronization (start, done).
-    /////////////// YOUR CODE STARTS HERE ///////////////
-    for (int i = 0; i < spec::kNumPE; i++) {    
-      pe_ptrs[i] = new PEPartition(sc_gen_unique_name("pe_inst"));    
+#ifndef ATTN_ONLY_MODE
+    for (int i = 0; i < spec::kNumPE; i++) {
+      pe_ptrs[i] = new PEPartition(sc_gen_unique_name("pe_inst"));
       pe_ptrs[i]->clk(clk);
       pe_ptrs[i]->rst(rst);
       pe_ptrs[i]->if_axi_rd.ar(axi_rd_c_ar[i+1]);
-      pe_ptrs[i]->if_axi_rd.r (axi_rd_c_r [i+1]);            
+      pe_ptrs[i]->if_axi_rd.r (axi_rd_c_r [i+1]);
       pe_ptrs[i]->if_axi_wr.aw(axi_wr_c_aw[i+1]);
       pe_ptrs[i]->if_axi_wr.w (axi_wr_c_w[i+1]);
-      pe_ptrs[i]->if_axi_wr.b (axi_wr_c_b[i+1]);    
+      pe_ptrs[i]->if_axi_wr.b (axi_wr_c_b[i+1]);
       pe_ptrs[i]->input_port(pe_inputs[i]);
       pe_ptrs[i]->output_port(data_in[i]);
       pe_ptrs[i]->start(pe_start_array[i]);
       pe_ptrs[i]->done(pe_done_array[i]);
     }
-    /////////////// YOUR CODE ENDS HERE ///////////////
+#endif
     
     // TODO #3: Connect the AxiSplitter instance (axispliter_inst)
     // 1. Connect clk and rst.
@@ -257,46 +271,40 @@ SC_MODULE(Top){
 
 
     // TODO #4: Connect the databus and interrupt handling modules
-    // 1. Connect PEStart (pe_start_inst) to distribute the start signal from GB to all PEs.
-    // 2. Connect PEDone (pe_done_inst) to aggregate done signals from all PEs and forward to GB.
-    // 3. Connect GBSend (gb_send_inst) to broadcast data from GB to all PEs.
-    // 4. Connect GBRecv (gb_recv_inst) to arbitrate and forward data from PEs to GB.
-    // 5. Connect Interrupt (irq_inst) to generate an interrupt when GB is done.
-
-    /////////////// YOUR CODE STARTS HERE ///////////////
+#ifndef ATTN_ONLY_MODE
     pe_start_inst.clk(clk);
     pe_start_inst.rst(rst);
     pe_start_inst.all_pe_start(all_pe_start);
-    for (int i = 0; i < spec::kNumPE; i++) {     
+    for (int i = 0; i < spec::kNumPE; i++) {
       pe_start_inst.pe_start_array[i](pe_start_array[i]);
     }
-    
+
     pe_done_inst.clk(clk);
     pe_done_inst.rst(rst);
-    for (int i = 0; i < spec::kNumPE; i++) {     
+    for (int i = 0; i < spec::kNumPE; i++) {
       pe_done_inst.pe_done_array[i](pe_done_array[i]);
     }
     pe_done_inst.all_pe_done(all_pe_done);
-    
+
     gb_send_inst.clk(clk);
     gb_send_inst.rst(rst);
     gb_send_inst.gb_output(gb_output);
-    for (int i = 0; i < spec::kNumPE; i++) {     
+    for (int i = 0; i < spec::kNumPE; i++) {
       gb_send_inst.pe_inputs[i](pe_inputs[i]);
-    }  
-    
+    }
+
     gb_recv_inst.clk(clk);
     gb_recv_inst.rst(rst);
-    for (int i = 0; i < spec::kNumPE; i++) {     
+    for (int i = 0; i < spec::kNumPE; i++) {
       gb_recv_inst.data_in[i](data_in[i]);
-    }  
+    }
     gb_recv_inst.data_out[0](data_out);
+#endif
 
     irq_inst.clk(clk);
     irq_inst.rst(rst);
     irq_inst.interrupt(interrupt);
     irq_inst.IRQ_trigger(gb_done);
-    /////////////// YOUR CODE ENDS HERE ///////////////
   }
   
 };
