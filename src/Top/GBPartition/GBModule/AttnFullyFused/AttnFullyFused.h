@@ -338,7 +338,6 @@ public:
     NVUINT8 col_counter = 0;
     NVUINT8 tile_count = 0;
     NVUINT8 v_idx = 0;
-    NVUINT8 rescale_idx = 0;
 
     spec::VectorType q_row_reg;
     spec::VectorType k_data_reg;
@@ -438,24 +437,17 @@ public:
           spec::Attention::FixedType corr_input = running_max - new_max;
           correction_reg = ac_math::ac_exp_pwl<spec::Attention::UnsignedFixedType>(corr_input);
           running_max = new_max;
-          rescale_idx = 0;
           c_state = C_TILE_RESCALE;
           break;
         }
 
         case C_TILE_RESCALE: {
-          // Serialize rescaling: 4 elements per cycle instead of 16
-          // Saves ~30K area (12 fewer 40x40 multipliers)
-          NVUINT8 base = rescale_idx;
 #pragma hls_unroll yes
-          for (int k = 0; k < 4; k++) {
-            v_accum[base + k] = v_accum[base + k] * correction_reg;
+          for (int k = 0; k < spec::kVectorSize; k++) {
+            v_accum[k] = v_accum[k] * correction_reg;
           }
-          if (rescale_idx == 0) {
-            running_sum = running_sum * correction_reg;
-          }
-          rescale_idx += 4;
-          c_state = (rescale_idx >= spec::kVectorSize) ? C_TILE_EXP : C_TILE_RESCALE;
+          running_sum = running_sum * correction_reg;
+          c_state = C_TILE_EXP;
           break;
         }
 

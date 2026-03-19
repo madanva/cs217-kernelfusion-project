@@ -16,7 +16,7 @@ Latency                 1           11              MemCtrl=1, Compute=2
 DSPs                    96          95              186
 LUTs                    8,667       16,650          17,817
 MUX_CARRYs              665         1,299           1,227
-Total Area Score        72,699      80,015          141,879
+Total Area Score        74,977      80,015          141,900
 
 === Scverify Results (N=16) ===
 
@@ -111,6 +111,19 @@ Fully Fused only:
 - Key metric is GB writes (proxy for off-chip traffic), not cycles:
   Unfused=576, Partial=320, Fused=64 — fusion eliminates intermediate materialization
 - Fusion tradeoff: Fully Fused wins on latency AND data movement, but costs 2x area
+
+=== Full Top Area Comparison (with vs without PECore) ===
+
+                        Full Top (w/ PE)    Attention-Only (no PE)    Reduction
+Total Area Score        443,301             225,158                   49.2%
+PECore contribution     115,865 (26.2%)     removed                  -
+ActUnit contribution    72,605 (16.4%)      removed                  -
+PEModule total          189,156 (42.7%)     removed                  -
+
+Attention-only mode: #ifdef ATTN_ONLY_MODE removes PEPartition + DataBus modules
+Build: make hls COMPILER_FLAGS="HLS_ALGORITHMICC ATTN_ONLY_MODE"
+Key: Attention unit is self-contained, does not use PECore for any computation
+Result: Nearly 50% area reduction with zero impact on attention performance
 
 === CPU Baseline (Double-Precision, Host CPU) ===
 

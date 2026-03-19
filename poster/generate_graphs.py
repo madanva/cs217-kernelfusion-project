@@ -5,165 +5,137 @@ import numpy as np
 matplotlib.rcParams['font.family'] = 'sans-serif'
 matplotlib.rcParams['font.size'] = 14
 
-variants = ['Unfused', 'Partial\nFused', 'Fully\nFused']
-colors_read = '#4A90D9'
-colors_write = '#E74C3C'
-colors_latency_16 = '#7FB3D8'
-colors_latency_64 = '#2C5F8A'
+variants = ['Unfused', 'Partial-ST', 'Partial-MT', 'Fully\nFused']
+colors = {
+    'unfused': '#4A90D9',
+    'partial_st': '#D4A037',
+    'partial_mt': '#E67E22',
+    'fused': '#27AE60',
+    'read': '#4A90D9',
+    'write': '#E74C3C',
+}
+bar_colors = [colors['unfused'], colors['partial_st'], colors['partial_mt'], colors['fused']]
 
 # ============================================================
 # GRAPH 1: GB Data Movement (Stacked Bar — Reads + Writes)
 # ============================================================
-fig, ax = plt.subplots(figsize=(8, 5))
+fig, (ax_r, ax_w) = plt.subplots(1, 2, figsize=(12, 5))
 
-gb_reads  = [8768, 8512, 8256]
-gb_writes = [576,  320,  64]
+gb_reads  = [8768, 8512, 8512, 8256]
+gb_writes = [576,  320,  320,  64]
 
 x = np.arange(len(variants))
-width = 0.5
+width = 0.55
 
-bars_r = ax.bar(x, gb_reads, width, label='GB Reads', color=colors_read, edgecolor='white', linewidth=0.5)
-bars_w = ax.bar(x, gb_writes, width, bottom=gb_reads, label='GB Writes', color=colors_write, edgecolor='white', linewidth=0.5)
+# Reads
+bars_r = ax_r.bar(x, gb_reads, width, color=bar_colors, edgecolor='white', linewidth=0.5)
+for i, v in enumerate(gb_reads):
+    ax_r.text(i, v + 150, f'{v:,}', ha='center', va='bottom', fontsize=11, fontweight='bold')
+ax_r.set_ylabel('Vector Count (16B each)', fontsize=13)
+ax_r.set_title('GB Reads (N=64, d=16)', fontsize=15, fontweight='bold')
+ax_r.set_xticks(x)
+ax_r.set_xticklabels(variants, fontsize=11)
+ax_r.set_ylim(0, 10500)
+ax_r.spines['top'].set_visible(False)
+ax_r.spines['right'].set_visible(False)
 
-# Annotate write counts on the write bars
-for i, (r, w) in enumerate(zip(gb_reads, gb_writes)):
-    ax.text(i, r + w + 150, f'{w} writes', ha='center', va='bottom', fontsize=12, fontweight='bold', color=colors_write)
+# Writes
+bars_w = ax_w.bar(x, gb_writes, width, color=bar_colors, edgecolor='white', linewidth=0.5)
+for i, v in enumerate(gb_writes):
+    ax_w.text(i, v + 15, f'{v}', ha='center', va='bottom', fontsize=11, fontweight='bold')
+ax_w.set_ylabel('Vector Count (16B each)', fontsize=13)
+ax_w.set_title('GB Writes (N=64, d=16)', fontsize=15, fontweight='bold')
+ax_w.set_xticks(x)
+ax_w.set_xticklabels(variants, fontsize=11)
+ax_w.set_ylim(0, 700)
+ax_w.spines['top'].set_visible(False)
+ax_w.spines['right'].set_visible(False)
 
-ax.set_ylabel('Vector Count (16B each)', fontsize=13)
-ax.set_title('GB Memory Traffic (N=64, d=16)', fontsize=15, fontweight='bold')
-ax.set_xticks(x)
-ax.set_xticklabels(variants, fontsize=13)
-ax.legend(loc='upper right', fontsize=12)
-ax.set_ylim(0, 11000)
-ax.spines['top'].set_visible(False)
-ax.spines['right'].set_visible(False)
-
-# Add 9x annotation arrow
-ax.annotate('9× fewer\nwrites', xy=(2, 8256 + 64 + 150), xytext=(2.45, 9800),
-            fontsize=12, fontweight='bold', color=colors_write,
-            arrowprops=dict(arrowstyle='->', color=colors_write, lw=1.5),
-            ha='center')
+# 9x annotation
+ax_w.annotate('', xy=(3, 64), xytext=(0, 576),
+            arrowprops=dict(arrowstyle='->', color='#333333', lw=2, connectionstyle='arc3,rad=-0.15'))
+ax_w.text(1.5, 450, r'9$\times$ reduction', fontsize=13, fontweight='bold', color='#333333', rotation=-25)
 
 plt.tight_layout()
-plt.savefig('graph_data_movement.png', dpi=200, bbox_inches='tight')
-plt.savefig('graph_data_movement.pdf', bbox_inches='tight')
-print("Saved graph_data_movement.png/pdf")
+plt.savefig('figures/data_mvmt.png', dpi=200, bbox_inches='tight')
+plt.savefig('figures/data_mvmt.pdf', bbox_inches='tight')
+print("Saved figures/data_mvmt.png/pdf")
 
 
 # ============================================================
-# GRAPH 2: Latency Comparison (Grouped Bar — N=16 and N=64)
+# GRAPH 2: Latency Comparison (N=64 only — the interesting case)
 # ============================================================
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+fig, ax = plt.subplots(figsize=(8, 5))
 
-variants_short = ['Unfused', 'Partial\nFused', 'Fully\nFused']
+latency_64 = [84296, 130793, 31329, 66454]
 
-# N=16
-latency_16 = [5672, 8565, 4392]
-x = np.arange(len(variants_short))
-width = 0.5
-
-bars16 = ax1.bar(x, latency_16, width, color=[colors_latency_64, '#D4A037', '#27AE60'], edgecolor='white', linewidth=0.5)
-ax1.set_ylabel('Simulation Clocks', fontsize=13)
-ax1.set_title('Latency (N=16)', fontsize=15, fontweight='bold')
-ax1.set_xticks(x)
-ax1.set_xticklabels(variants_short, fontsize=12)
-ax1.set_ylim(0, 10000)
-ax1.spines['top'].set_visible(False)
-ax1.spines['right'].set_visible(False)
-
-for i, v in enumerate(latency_16):
-    ax1.text(i, v + 200, f'{v:,}', ha='center', va='bottom', fontsize=11, fontweight='bold')
-
-# Speedup annotations for N=16
-ax1.text(2, 4392 + 800, '1.29×', ha='center', fontsize=10, color='#27AE60', fontstyle='italic')
-
-# N=64
-latency_64 = [84296, 131561, 66454]
-
-bars64 = ax2.bar(x, latency_64, width, color=[colors_latency_64, '#D4A037', '#27AE60'], edgecolor='white', linewidth=0.5)
-ax2.set_ylabel('Simulation Clocks', fontsize=13)
-ax2.set_title('Latency (N=64)', fontsize=15, fontweight='bold')
-ax2.set_xticks(x)
-ax2.set_xticklabels(variants_short, fontsize=12)
-ax2.set_ylim(0, 155000)
-ax2.spines['top'].set_visible(False)
-ax2.spines['right'].set_visible(False)
+bars = ax.bar(x, latency_64, width, color=bar_colors, edgecolor='white', linewidth=0.5)
 
 for i, v in enumerate(latency_64):
-    ax2.text(i, v + 3000, f'{v:,}', ha='center', va='bottom', fontsize=11, fontweight='bold')
+    ax.text(i, v + 2500, f'{v:,}', ha='center', va='bottom', fontsize=11, fontweight='bold')
 
-# Speedup annotations for N=64
-ax2.text(2, 66454 + 12000, '1.27×', ha='center', fontsize=10, color='#27AE60', fontstyle='italic')
-ax2.text(1, 131561 + 12000, '0.64×', ha='center', fontsize=10, color='#D4A037', fontstyle='italic')
+# Speedup annotations
+speedups = [1.0, 0.64, 2.69, 1.27]
+for i, s in enumerate(speedups):
+    if i == 0:
+        continue
+    color = bar_colors[i]
+    label = f'{s:.2f}' + r'$\times$'
+    ax.text(i, latency_64[i] + 9000, label, ha='center', fontsize=11, color=color, fontstyle='italic', fontweight='bold')
 
-plt.tight_layout()
-plt.savefig('graph_latency.png', dpi=200, bbox_inches='tight')
-plt.savefig('graph_latency.pdf', bbox_inches='tight')
-print("Saved graph_latency.png/pdf")
-
-
-# ============================================================
-# GRAPH 3: GB Writes Only (Dramatic reduction bar chart)
-# ============================================================
-fig, ax = plt.subplots(figsize=(7, 5))
-
-writes = [576, 320, 64]
-
-bars = ax.bar(x, writes, width, color=[colors_latency_64, '#D4A037', '#27AE60'], edgecolor='white', linewidth=0.5)
-
-for i, v in enumerate(writes):
-    ax.text(i, v + 15, f'{v}', ha='center', va='bottom', fontsize=13, fontweight='bold')
-
-ax.set_ylabel('GB Write Vectors', fontsize=13)
-ax.set_title('SRAM Write Reduction (N=64, d=16)', fontsize=15, fontweight='bold')
+ax.set_ylabel('Simulation Clocks', fontsize=13)
+ax.set_title('End-to-End Latency (N=64, d=16)', fontsize=15, fontweight='bold')
 ax.set_xticks(x)
-ax.set_xticklabels(variants_short, fontsize=13)
-ax.set_ylim(0, 700)
+ax.set_xticklabels(variants, fontsize=12)
+ax.set_ylim(0, 160000)
 ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 
-# Arrow showing 9x reduction
-ax.annotate('', xy=(2, 64), xytext=(0, 576),
-            arrowprops=dict(arrowstyle='->', color='#333333', lw=2, connectionstyle='arc3,rad=-0.2'))
-ax.text(1.3, 400, '9× reduction', fontsize=13, fontweight='bold', color='#333333', rotation=-30)
-
 plt.tight_layout()
-plt.savefig('graph_writes_reduction.png', dpi=200, bbox_inches='tight')
-plt.savefig('graph_writes_reduction.pdf', bbox_inches='tight')
-print("Saved graph_writes_reduction.png/pdf")
+plt.savefig('figures/latency.png', dpi=200, bbox_inches='tight')
+plt.savefig('figures/latency.pdf', bbox_inches='tight')
+print("Saved figures/latency.png/pdf")
 
 
 # ============================================================
-# GRAPH 4: Area vs Speedup Trade-off (Scatter/Bubble)
+# GRAPH 3: Area vs Speedup Trade-off (Scatter)
 # ============================================================
-fig, ax = plt.subplots(figsize=(7, 5))
+fig, ax = plt.subplots(figsize=(8, 5.5))
 
-area_scores = [72699, 80015, 141879]
-speedups = [1.0, 0.64, 1.27]
-labels = ['Unfused', 'Partial Fused', 'Fully Fused']
-point_colors = [colors_latency_64, '#D4A037', '#27AE60']
+area_scores = [74977, 80015, 73843, 141900]
+speedup_vals = [1.0, 0.64, 2.69, 1.27]
+labels = ['Unfused', 'Partial-ST', 'Partial-MT', 'Fully Fused']
 
-for i in range(3):
-    ax.scatter(area_scores[i], speedups[i], s=200, c=point_colors[i], edgecolors='black', linewidth=1, zorder=5)
-    offset_x = 3000 if i != 1 else -3000
-    offset_y = 0.04 if i != 1 else -0.06
-    ax.annotate(labels[i], (area_scores[i], speedups[i]),
-                textcoords="offset points", xytext=(offset_x//200, offset_y*300),
-                fontsize=12, fontweight='bold', ha='center')
+for i in range(4):
+    ax.scatter(area_scores[i], speedup_vals[i], s=250, c=bar_colors[i], edgecolors='black', linewidth=1.5, zorder=5)
+
+# Labels with offsets to avoid overlap
+offsets = [(15, -15), (-50, -18), (15, 10), (15, -15)]
+for i in range(4):
+    ax.annotate(labels[i], (area_scores[i], speedup_vals[i]),
+                textcoords="offset points", xytext=offsets[i],
+                fontsize=12, fontweight='bold', ha='left')
 
 ax.axhline(y=1.0, color='gray', linestyle='--', alpha=0.5, label='Unfused baseline')
 ax.set_xlabel('HLS Area Score', fontsize=13)
 ax.set_ylabel('Speedup vs Unfused', fontsize=13)
 ax.set_title('Area vs Performance Trade-off', fontsize=15, fontweight='bold')
 ax.set_xlim(50000, 170000)
-ax.set_ylim(0.4, 1.5)
+ax.set_ylim(0.3, 3.2)
 ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 ax.legend(fontsize=11)
 
+# Highlight Partial-MT as Pareto-optimal
+ax.annotate('Best efficiency:\n2.69x speed, 1.02x area',
+            xy=(73843, 2.69), xytext=(100000, 2.9),
+            fontsize=10, fontstyle='italic', color=colors['partial_mt'],
+            arrowprops=dict(arrowstyle='->', color=colors['partial_mt'], lw=1.5),
+            ha='center')
+
 plt.tight_layout()
-plt.savefig('graph_area_tradeoff.png', dpi=200, bbox_inches='tight')
-plt.savefig('graph_area_tradeoff.pdf', bbox_inches='tight')
-print("Saved graph_area_tradeoff.png/pdf")
+plt.savefig('figures/area_tradeoff.png', dpi=200, bbox_inches='tight')
+plt.savefig('figures/area_tradeoff.pdf', bbox_inches='tight')
+print("Saved figures/area_tradeoff.png/pdf")
 
 print("\nAll graphs generated!")
